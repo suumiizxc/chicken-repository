@@ -17,7 +17,7 @@ import "./css/light-theme.css";
 function App() {
   const { SubMenu } = Menu;
 
-  const [loader, setLoader] = useState();
+  const [loader, setLoader] = useState(false);
   // const [token, setToken] = useState(null);
 
   const [userData, setUserData] = useState({

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, Form, Input, Divider, Alert } from "antd";
+import { Button, Form, Input, Divider, message } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import { authLogin } from "../services/main_service";
 
@@ -13,13 +13,17 @@ export const LoginForm = (props) => {
     signIn,
     loading,
     showMessage,
-    message,
+    // message,
     userData,
   } = props;
 
   const initialCredential = {
     email: "contentmaker4@gmail.com",
     password: "mongol",
+  };
+
+  const onFailed = () => {
+    message.error("Нэвтрэх нэр эсвэл нууц үг буруу байна");
   };
 
   const onLogin = (values) => {
@@ -33,6 +37,8 @@ export const LoginForm = (props) => {
           console.log("res.data.data", res.data.data);
           props.setUserData(res.data.data);
           localStorage.setItem("token", res.data.data.token);
+          localStorage.setItem("user_id", res.data.data.id);
+          message.success("Амжилттай нэттэрлээ");
 
           // ------------------------------------------------------------
 
@@ -83,6 +89,7 @@ export const LoginForm = (props) => {
         name="login-form"
         initialValues={initialCredential}
         onFinish={onLogin}
+        onFinishFailed={onFailed}
       >
         <Form.Item
           name="email"
