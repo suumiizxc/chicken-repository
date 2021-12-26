@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import LoginForm from "./login_form";
 import { Card, Row, Col } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -10,8 +10,7 @@ const backgroundStyle = {
 };
 
 const Login = (props) => {
-  const id = false;
-  let navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     props.userData.token ? navigate("/word") : <></>;

@@ -6,16 +6,7 @@ import { authLogin } from "../services/main_service";
 // import { authLogin } from "services/MainService";
 
 export const LoginForm = (props) => {
-  const {
-    showForgetPassword,
-    onForgetPasswordClick,
-    showLoading,
-    signIn,
-    loading,
-    showMessage,
-    // message,
-    userData,
-  } = props;
+  const { showForgetPassword, onForgetPasswordClick } = props;
 
   const initialCredential = {
     email: "contentmaker4@gmail.com",

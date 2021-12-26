@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Spin, Menu, Layout } from "antd";
+import React, { useState } from "react";
+import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./auth/login";
 import LayoutIndex from "./layouts/Index";
 import ViewIndex from "./views/index";
 import WordIndex from "./views/word/Index";
 import ContentIndex from "./views/content/index";
+import PageNotFound from "./views/PageNotFound";
 
 import "./App.css";
 import "./css/index.css";
@@ -15,8 +16,6 @@ import "./css/layout.css";
 import "./css/light-theme.css";
 
 function App() {
-  const { SubMenu } = Menu;
-
   const [loader, setLoader] = useState(false);
   // const [token, setToken] = useState(null);
 
@@ -31,16 +30,6 @@ function App() {
     created_user_id: null,
     organization_id: null,
     is_active: 1,
-  });
-
-  const [wordData, setWordData] = useState({
-    id: null,
-    language_id: null,
-    word: null,
-    root_word_id: null,
-    type_id: null,
-    created_by: null,
-    created_date: null,
   });
 
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} spin />;
@@ -60,42 +49,48 @@ function App() {
       ) : (
         <BrowserRouter>
           <Routes>
-            {userData.token ? (
-              <Route
-                path="/"
-                element={
-                  <LayoutIndex userData={userData} setUserData={setUserData} />
-                }
-              >
-                <Route index element={<ViewIndex />}></Route>
-                <Route
-                  path="/word"
-                  element={
-                    <WordIndex
-                      userData={userData}
-                      setUserData={setUserData}
-                      loader={loader}
-                      setLoader={setLoader}
-                    />
-                  }
-                ></Route>
-                <Route path="/content" element={<ContentIndex />}></Route>
-              </Route>
-            ) : (
-              <></>
-            )}
             <Route
-              path="/login"
+              path="/"
               element={
-                <Login
-                  userData={userData}
-                  setUserData={setUserData}
-                  loader={loader}
-                  setLoader={setLoader}
-                  tok
-                />
+                userData.token ? (
+                  <LayoutIndex userData={userData} setUserData={setUserData} />
+                ) : (
+                  <Login
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    tok
+                  />
+                )
               }
-            ></Route>
+            >
+              <Route index element={<ViewIndex />}></Route>
+              <Route
+                path="/word"
+                element={
+                  <WordIndex
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                  />
+                }
+              />
+              <Route path="/content" element={<ContentIndex />} />
+              <Route
+                path="/login"
+                element={
+                  <Login
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                  />
+                }
+              />
+            </Route>
+            <Route path="*" element={<PageNotFound />}></Route>
           </Routes>
         </BrowserRouter>
       )}

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Table,
-  Tag,
   Space,
   Button,
   Card,
@@ -9,84 +8,91 @@ import {
   Form,
   Input,
   Select,
+  Popconfirm,
+  Spin,
+  Divider,
+  Col,
+  Row,
+  message,
 } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
+  LoadingOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
-import { getWords, insertWord } from "../../services/main_service";
+import {
+  deleteWord,
+  findRootWord,
+  getLanguageWord,
+  getTypesWord,
+  getWords,
+  insertTranslation,
+  updateTranslation,
+  insertWord,
+  updateWord,
+} from "../../services/Word_service";
 
 export default function Index(props) {
   const { Option } = Select;
   const [form] = Form.useForm();
+  const [wordLoader, setWordLoader] = useState(false);
+  const antIcon = <LoadingOutlined style={{ fontSize: 32 }} />;
   const [wordStates, setWordStates] = useState({
     isModalVisible: false,
     data: null,
-    all_language: [
-      {
-        id: 55,
-        name: "GERMAN",
-      },
-      {
-        id: 23,
-        name: "",
-      },
-      {
-        id: 24,
-        name: "ENGLISH",
-      },
-      {
-        id: 25,
-        name: "MONGOL",
-      },
-      {
-        id: 26,
-        name: "CHINESE",
-      },
-    ],
-    types: [
-      {
-        id: 118,
-        full_name: "plural",
-        short_name: "plural",
-      },
-      {
-        id: 119,
-        full_name: "present continuous",
-        short_name: "present continuous",
-      },
-      {
-        id: 120,
-        full_name: "present simple",
-        short_name: "present simple",
-      },
-      {
-        id: 121,
-        full_name: "past simple",
-        short_name: "past simple",
-      },
-      {
-        id: 122,
-        full_name: "past continuous",
-        short_name: "past continuous",
-      },
-      {
-        id: 27,
-        full_name: "TEST",
-        short_name: "TEST",
-      },
-    ],
+    all_language: null,
+    types: null,
+    language_id: null,
+    word_id: null,
     sendWord: {
       language_id: null,
       word: null,
       type_id: null,
       root_word_id: null,
-      type_id: null,
       created_by: null,
     },
+    editWord: {},
+    deleteWord: {},
+    editWordInit: {},
+    action: null,
+    rootWordLikely: [],
+    rootWordEqually: [],
   });
 
+  const EditDate = (date) => {
+    const slitDate = date.split(" ");
+    return slitDate[0];
+  };
+
+  const onChangeRootWordOption = (value) => {
+    console.log(`selected ${value}`);
+  };
+
+  const onSearchRootWordOption = (val) => {
+    console.log("search:", val);
+    findRootWord(val, props.userData.token)
+      .then((res) => {
+        setWordLoader(false);
+        if (res && res.data && res.data.status && res.data.status === true) {
+          //success
+          console.log("success find root word equally", res.data.equally);
+          console.log("success find root word likely", res.data.likely);
+          wordStates.isModalVisible = false;
+          wordStates.rootWordLikely = res.data.likely;
+          wordStates.rootWordEqually = res.data.equally;
+          setWordStates(wordStates);
+        } else {
+          //unsuccessful
+          console.log("unsuccessfully find root word");
+        }
+      })
+      .catch((e) => {
+        //unsuccessful
+        setWordLoader(false);
+        console.log("catch error find root word", e);
+      });
+  };
   const columns = [
     {
       title: "Id",
@@ -112,42 +118,45 @@ export default function Index(props) {
     {
       title: "Үгийн үндэс",
       dataIndex: "root_word_id",
-      key: "address",
+      key: "root_word_id",
     },
     {
       title: "Огноо",
-      dataIndex: "created_date",
-      key: "address",
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (text, record) => <Space size="middle">{EditDate(text)}</Space>,
     },
     {
       title: "Ажилтан",
       dataIndex: "created_by",
-      key: "address",
+      key: "created_by",
     },
     {
       title: "Үйлдэл",
       key: "action",
       render: (text, record) => (
         <Space size="middle">
-          <Button
-            onClick={() => {
-              console.log("record", record);
+          <Popconfirm
+            placement="topLeft"
+            htmlType="submit"
+            title={"Мэдээллийг устгахад итгэлтэй байна уу?"}
+            onConfirm={() => {
+              console.log("delete record", record);
+              runDeleteWord(record);
             }}
-            icon={<DeleteOutlined style={{ color: "#FF6B72" }} />}
-          />
+            okText="Тийм"
+            cancelText="Үгүй"
+          >
+            <Button icon={<DeleteOutlined style={{ color: "#FF6B72" }} />} />
+          </Popconfirm>
           <Button
             onClick={() => {
-              console.log("record", record);
-              wordStates.sendWord = record;
-              // state.addEditOrganizationInit = Object.assign(
-              //   {},
-              //   state.addEditOrganization
-              // );
               wordStates.isModalVisible = true;
-
-              // setFields();
+              wordStates.editWord = record;
+              wordStates.action = "EDIT";
+              getFormData(record);
               setWordStates({ ...wordStates });
-              console.log("wordState edit", wordStates);
+              console.log("wordState editWords", wordStates.editWord);
             }}
             icon={<EditOutlined style={{ color: "#3e79f7" }} />}
           />
@@ -155,6 +164,57 @@ export default function Index(props) {
       ),
     },
   ];
+
+  const getFormData = (data) => {
+    form.setFieldsValue({
+      language_id: data.language_id,
+      word: data.word,
+      type_id: data.type_id,
+      root_word_id: data.root_word_id,
+      noun: data.noun,
+      verb: data.verb,
+      adjective: data.adjective,
+      adverb: data.adverb,
+      pronoun: data.pronoun,
+      preposition: data.preposition,
+      conjunction: data.conjunction,
+      determiner: data.determiner,
+      exclamation: data.exclamation,
+      modal_verb: data.modal_verb,
+      phrasal_verb: data.phrasal_verb,
+      idiom: data.idiom,
+      auxilary_verb: data.auxilary_verb,
+      phrase: data.phrase,
+      example_1: data.example_1,
+      example_2: data.example_2,
+      example_3: data.example_3,
+    });
+  };
+
+  const runDeleteWord = (data) => {
+    console.log("DELETE record", data);
+    setWordLoader(true);
+    deleteWord(parseInt(data.id), props.userData.token)
+      .then((res) => {
+        setWordLoader(false);
+        if (res && res.data && res.data.status && res.data.status === true) {
+          //success
+          console.log("success delete word");
+          wordStates.isModalVisible = false;
+          setWordStates(wordStates);
+          getAllWords();
+          message.warning("Ажилттай устгагдлаа");
+        } else {
+          //unsuccessful
+          console.log("unsuccessfully delete word");
+        }
+      })
+      .catch((e) => {
+        //unsuccessful
+        setWordLoader(false);
+        console.log("catch error", e);
+      });
+  };
 
   const wordAdd = () => {
     setWordStates({ ...wordStates, isModalVisible: true });
@@ -170,158 +230,484 @@ export default function Index(props) {
     console.log("wordState type id", wordStates.type_id);
   };
 
-  const handleCancel = () => {
-    setWordStates({ ...wordStates, isModalVisible: false });
-  };
-
   const onFinishFailedWord = (err) => {
     console.log("onFinishFailed", err);
   };
 
   const onFinishWord = (values) => {
-    wordStates.sendWord = {
-      language_id: parseInt(values.language_id),
-      word: values.word,
-      type_id: values.type_id,
-      root_word_id: parseInt(values.root_word_id),
-      type_id: values.type_id,
-      created_by: parseInt(localStorage.getItem("user_id")),
-    };
+    console.log("values onFinish", values);
+
     setWordStates({ ...wordStates });
-    insertWord(wordStates.sendWord, props.userData.token)
-      .then((res) => {
-        if (res && res.data && res.data.status && res.data.status === true) {
-          //success
-          console.log("success insert word");
-          getAllWords();
-          // form.resetFields();
-        } else {
+    console.log("ACTION", wordStates.action);
+    if (wordStates.action === "EDIT") {
+      wordStates.editWord = {
+        id: parseInt(wordStates.editWord.id),
+        language_id: parseInt(values.language_id),
+        word: values.word,
+        type_id: values.type_id,
+        root_word_id: parseInt(values.root_word_id),
+        created_by: parseInt(localStorage.getItem("user_id")),
+      };
+      setWordLoader(true);
+      updateWord(wordStates.editWord, props.userData.token)
+        .then((res) => {
+          setWordLoader(false);
+          if (res && res.data && res.data.status && res.data.status === true) {
+            //success
+            console.log("success update word");
+            wordStates.isModalVisible = false;
+            setWordStates(wordStates);
+            getAllWords();
+            //Update translation
+            updateTranslations(values);
+            message.success("Ажилттай засагдлаа");
+            // form.resetFields();
+          } else {
+            //unsuccessful
+            message.error("Алдаа гарлаа /үг засах үед/");
+            console.log("unsuccessfully update word");
+          }
+        })
+        .catch((e) => {
           //unsuccessful
-          console.log("unsuccessfully insert word");
-        }
-      })
-      .catch((e) => {
-        //unsuccessful
-        console.log(e);
-      });
+          message.error("Алдаа гарлаа /үг засах үед/");
+          console.log(e);
+        });
+    } else {
+      wordStates.sendWord = {
+        language_id: parseInt(values.language_id),
+        word: values.word,
+        type_id: values.type_id,
+        root_word_id: parseInt(values.root_word_id),
+        created_by: parseInt(localStorage.getItem("user_id")),
+      };
+      setWordLoader(true);
+      insertWord(wordStates.sendWord, props.userData.token)
+        .then((res) => {
+          setWordLoader(false);
+          if (res && res.data && res.data.status && res.data.status === true) {
+            //success
+            console.log("success insert word");
+            getAllWords();
+            wordStates.word_id = res.data.data.id;
+            setWordStates({ ...wordStates });
+            console.log("insert translations values=== ", values);
+            const translationsData = {
+              word_id: res.data.data.id,
+              to_language_id: res.data.data.language_id,
+              translation_to_origin: "english to mongolia",
+              created_by: parseInt(localStorage.getItem("user_id")),
+              translations: {
+                noun: values.noun,
+                verb: values.verb,
+                adjective: values.adjective,
+                adverb: values.adverb,
+                pronoun: values.pronoun,
+                preposition: values.preposition,
+                conjunction: values.conjunction,
+                determiner: values.determiner,
+                exclamation: values.exclamation,
+                modal_verb: values.modal_verb,
+                phrasal_verb: values.phrasal_verb,
+                idiom: values.idiom,
+                auxilary_verb: values.auxilary_verb,
+                phrase: values.phrase,
+                example_1: values.example_1,
+                example_2: values.example_2,
+                example_3: values.example_3,
+              },
+            };
+            // Translation insert
+            insertTranslations(translationsData, props.userData.token);
+            wordStates.isModalVisible = false;
+            setWordStates(wordStates);
+            message.success("Ажилттай нэмэгдлээ");
+            // form.resetFields();
+          } else {
+            //unsuccessful
+            setWordLoader(false);
+            console.log("unsuccessfully insert word");
+            message.error("Алдаа гарлаа /үг нэмэх үед/");
+          }
+        })
+        .catch((e) => {
+          //unsuccessful
+          console.log(e);
+          message.error("Алдаа гарлаа /үг нэмэх үед/");
+        });
+    }
   };
 
   const getAllWords = () => {
     const token = localStorage.getItem("token");
-    // props.setLoader(true);
+    setWordLoader(true);
+    //1. Get table all words request
     getWords(token)
       .then((res) => {
+        setWordLoader(false);
         if (res && res.data && res.data.status && res.data.status === true) {
           //success
 
-          console.log("success all words");
-          setWordStates({ ...wordStates, data: res.data.data });
+          console.log("success all words", res.data.data);
+          wordStates.data = res.data.data;
+          setWordStates({ ...wordStates });
         } else {
           //unsuccessful
+          message.error("Алдаа гарлаа /үгийн жагсаалт авах үед/");
+        }
+      })
+      .catch((e) => {
+        //unsuccessful
+        message.error("Алдаа гарлаа /үгийн жагсаалт авах үед/");
+        console.log(e);
+      });
+    //2. Get word types request
+    getTypesWord(token)
+      .then((res) => {
+        setWordLoader(false);
+        if (res && res.data && res.data.status && res.data.status === true) {
+          //success
+
+          console.log("success all types", res.data.data);
+          wordStates.types = res.data.data;
+
+          setWordStates({ ...wordStates });
+        } else {
+          //unsuccessful
+          message.error("Алдаа гарлаа /үгийн төрөл авах үед/");
         }
       })
       .catch((e) => {
         //unsuccessful
         props.setLoader(false);
+        message.error("Алдаа гарлаа /үгийн төрөл авах үед/");
+        console.log(e);
+      });
+
+    //3. Get word language request
+    getLanguageWord(token)
+      .then((res) => {
+        setWordLoader(false);
+        if (res && res.data && res.data.status && res.data.status === true) {
+          //success
+
+          console.log("success all language", res.data.data);
+          wordStates.all_language = res.data.data;
+
+          setWordStates({ ...wordStates });
+        } else {
+          //unsuccessful
+          message.error("Алдаа гарлаа /үгийг language авах үед/");
+        }
+      })
+      .catch((e) => {
+        //unsuccessful
+        props.setLoader(false);
+        message.error("Алдаа гарлаа /үгийг language авах үед/");
         console.log(e);
       });
   };
+
+  //... Save word translation request
+  const insertTranslations = (data, token) => {
+    insertTranslation(data, token)
+      .then((res) => {
+        setWordLoader(false);
+        if (res && res.data && res.data.status && res.data.status === true) {
+          //success
+          console.log("success all translation type", res.data.data);
+          setWordStates({ ...wordStates });
+        } else {
+          //unsuccessful
+          message.error("Алдаа гарлаа /үгийг орчуулга нэмэх үед/");
+        }
+      })
+      .catch((e) => {
+        //unsuccessful
+        props.setLoader(false);
+        message.error("Алдаа гарлаа /үгийг орчуулга нэмэх үед/");
+        console.log(e);
+      });
+  };
+
+  //... Update word translation request
+  const updateTranslations = (values) => {
+    console.log("values tran update", values);
+    const translationsData = {
+      word_id: wordStates.word_id,
+      to_language_id: parseInt(values.language_id),
+      translation_to_origin: "english to mongolia",
+      created_by: parseInt(localStorage.getItem("user_id")),
+      translations: {
+        noun: values.noun,
+        verb: values.verb,
+        adjective: values.adjective,
+        adverb: values.adverb,
+        pronoun: values.pronoun,
+        preposition: values.preposition,
+        conjunction: values.conjunction,
+        determiner: values.determiner,
+        exclamation: values.exclamation,
+        modal_verb: values.modal_verb,
+        phrasal_verb: values.phrasal_verb,
+        idiom: values.idiom,
+        auxilary_verb: values.auxilary_verb,
+        phrase: values.phrase,
+        example_1: values.example_1,
+        example_2: values.example_2,
+        example_3: values.example_3,
+      },
+    };
+    // Translation update
+
+    updateTranslation(translationsData, props.userData.token)
+      .then((res) => {
+        setWordLoader(false);
+        if (res && res.data && res.data.status && res.data.status === true) {
+          //success
+          console.log("success all translation UPDATE", res.data.data);
+          getAllWords();
+          message.success("Амжилттай засагдлаа орчуулга");
+        } else {
+          //unsuccessful
+          message.error("Алдаа гарлаа /үгийг орчуулга нэмэх үед/");
+        }
+      })
+      .catch((e) => {
+        //unsuccessful
+        props.setLoader(false);
+        message.error("Алдаа гарлаа /үгийг орчуулга нэмэх үед/");
+        console.log(e);
+      });
+  };
+
   useEffect(() => {
     console.log("word useffect");
-    console.log("user token", props.userData.token);
     getAllWords();
-  }, []);
+  }, [wordStates.isModalVisible]);
 
   return (
     <Card title={"Үгсийн сан"} style={{ margin: 15, width: "100%" }}>
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button
-          onClick={wordAdd}
-          icon={<PlusCircleOutlined />}
-          type="primary"
-          style={{
-            marginBottom: 16,
+      <Spin
+        tip=""
+        spinning={wordLoader}
+        indicator={antIcon}
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "0%",
+          marginTop: "-5.5rem",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            onClick={wordAdd}
+            icon={<PlusCircleOutlined />}
+            type="primary"
+            style={{
+              marginBottom: 16,
+            }}
+          >
+            Үг нэмэх
+          </Button>
+        </div>
+        <Table columns={columns} dataSource={wordStates.data} />
+        {/* {wordStates.isModalVisible ? ( */}
+        <Modal
+          title="Үг нэмэх"
+          width={"70%"}
+          visible={wordStates.isModalVisible}
+          footer={null}
+          onCancel={() => {
+            form.resetFields();
+            wordStates.isModalVisible = false;
+            wordStates.action = null;
+            setWordStates({ ...wordStates });
           }}
         >
-          Үг нэмэх
-        </Button>
-      </div>
-      <Table columns={columns} dataSource={wordStates.data} />
-      <Modal
-        title="Үг нэмэх"
-        visible={wordStates.isModalVisible}
-        footer={null}
-        onCancel={handleCancel}
-      >
-        <Form
-          name="addWord"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          initialValues={{ remember: true }}
-          onFinish={onFinishWord}
-          onFinishFailed={onFinishFailedWord}
-          autoComplete="off"
-        >
-          <Form.Item
-            name={"language_id"}
-            label="Үндсэн хэл"
-            rules={[{ required: true, message: "Заавал бөглөнө үү!" }]}
+          <Form
+            form={form}
+            name="addWord"
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
+            initialValues={{ remember: true }}
+            onFinish={onFinishWord}
+            onFinishFailed={onFinishFailedWord}
+            autoComplete="off"
           >
-            <Select
-              placeholder="Үндсэг хэлээ сонгоно уу"
-              defaultValue={
-                wordStates.sendWord && wordStates.sendWord.id
-                  ? wordStates.sendWord.language.id
-                  : 1
-              }
-              onChange={onLanguageChange}
-              allowClear
-            >
-              {wordStates.all_language &&
-                wordStates.all_language.map((type) => (
-                  <Option value={type.id}>{type.name}</Option>
-                ))}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label="Үг"
-            name="word"
-            rules={[{ required: true, message: "Заавал бөглөнө үү!" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name={"type_id"}
-            label="Цагын хэлбэр"
-            rules={[{ required: true, message: "Заавал бөглөнө үү!" }]}
-          >
-            <Select
-              placeholder="Цагын хэлбэрээ сонгоно уу"
-              // defaultValue={""}
-              onChange={onTypeChange}
-              allowClear
-            >
-              {wordStates.types &&
-                wordStates.types.map((type) => (
-                  <Option value={type.id}>{type.full_name}</Option>
-                ))}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label="Үгийн үндэс"
-            name="root_word_id"
-            rules={[{ required: true, message: "Заавал бөглөнө үү!" }]}
-          >
-            <Input />
-          </Form.Item>
+            <Row>
+              <Divider>Word add</Divider>
+              <Col span={24}>
+                <Row>
+                  <Col span={12}>
+                    <Form.Item
+                      name={"language_id"}
+                      label="Үндсэн хэл"
+                      rules={[
+                        { required: true, message: "Заавал бөглөнө үү!" },
+                      ]}
+                    >
+                      <Select
+                        placeholder="Үндсэг хэлээ сонгоно уу"
+                        defaultValue={null}
+                        onChange={onLanguageChange}
+                      >
+                        {wordStates.all_language &&
+                          wordStates.all_language.map((type) => (
+                            <Option value={type.id}>{type.name}</Option>
+                          ))}
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
+                      label="Үг"
+                      name="word"
+                      rules={[
+                        { required: true, message: "Заавал бөглөнө үү!" },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      name={"type_id"}
+                      label="Цагын хэлбэр"
+                      rules={[
+                        { required: true, message: "Заавал бөглөнө үү!" },
+                      ]}
+                    >
+                      <Select
+                        placeholder="Цагын хэлбэрээ сонгоно уу"
+                        defaultValue={null}
+                        onChange={onTypeChange}
+                        allowClear
+                      >
+                        {wordStates.types &&
+                          wordStates.types.map((type, i) => (
+                            <Option key={i} value={type.id}>
+                              {type.full_name}
+                            </Option>
+                          ))}
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
+                      label="Үгийн үндэс"
+                      name="root_word_id"
+                      rules={[
+                        { required: true, message: "Заавал бөглөнө үү!" },
+                      ]}
+                    >
+                      <Input disabled={!wordStates.type_id} />
+                    </Form.Item>
+                    {/* <Form.Item
+                      label="Үгийн үндэс"
+                      name="root_word_id"
+                      rules={[
+                        { required: true, message: "Заавал бөглөнө үү!" },
+                      ]}
+                    >
+                      <Select
+                        showSearch
+                        name="root_word_id"
+                        placeholder="Үгийн үндэс сонгох"
+                        optionFilterProp="children"
+                        onChange={onChangeRootWordOption}
+                        onSearch={onSearchRootWordOption}
+                        filterOption={(input, option) =>
+                          option.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
+                      >
+                        {wordStates.rootWordLikely.map((type) => (
+                          <Option value={type.root_word_id}>{type.word}</Option>
+                        ))}
+                      </Select>
+                    </Form.Item> */}
+                  </Col>
+                </Row>
+              </Col>
 
-          <Form.Item wrapperCol={{ offset: 17, span: 8 }}>
-            <Button type="primary" htmlType="submit">
-              Шинээр нэмэх
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+              <Divider>Word translation</Divider>
+              <Col span={24}>
+                <Row>
+                  <Col span={12}>
+                    <Form.Item label={"noun"} name={"noun"}>
+                      <Input />
+                    </Form.Item>
+                    <Form.Item label={"verb"} name={"verb"}>
+                      <Input />
+                    </Form.Item>
+                    <Form.Item label={"adjective"} name={"adjective"}>
+                      <Input />
+                    </Form.Item>
+                    <Form.Item label={"adverb"} name={"adverb"}>
+                      <Input />
+                    </Form.Item>
+                    <Form.Item label={"pronoun"} name={"pronoun"}>
+                      <Input />
+                    </Form.Item>
+                    <Form.Item label={"preposition"} name={"preposition"}>
+                      <Input />
+                    </Form.Item>
+                    <Form.Item label={"conjunction"} name={"conjunction"}>
+                      <Input />
+                    </Form.Item>
+
+                    <Form.Item label={"determiner"} name={"determiner"}>
+                      <Input />
+                    </Form.Item>
+                    <Form.Item label={"exclamation"} name={"exclamation"}>
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label={"modal_verb"} name={"modal_verb"}>
+                      <Input />
+                    </Form.Item>
+                    <Form.Item label={"phrasal_verb"} name={"phrasal_verb"}>
+                      <Input />
+                    </Form.Item>
+                    <Form.Item label={"idiom"} name={"idiom"}>
+                      <Input />
+                    </Form.Item>
+                    <Form.Item label={"auxilary_verb"} name={"auxilary_verb"}>
+                      <Input />
+                    </Form.Item>
+                    <Form.Item label={"phrase"} name={"phrase"}>
+                      <Input />
+                    </Form.Item>
+                    <Form.Item label={"example_1"} name={"example_1"}>
+                      <Input />
+                    </Form.Item>
+                    <Form.Item label={"example_2"} name={"example_2"}>
+                      <Input />
+                    </Form.Item>
+                    <Form.Item label={"example_3"} name={"example_3"}>
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      label={"translation_to_origin"}
+                      name={"translation_to_origin"}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+            <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{ width: "100%" }}
+              >
+                Хадгалах
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+      </Spin>
     </Card>
   );
 }
