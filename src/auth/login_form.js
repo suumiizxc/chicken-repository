@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Button, Form, Input, Divider, message } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
-import { authLogin } from "../services/main_service";
+import { authLogin } from "../services/Main_service";
 
 // import { authLogin } from "services/MainService";
 

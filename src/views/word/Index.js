@@ -27,10 +27,12 @@ import {
   getLanguageWord,
   getTypesWord,
   getWords,
+  getWordsId,
   insertTranslation,
   updateTranslation,
-  insertWord,
-  updateWord,
+  insertWordTransalation,
+  updateWordTranslation,
+  deleteWordTranslation,
 } from "../../services/Word_service";
 
 export default function Index(props) {
@@ -45,20 +47,71 @@ export default function Index(props) {
     types: null,
     language_id: null,
     word_id: null,
-    sendWord: {
+    insertWord: {
       language_id: null,
       word: null,
-      type_id: null,
       root_word_id: null,
+      type_id: null,
       created_by: null,
+      to_language_id: null,
+      translation_to_origin: null,
+      translations: {
+        noun: null,
+        verb: null,
+        adjective: null,
+        adverb: null,
+        pronoun: null,
+        preposition: null,
+        conjunction: null,
+        determiner: null,
+        exclamation: null,
+        modal_verb: null,
+        phrasal_verb: null,
+        idiom: null,
+        auxilary_verb: null,
+        phrase: null,
+        example_1: null,
+        example_2: null,
+        example_3: null,
+      },
     },
-    editWord: {},
+    editWord: {
+      insertWord: {
+        language_id: null,
+        word: null,
+        root_word_id: null,
+        type_id: null,
+        created_by: null,
+        to_language_id: null,
+        translation_to_origin: null,
+        translations: {
+          noun: null,
+          verb: null,
+          adjective: null,
+          adverb: null,
+          pronoun: null,
+          preposition: null,
+          conjunction: null,
+          determiner: null,
+          exclamation: null,
+          modal_verb: null,
+          phrasal_verb: null,
+          idiom: null,
+          auxilary_verb: null,
+          phrase: null,
+          example_1: null,
+          example_2: null,
+          example_3: null,
+        },
+      },
+    },
     deleteWord: {},
     editWordInit: {},
     action: null,
     rootWordLikely: [],
     rootWordEqually: [],
   });
+  const [showWordStateOption, setShowWordStateOption] = useState(false);
 
   const EditDate = (date) => {
     const slitDate = date.split(" ");
@@ -154,7 +207,31 @@ export default function Index(props) {
               wordStates.isModalVisible = true;
               wordStates.editWord = record;
               wordStates.action = "EDIT";
-              getFormData(record);
+              console.log("edit word records==>", record);
+              getWordsId(record.id, props.userData.token)
+                .then((res) => {
+                  setWordLoader(false);
+                  console.log("getWORDID", res);
+                  if (
+                    res &&
+                    res.data.word &&
+                    res.data.word_translation &&
+                    res.data.status === true
+                  ) {
+                    //success
+                    console.log("success get word id", res);
+                    getFormData(res.data.word, res.data.word_translation);
+                  } else {
+                    //unsuccessful
+                    console.log("unsuccessfully get word id");
+                  }
+                })
+                .catch((e) => {
+                  //unsuccessful
+                  setWordLoader(false);
+                  console.log("catch error", e);
+                });
+
               setWordStates({ ...wordStates });
               console.log("wordState editWords", wordStates.editWord);
             }}
@@ -165,36 +242,104 @@ export default function Index(props) {
     },
   ];
 
-  const getFormData = (data) => {
+  const getFormData = (word, translation) => {
+    console.log(
+      "translation  real-> obj",
+      translation.find((element) => element.translation_type.id === 11)
+    );
+    console.log("translation word-> ", word);
+    console.log("translation translation full-> ", translation);
+    const noun = translation.find(
+      (element) => element.translation_type.id === 1
+    );
+    const verb = translation.find(
+      (element) => element.translation_type.id === 2
+    );
+    const adjective = translation.find(
+      (element) => element.translation_type.id === 3
+    );
+    const adverb = translation.find(
+      (element) => element.translation_type.id === 4
+    );
+    const pronoun = translation.find(
+      (element) => element.translation_type.id === 5
+    );
+    const preposition = translation.find(
+      (element) => element.translation_type.id === 6
+    );
+    const conjunction = translation.find(
+      (element) => element.translation_type.id === 7
+    );
+    const determiner = translation.find(
+      (element) => element.translation_type.id === 8
+    );
+    const exclamation = translation.find(
+      (element) => element.translation_type.id === 9
+    );
+    const modal_verb = translation.find(
+      (element) => element.translation_type.id === 10
+    );
+    const phrasal_verb = translation.find(
+      (element) => element.translation_type.id === 11
+    );
+    const idiom = translation.find(
+      (element) => element.translation_type.id === 12
+    );
+    const auxilary_verb = translation.find(
+      (element) => element.translation_type.id === 13
+    );
+    const phrase = translation.find(
+      (element) => element.translation_type.id === 14
+    );
+
+    const example_1 = translation.find(
+      (element) => element.translation_type.id === 200
+    );
+
+    const example_2 = translation.find(
+      (element) => element.translation_type.id === 201
+    );
+
+    const example_3 = translation.find(
+      (element) => element.translation_type.id === 202
+    );
+
     form.setFieldsValue({
-      language_id: data.language_id,
-      word: data.word,
-      type_id: data.type_id,
-      root_word_id: data.root_word_id,
-      noun: data.noun,
-      verb: data.verb,
-      adjective: data.adjective,
-      adverb: data.adverb,
-      pronoun: data.pronoun,
-      preposition: data.preposition,
-      conjunction: data.conjunction,
-      determiner: data.determiner,
-      exclamation: data.exclamation,
-      modal_verb: data.modal_verb,
-      phrasal_verb: data.phrasal_verb,
-      idiom: data.idiom,
-      auxilary_verb: data.auxilary_verb,
-      phrase: data.phrase,
-      example_1: data.example_1,
-      example_2: data.example_2,
-      example_3: data.example_3,
+      language_id: word.language_id,
+      word: word.word,
+      type_id: word.type_id,
+      root_word_id: word.root_word_id,
+      translation_to_origin:
+        translation.length > 0 ? translation[0].translation_to_origin : "",
+      noun: noun === undefined ? "" : noun.translation_text,
+      verb: verb === undefined ? "" : verb.translation_text,
+      adjective: adjective === undefined ? "" : adjective.translation_text,
+      adverb: adverb === undefined ? "" : adverb.translation_text,
+      pronoun: pronoun === undefined ? "" : pronoun.translation_text,
+      preposition:
+        preposition === undefined ? "" : preposition.translation_text,
+      conjunction:
+        conjunction === undefined ? "" : conjunction.translation_text,
+      determiner: determiner === undefined ? "" : determiner.translation_text,
+      exclamation:
+        exclamation === undefined ? "" : exclamation.translation_text,
+      modal_verb: modal_verb === undefined ? "" : modal_verb.translation_text,
+      phrasal_verb:
+        phrasal_verb === undefined ? "" : phrasal_verb.translation_text,
+      idiom: idiom === undefined ? "" : idiom.translation_text,
+      auxilary_verb:
+        auxilary_verb === undefined ? "" : auxilary_verb.translation_text,
+      phrase: phrase === undefined ? "" : phrase.translation_text,
+      example_1: example_1 === undefined ? "" : example_1.translation_text,
+      example_2: example_2 === undefined ? "" : example_2.translation_text,
+      example_3: example_3 === undefined ? "" : example_3.translation_text,
     });
   };
 
   const runDeleteWord = (data) => {
     console.log("DELETE record", data);
     setWordLoader(true);
-    deleteWord(parseInt(data.id), props.userData.token)
+    deleteWordTranslation(parseInt(data.id), props.userData.token)
       .then((res) => {
         setWordLoader(false);
         if (res && res.data && res.data.status && res.data.status === true) {
@@ -236,10 +381,10 @@ export default function Index(props) {
 
   const onFinishWord = (values) => {
     console.log("values onFinish", values);
-
     setWordStates({ ...wordStates });
     console.log("ACTION", wordStates.action);
     if (wordStates.action === "EDIT") {
+      console.log("edit word trans values--", values);
       wordStates.editWord = {
         id: parseInt(wordStates.editWord.id),
         language_id: parseInt(values.language_id),
@@ -247,11 +392,36 @@ export default function Index(props) {
         type_id: values.type_id,
         root_word_id: parseInt(values.root_word_id),
         created_by: parseInt(localStorage.getItem("user_id")),
+        to_language_id: 27,
+        translation_to_origin:
+          values.translation_to_origin === undefined
+            ? "English to Mongolia"
+            : values.translation_to_origin,
+        translations: {
+          noun: values.noun,
+          verb: values.verb,
+          adjective: values.adjective,
+          adverb: values.adverb,
+          pronoun: values.pronoun,
+          preposition: values.preposition,
+          conjunction: values.conjunction,
+          determiner: values.determiner,
+          exclamation: values.exclamation,
+          modal_verb: values.modal_verb,
+          phrasal_verb: values.pharse_verb,
+          idiom: values.idiom,
+          auxilary_verb: values.auxilary_verb,
+          phrase: values.phrase,
+          example_1: values.example_1,
+          example_2: values.example_2,
+          example_3: values.example_3,
+        },
       };
       setWordLoader(true);
-      updateWord(wordStates.editWord, props.userData.token)
+      updateWordTranslation(wordStates.editWord, props.userData.token)
         .then((res) => {
           setWordLoader(false);
+          console.log("wordStates.editWord", wordStates.editWord);
           if (res && res.data && res.data.status && res.data.status === true) {
             //success
             console.log("success update word");
@@ -273,54 +443,56 @@ export default function Index(props) {
           message.error("Алдаа гарлаа /үг засах үед/");
           console.log(e);
         });
-    } else {
-      wordStates.sendWord = {
+    }
+    // insert Word
+    else {
+      console.log("insert word VALUES", values);
+      wordStates.insertWord = {
         language_id: parseInt(values.language_id),
         word: values.word,
-        type_id: values.type_id,
+        type_id: values.type_id === undefined ? 0 : values.type_id,
         root_word_id: parseInt(values.root_word_id),
         created_by: parseInt(localStorage.getItem("user_id")),
+        to_language_id: 27, //static
+        translation_to_origin:
+          values.translation_to_origin === undefined
+            ? "English to Mongolia"
+            : values.translation_to_origin,
+        translations: {
+          noun: values.noun,
+          verb: values.verb,
+          adjective: values.adjective,
+          adverb: values.adverb,
+          pronoun: values.pronoun,
+          preposition: values.preposition,
+          conjunction: values.conjunction,
+          determiner: values.determiner,
+          exclamation: values.exclamation,
+          modal_verb: values.modal_verb,
+          phrasal_verb: values.pharse_verb,
+          idiom: values.idiom,
+          auxilary_verb: values.auxilary_verb,
+          phrase: values.phrase,
+          example_1: values.example_1,
+          example_2: values.example_2,
+          example_3: values.example_3,
+        },
       };
+      console.log("insert word", wordStates.insertWord);
       setWordLoader(true);
-      insertWord(wordStates.sendWord, props.userData.token)
+      insertWordTransalation(wordStates.insertWord, props.userData.token)
         .then((res) => {
           setWordLoader(false);
-          if (res && res.data && res.data.status && res.data.status === true) {
+          console.log("insert word", res);
+          if (res && res.data && res.status && res.data.status === true) {
             //success
-            console.log("success insert word");
+            console.log("success insert word", res);
             getAllWords();
-            wordStates.word_id = res.data.data.id;
-            setWordStates({ ...wordStates });
-            console.log("insert translations values=== ", values);
-            const translationsData = {
-              word_id: res.data.data.id,
-              to_language_id: res.data.data.language_id,
-              translation_to_origin: "english to mongolia",
-              created_by: parseInt(localStorage.getItem("user_id")),
-              translations: {
-                noun: values.noun,
-                verb: values.verb,
-                adjective: values.adjective,
-                adverb: values.adverb,
-                pronoun: values.pronoun,
-                preposition: values.preposition,
-                conjunction: values.conjunction,
-                determiner: values.determiner,
-                exclamation: values.exclamation,
-                modal_verb: values.modal_verb,
-                phrasal_verb: values.phrasal_verb,
-                idiom: values.idiom,
-                auxilary_verb: values.auxilary_verb,
-                phrase: values.phrase,
-                example_1: values.example_1,
-                example_2: values.example_2,
-                example_3: values.example_3,
-              },
-            };
-            // Translation insert
-            insertTranslations(translationsData, props.userData.token);
+            wordStates.word_id = res.data.data.word.id;
             wordStates.isModalVisible = false;
-            setWordStates(wordStates);
+            setWordStates({ ...wordStates });
+
+            // Translation inser
             message.success("Ажилттай нэмэгдлээ");
             // form.resetFields();
           } else {
@@ -333,7 +505,7 @@ export default function Index(props) {
         .catch((e) => {
           //unsuccessful
           console.log(e);
-          message.error("Алдаа гарлаа /үг нэмэх үед/");
+          message.error("Алдаа гарлаа /үг нэмэх үед catch.../");
         });
     }
   };
@@ -358,6 +530,7 @@ export default function Index(props) {
       })
       .catch((e) => {
         //unsuccessful
+        setWordLoader(false);
         message.error("Алдаа гарлаа /үгийн жагсаалт авах үед/");
         console.log(e);
       });
@@ -484,7 +657,19 @@ export default function Index(props) {
   useEffect(() => {
     console.log("word useffect");
     getAllWords();
-  }, [wordStates.isModalVisible]);
+  }, []);
+
+  // useEffect(() => {
+  //   if (showWordStateOption) {
+  //     setShowWordStateOption(false);
+  //   }
+  // }, [wordStates.rootWordLikely]);
+
+  // useEffect(() => {
+  //   if (!showWordStateOption) {
+  //     setShowWordStateOption(true);
+  //   }
+  // }, [setShowWordStateOption]);
 
   return (
     <Card title={"Үгсийн сан"} style={{ margin: 15, width: "100%" }}>
@@ -549,7 +734,6 @@ export default function Index(props) {
                     >
                       <Select
                         placeholder="Үндсэг хэлээ сонгоно уу"
-                        defaultValue={null}
                         onChange={onLanguageChange}
                       >
                         {wordStates.all_language &&
@@ -572,13 +756,12 @@ export default function Index(props) {
                     <Form.Item
                       name={"type_id"}
                       label="Цагын хэлбэр"
-                      rules={[
-                        { required: true, message: "Заавал бөглөнө үү!" },
-                      ]}
+                      // rules={[
+                      //   { required: true, message: "Заавал бөглөнө үү!" },
+                      // ]}
                     >
                       <Select
                         placeholder="Цагын хэлбэрээ сонгоно уу"
-                        defaultValue={null}
                         onChange={onTypeChange}
                         allowClear
                       >
@@ -593,9 +776,9 @@ export default function Index(props) {
                     <Form.Item
                       label="Үгийн үндэс"
                       name="root_word_id"
-                      rules={[
-                        { required: true, message: "Заавал бөглөнө үү!" },
-                      ]}
+                      // rules={[
+                      //   { required: true, message: "Заавал бөглөнө үү!" },
+                      // ]}
                     >
                       <Input disabled={!wordStates.type_id} />
                     </Form.Item>
@@ -619,9 +802,12 @@ export default function Index(props) {
                             .indexOf(input.toLowerCase()) >= 0
                         }
                       >
-                        {wordStates.rootWordLikely.map((type) => (
-                          <Option value={type.root_word_id}>{type.word}</Option>
-                        ))}
+                        {showWordStateOption &&
+                          wordStates.rootWordLikely.map((type) => (
+                            <Option value={type.root_word_id}>
+                              {type.word}
+                            </Option>
+                          ))}
                       </Select>
                     </Form.Item> */}
                   </Col>

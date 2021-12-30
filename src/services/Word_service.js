@@ -19,12 +19,31 @@ export function getWords(token) {
       .catch((err) => reject(err));
   });
 }
+
+// ----------------------------------------- Word module word-transaltion get id  -----------------------------------------
+export function getWordsId(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/dt-word/profile-with-word-translation/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
 // ----------------------------------------- Word module insert  -----------------------------------------
-export function insertWord(data, token) {
+export function insertWordTransalation(data, token) {
   return new Promise((resolve, reject) => {
     axios({
       method: "post",
-      url: url + "/api/dt-word/insert",
+      url: url + "/api/dt-word/insert-with-word-translation",
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
@@ -38,11 +57,11 @@ export function insertWord(data, token) {
 }
 
 // ----------------------------------------- Word module update  -----------------------------------------
-export function updateWord(data, token) {
+export function updateWordTranslation(data, token) {
   return new Promise((resolve, reject) => {
     axios({
       method: "put",
-      url: url + "/api/dt-word/update",
+      url: url + "/api/dt-word/update-with-word-translation",
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
@@ -56,11 +75,11 @@ export function updateWord(data, token) {
 }
 
 // ----------------------------------------- Word module delete  -----------------------------------------
-export function deleteWord(id, token) {
+export function deleteWordTranslation(id, token) {
   return new Promise((resolve, reject) => {
     axios({
       method: "delete",
-      url: url + "/api/dt-word/delete/" + id,
+      url: url + "/api/dt-word/delete-with-word-translation/" + id,
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
