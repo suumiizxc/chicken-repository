@@ -6,7 +6,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./auth/login";
 import LayoutIndex from "./layouts/Index";
 import ViewIndex from "./views/index";
-import WordIndex from "./views/word/Index";
+import WordIndex from "./views/word";
+import CourseIndex from "./views/course/index";
+import CourseIntroVideo from "./views/course/course_intro_video/CourseIntroVideo";
+import CourseIntroCueVideo from "./views/course/course_intro_cue_video/CourseIntroCueVideo";
 import ContentIndex from "./views/content/index";
 import PageNotFound from "./views/PageNotFound";
 
@@ -89,7 +92,41 @@ function App() {
                   />
                 }
               />
+              <Route
+                path="/course"
+                element={
+                  <CourseIndex
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                  />
+                }
+              />
+              <Route
+                path="/course/intro-video"
+                element={
+                  <CourseIntroVideo
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                  />
+                }
+              />
+              <Route
+                path="/course/intro-cue-video"
+                element={
+                  <CourseIntroCueVideo
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                  />
+                }
+              />
             </Route>
+
             <Route path="*" element={<PageNotFound />}></Route>
           </Routes>
         </BrowserRouter>
