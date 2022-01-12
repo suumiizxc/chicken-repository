@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Button, Menu } from "antd";
 import {
+  BankOutlined,
+  BarsOutlined,
   CalendarOutlined,
   MailOutlined,
   MenuFoldOutlined,
@@ -15,12 +17,18 @@ export default function Side_nav() {
   const navigate = useNavigate();
   const handleClick = (e) => {
     console.log("click ", e);
+    if (e.key == "3.1") {
+      navigate("/course/intro-video");
+    } else if (e.key == "3.2") {
+      navigate("/course/intro-cue-video");
+    }
   };
   const toggleCollapsed = () => {
     collapse ? setCollapse(false) : setCollapse(true);
   };
 
-  const onNavigate = () => {
+  const onNavigate = (a) => {
+    console.log("navigate a ", a);
     navigate("/word");
   };
 
@@ -60,16 +68,22 @@ export default function Side_nav() {
             {collapse ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           </Button>
         </div>
-        <Menu.Item key="1" icon={<MailOutlined />} onClick={onNavigate}>
+        <Menu.Item key="1" icon={<BarsOutlined />} onClick={onNavigate}>
           {"Үгсийн сан"}
         </Menu.Item>
-        <Menu.Item key="2" icon={<CalendarOutlined />}>
-          {"Курс"}
+        <Menu.Item key="2" icon={<BankOutlined />}>
+          {"Контент"}
         </Menu.Item>
-        <SubMenu key="3" icon={<MailOutlined />} title="Coming soon">
-          <Menu.ItemGroup key="3.1" title="Item 1">
-            <Menu.Item key="3.1.1">{"Coming soon"}</Menu.Item>
-            <Menu.Item key="3.1.2">{"Coming soon"}</Menu.Item>
+        <SubMenu key="3" icon={<MailOutlined />} title="Курс">
+          {/* <Menu.ItemGroup key="3.1" title="Курс"> */}
+          <Menu.Item key="3.1">{"Интро видео"}</Menu.Item>
+          <Menu.Item key="3.2">{"Интро видео cue"}</Menu.Item>
+          {/* </Menu.ItemGroup> */}
+        </SubMenu>
+        <SubMenu key="4" icon={<MailOutlined />} title="Coming soon">
+          <Menu.ItemGroup key="4.1" title="Item 1">
+            <Menu.Item key="4.1.1">{"Coming soon"}</Menu.Item>
+            <Menu.Item key="4.1.2">{"Coming soon"}</Menu.Item>
           </Menu.ItemGroup>
         </SubMenu>
       </Menu>

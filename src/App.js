@@ -17,6 +17,8 @@ import "./App.css";
 import "./css/index.css";
 import "./css/layout.css";
 import "./css/light-theme.css";
+import CourseMixedVideo from "./views/course/course_mixed_video/CourseMixedVideo";
+import CourseMixedVideoCue from "./views/course/course_mixed_video_cue/CourseMixedVideoCue";
 
 function App() {
   const [loader, setLoader] = useState(false);
@@ -118,6 +120,28 @@ function App() {
                 path="/course/intro-cue-video"
                 element={
                   <CourseIntroCueVideo
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                  />
+                }
+              />
+              <Route
+                path="/course/mixed-video"
+                element={
+                  <CourseMixedVideo
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                  />
+                }
+              />
+              <Route
+                path="/course/mixed-video-cue"
+                element={
+                  <CourseMixedVideoCue
                     userData={userData}
                     setUserData={setUserData}
                     loader={loader}

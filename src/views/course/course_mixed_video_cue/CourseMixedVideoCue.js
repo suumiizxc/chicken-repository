@@ -113,6 +113,11 @@ export default function Index(props) {
       key: "to_language_is_default",
     },
     {
+      title: "isHighlighted for grammar ",
+      dataIndex: "to_language_is_default",
+      key: "to_language_is_default",
+    },
+    {
       title: "Үйлдэл",
       key: "action",
       render: (text, record) => (
@@ -407,7 +412,7 @@ export default function Index(props) {
   }, []);
 
   return (
-    <Card title={"Интро видео cue"} style={{ margin: 15, width: "100%" }}>
+    <Card title={"Mixed видео cue"} style={{ margin: 15, width: "100%" }}>
       <Spin
         tip=""
         spinning={introVideoCueStates.loader}
