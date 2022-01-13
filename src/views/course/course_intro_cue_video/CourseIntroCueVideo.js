@@ -697,7 +697,7 @@ export default function Index(props) {
                   htmlType="submit"
                   style={{ width: "100%" }}
                 >
-                  Хадгалах update
+                  Хадгалах/UPDATE/
                 </Button>
               </Form.Item>
             </Form>

@@ -21,6 +21,10 @@ export default function Side_nav() {
       navigate("/course/intro-video");
     } else if (e.key == "3.2") {
       navigate("/course/intro-cue-video");
+    } else if (e.key == "3.3") {
+      navigate("/course/mixed-video");
+    } else if (e.key == "3.4") {
+      navigate("/course/mixed-video-cue");
     }
   };
   const toggleCollapsed = () => {
@@ -78,6 +82,8 @@ export default function Side_nav() {
           {/* <Menu.ItemGroup key="3.1" title="Курс"> */}
           <Menu.Item key="3.1">{"Интро видео"}</Menu.Item>
           <Menu.Item key="3.2">{"Интро видео cue"}</Menu.Item>
+          <Menu.Item key="3.3">{"Mixed видео"}</Menu.Item>
+          <Menu.Item key="3.4">{"Mixed видео cue"}</Menu.Item>
           {/* </Menu.ItemGroup> */}
         </SubMenu>
         <SubMenu key="4" icon={<MailOutlined />} title="Coming soon">

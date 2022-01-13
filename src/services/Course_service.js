@@ -219,3 +219,76 @@ export function insertMixedVideoAPI(data, token) {
       .catch((err) => reject(err));
   });
 }
+
+// ----------------------------------------- START COURSE MIXED VIDEO "CUE"  -----------------------------------------
+// ----------------------------------------- GET All MIXED video "CUE" -----------------------------------------
+export function getAllMixedVideCueAPI(token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/course-mixed-video-cue/all",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+// ----------------------------------------- DELETE Delete MIXED video "CUE"-----------------------------------------
+export function deleteMixedVideoCueAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/course-mixed-video-cue/delete/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+// ----------------------------------------- PUT Update MIXED video "CUE" -----------------------------------------
+export function updateMixedVideoCueAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/course-intro-video-cue/update",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+// ----------------------------------------- POST Insert MIXED video "CUE" -----------------------------------------
+export function insertMixedVideoCueAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/course-mixed-video-cue/insert-many",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}

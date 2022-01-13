@@ -26,16 +26,15 @@ import {
 import CustomLoader from "../../../components/Loader";
 import CardLarge from "../../../components/CardLarge";
 import {
-  deleteIntoCueVideoAPI,
-  getAllIntoCueVideo,
-  insertIntoCueVideoAPI,
-  updateIntoVideoCueAPI,
+  deleteMixedVideoCueAPI,
+  getAllMixedVideCueAPI,
+  insertMixedVideoCueAPI,
+  updateMixedVideoCueAPI,
 } from "../../../services/Course_service";
 
 export default function Index(props) {
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} />;
   const [form] = Form.useForm();
-
   const [introVideoCueStates, setIntroVideoCueStates] = useState({
     token: localStorage.getItem("token"),
     card_title: "Видео интро",
@@ -46,21 +45,23 @@ export default function Index(props) {
     host_source: null,
     from_language_is_default: null,
     to_language_is_default: null,
+    grammar_is_highlighted: null,
     insertData: {
-      course_intro_videos: [],
+      course_mixed_videos: [],
     },
     updateData: {
       id: null,
-      intro_video_id: 821,
+      mixed_video_id: 821,
       ordering: 1,
     },
   });
-
   const columns = [
     {
       title: "Id",
       dataIndex: "id",
       key: "id",
+      width: 100,
+      fixed: "left",
     },
     {
       title: "Cue ийн дугаарлалт",
@@ -69,8 +70,8 @@ export default function Index(props) {
     },
     {
       title: "Интро видео id",
-      dataIndex: "intro_video_id",
-      key: "intro_video_id",
+      dataIndex: "mixed_video_id",
+      key: "mixed_video_id",
     },
     {
       title: "Эхлэх цаг",
@@ -113,13 +114,20 @@ export default function Index(props) {
       key: "to_language_is_default",
     },
     {
+      title: "grammar_description",
+      dataIndex: "grammar_description",
+      key: "grammar_description",
+    },
+    {
       title: "isHighlighted for grammar ",
-      dataIndex: "to_language_is_default",
-      key: "to_language_is_default",
+      dataIndex: "grammar_is_highlighted",
+      key: "grammar_is_highlighted",
     },
     {
       title: "Үйлдэл",
       key: "action",
+      fixed: "right",
+      width: 100,
       render: (text, record) => (
         <Space size="middle">
           <Popconfirm
@@ -168,6 +176,12 @@ export default function Index(props) {
       (introVideoCueStates.to_language_is_default =
         record.to_language_is_default)
     );
+    record.grammar_is_highlighted == "0" ? (
+      <></>
+    ) : (
+      (introVideoCueStates.grammar_is_highlighted =
+        record.grammar_is_highlighted)
+    );
     setIntroVideoCueStates({ ...introVideoCueStates });
     form.setFieldsValue({
       start_time: record.start_time,
@@ -178,6 +192,8 @@ export default function Index(props) {
       to_language_id: record.to_language_id,
       to_language_translation: record.to_language_translation,
       to_language_is_default: record.to_language_is_default,
+      grammar_is_highlighted: record.grammar_is_highlighted,
+      grammar_description: record.grammar_description,
     });
   };
 
@@ -185,7 +201,7 @@ export default function Index(props) {
   const getAllIntroCueData = () => {
     introVideoCueStates.loader = true;
     setIntroVideoCueStates({ introVideoCueStates });
-    getAllIntoCueVideo(introVideoCueStates.token)
+    getAllMixedVideCueAPI(introVideoCueStates.token)
       .then((res) => {
         introVideoCueStates.loader = false;
         setIntroVideoCueStates({ introVideoCueStates });
@@ -219,13 +235,13 @@ export default function Index(props) {
 
     var ids = {
       ordering: 1,
-      intro_video_id: 821,
+      mixed_video_id: 1215,
       from_language_id: 2,
       to_language_id: 1,
     };
     values.video_cue.map((item, key) => {
       item["ordering"] = ids.ordering + key;
-      item["intro_video_id"] = ids.intro_video_id;
+      item["mixed_video_id"] = ids.mixed_video_id;
       item["from_language_id"] = ids.from_language_id;
       item["to_language_id"] = ids.to_language_id;
       introVideoCueStates.from_language_is_default == null
@@ -236,8 +252,12 @@ export default function Index(props) {
         ? (item["to_language_is_default"] = "0")
         : (item["to_language_is_default"] =
             introVideoCueStates.to_language_is_default);
+      introVideoCueStates.grammar_is_highlighted == null
+        ? (item["grammar_is_highlighted"] = "0")
+        : (item["grammar_is_highlighted"] =
+            introVideoCueStates.grammar_is_highlighted);
 
-      insertArray.insertData.course_intro_videos.push(item);
+      insertArray.insertData.course_mixed_videos.push(item);
     });
 
     setIntroVideoCueStates(insertArray);
@@ -246,7 +266,7 @@ export default function Index(props) {
     setIntroVideoCueStates({ introVideoCueStates });
 
     // INSERT Intro cue videos
-    insertIntoCueVideoAPI(
+    insertMixedVideoCueAPI(
       introVideoCueStates.insertData,
       introVideoCueStates.token
     )
@@ -258,7 +278,7 @@ export default function Index(props) {
           getAllIntroCueData();
           message.success("Ажилттай интро видео cue нэмэгдлээ");
           console.log("success all language", res.data.data);
-          insertArray.insertData.course_intro_videos = [];
+          insertArray.insertData.course_mixed_videos = [];
           form.resetFields();
         } else {
           //unsuccessful
@@ -279,7 +299,7 @@ export default function Index(props) {
 
   //DELETE Intro CUE video
   const deleteIntoCueVideo = (values) => {
-    deleteIntoCueVideoAPI(values.id, introVideoCueStates.token)
+    deleteMixedVideoCueAPI(values.id, introVideoCueStates.token)
       .then((res) => {
         introVideoCueStates.loader = false;
         setIntroVideoCueStates({ introVideoCueStates });
@@ -307,16 +327,19 @@ export default function Index(props) {
       introVideoCueStates.from_language_is_default == null
         ? "0"
         : value.from_language_is_default;
-
     var update_to_language_is_default =
       introVideoCueStates.from_language_is_default == null
         ? "0"
         : value.to_language_is_default;
+    var update_grammar_is_highlighted =
+      introVideoCueStates.grammar_is_highlighted == null
+        ? "0"
+        : value.grammar_is_highlighted;
 
     introVideoCueStates.updateData = {
       id: introVideoCueStates.updateData.id,
       ordering: introVideoCueStates.updateData.ordering,
-      intro_video_id: introVideoCueStates.updateData.intro_video_id,
+      mixed_video_id: introVideoCueStates.updateData.mixed_video_id,
       start_time: value.start_time,
       end_time: value.end_time,
       from_language_id: 1,
@@ -325,9 +348,11 @@ export default function Index(props) {
       to_language_id: 2,
       to_language_translation: value.to_language_translation,
       to_language_is_default: update_to_language_is_default,
+      grammar_description: value.grammar_description,
+      grammar_is_highlighted: update_grammar_is_highlighted,
     };
     setIntroVideoCueStates({ ...introVideoCueStates });
-    updateIntoVideoCueAPI(
+    updateMixedVideoCueAPI(
       introVideoCueStates.updateData,
       introVideoCueStates.token
     )
@@ -403,6 +428,19 @@ export default function Index(props) {
     setIntroVideoCueStates({ ...introVideoCueStates });
   };
 
+  const onChangeCheckH = (checkedValues) => {
+    console.log("checked values from_language_is_default==", checkedValues);
+    console.log(
+      "introVideoCueStates.grammar_is_highlighted==>",
+      introVideoCueStates.grammar_is_highlighted
+    );
+    introVideoCueStates.grammar_is_highlighted == null
+      ? (introVideoCueStates.grammar_is_highlighted =
+          checkedValues.target.defaultValue)
+      : (introVideoCueStates.grammar_is_highlighted = null);
+    setIntroVideoCueStates({ ...introVideoCueStates });
+  };
+
   const test = () => {
     console.log("test");
   };
@@ -436,7 +474,11 @@ export default function Index(props) {
             Video cue add
           </Button>
         </div>
-        <Table columns={columns} dataSource={introVideoCueStates.data} />
+        <Table
+          columns={columns}
+          dataSource={introVideoCueStates.data}
+          scroll={{ x: "100%" }}
+        />
         <Modal
           title="Интро вилео cue"
           width={"90%"}
@@ -526,7 +568,6 @@ export default function Index(props) {
                             disabled={
                               introVideoCueStates.to_language_is_default
                             }
-                            // value={"English"}
                           ></Checkbox>
                         </Form.Item>
                         <Form.Item
@@ -556,6 +597,32 @@ export default function Index(props) {
                             disabled={
                               introVideoCueStates.from_language_is_default
                             }
+                          ></Checkbox>
+                        </Form.Item>
+                        <Form.Item
+                          label="isHighlighted for grammar"
+                          {...restField}
+                          name={[name, "grammar_description"]}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Заавал бөглөнө үү!",
+                            },
+                          ]}
+                          labelCol={{ span: 24 }}
+                        >
+                          <Input />
+                        </Form.Item>
+                        <Form.Item
+                          label="Highlight"
+                          {...restField}
+                          name={[name, "grammar_is_highlighted"]}
+                          labelCol={{ span: 24 }}
+                        >
+                          <Checkbox
+                            onChange={onChangeCheckH}
+                            defaultValue={"1"}
+                            checked={introVideoCueStates.grammar_is_highlighted}
                           ></Checkbox>
                         </Form.Item>
                         <Form.Item label={"Хасах"} labelCol={{ span: 24 }}>
@@ -607,7 +674,7 @@ export default function Index(props) {
               autoComplete="off"
             >
               <Row>
-                <Col span={4}>
+                <Col span={2}>
                   <Form.Item
                     label="Эхлэх цаг"
                     name="start_time"
@@ -622,7 +689,7 @@ export default function Index(props) {
                     <Input />
                   </Form.Item>
                 </Col>
-                <Col span={4}>
+                <Col span={2}>
                   <Form.Item
                     label="Дуусах цаг"
                     name="end_time"
@@ -695,6 +762,34 @@ export default function Index(props) {
                     ></Checkbox>
                   </Form.Item>
                 </Col>
+                <Col span={4}>
+                  <Form.Item
+                    label="isHighlighted for grammar"
+                    name="grammar_description"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Заавал бөглөнө үү!",
+                      },
+                    ]}
+                    labelCol={{ span: 24 }}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col span={2}>
+                  <Form.Item
+                    label="Highlight"
+                    name="grammar_is_highlighted"
+                    labelCol={{ span: 24 }}
+                  >
+                    <Checkbox
+                      onChange={onChangeCheckH}
+                      defaultValue={"1"}
+                      checked={introVideoCueStates.grammar_is_highlighted}
+                    ></Checkbox>
+                  </Form.Item>
+                </Col>
               </Row>
               <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
                 <Button
@@ -702,7 +797,7 @@ export default function Index(props) {
                   htmlType="submit"
                   style={{ width: "100%" }}
                 >
-                  Хадгалах update
+                  Хадгалах/UPDATE/
                 </Button>
               </Form.Item>
             </Form>
