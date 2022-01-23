@@ -22,9 +22,8 @@ import {
   MinusCircleOutlined,
   PlusCircleOutlined,
   PlusOutlined,
+  RollbackOutlined,
 } from "@ant-design/icons";
-import CustomLoader from "../../../components/Loader";
-import CardLarge from "../../../components/CardLarge";
 import {
   deleteMixedVideoCueAPI,
   getAllMixedVideCueAPI,
@@ -32,9 +31,12 @@ import {
   updateMixedVideoCueAPI,
 } from "../../../services/Course_service";
 
+import { useNavigate } from "react-router-dom";
+
 export default function Index(props) {
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} />;
   const [form] = Form.useForm();
+  const navigate = useNavigate();
   const [introVideoCueStates, setIntroVideoCueStates] = useState({
     token: localStorage.getItem("token"),
     card_title: "Видео интро",
@@ -163,20 +165,20 @@ export default function Index(props) {
 
   const getFormData = (record) => {
     console.log("getFormData records==>", record);
-    record.from_language_is_default == "0" ? (
+    record.from_language_is_default === "0" ? (
       <> </>
     ) : (
       (introVideoCueStates.from_language_is_default =
         record.from_language_is_default)
     );
 
-    record.to_language_is_default == "0" ? (
+    record.to_language_is_default === "0" ? (
       <></>
     ) : (
       (introVideoCueStates.to_language_is_default =
         record.to_language_is_default)
     );
-    record.grammar_is_highlighted == "0" ? (
+    record.grammar_is_highlighted === "0" ? (
       <></>
     ) : (
       (introVideoCueStates.grammar_is_highlighted =
@@ -201,7 +203,10 @@ export default function Index(props) {
   const getAllIntroCueData = () => {
     introVideoCueStates.loader = true;
     setIntroVideoCueStates({ introVideoCueStates });
-    getAllMixedVideCueAPI(introVideoCueStates.token)
+    getAllMixedVideCueAPI(
+      props.courseIds.mixedVideoId,
+      introVideoCueStates.token
+    )
       .then((res) => {
         introVideoCueStates.loader = false;
         setIntroVideoCueStates({ introVideoCueStates });
@@ -235,7 +240,7 @@ export default function Index(props) {
 
     var ids = {
       ordering: 1,
-      mixed_video_id: 1215,
+      mixed_video_id: props.courseIds.mixedVideoId,
       from_language_id: 2,
       to_language_id: 1,
     };
@@ -464,6 +469,21 @@ export default function Index(props) {
       >
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <Button
+            onClick={() => {
+              navigate("/course/mixed-video");
+            }}
+            icon={<RollbackOutlined />}
+            // type="alert"
+            style={{
+              marginBottom: 16,
+              marginRight: 16,
+              backgroundColor: "#FAAD14",
+              color: "#FFFFFF",
+            }}
+          >
+            Буцах
+          </Button>
+          <Button
             onClick={insertIntroVideoClicked}
             icon={<PlusCircleOutlined />}
             type="primary"
@@ -471,7 +491,7 @@ export default function Index(props) {
               marginBottom: 16,
             }}
           >
-            Video cue add
+            Видео cue нэмэх
           </Button>
         </div>
         <Table
@@ -480,7 +500,7 @@ export default function Index(props) {
           scroll={{ x: "100%" }}
         />
         <Modal
-          title="Интро вилео cue"
+          title="Интро видео cue"
           width={"90%"}
           visible={introVideoCueStates.isModalVisible}
           footer={null}

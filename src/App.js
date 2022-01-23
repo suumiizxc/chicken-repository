@@ -12,14 +12,16 @@ import CourseIntroVideo from "./views/course/course_intro_video/CourseIntroVideo
 import CourseIntroCueVideo from "./views/course/course_intro_cue_video/CourseIntroCueVideo";
 import ContentIndex from "./views/content/index";
 import PageNotFound from "./views/PageNotFound";
+import CourseMixedVideo from "./views/course/course_mixed_video/CourseMixedVideo";
+import CourseMixedVideoCue from "./views/course/course_mixed_video_cue/CourseMixedVideoCue";
+import Grammer from "./views/content/grammer/Grammer";
+import GrammerStructure from "./views/content/grammer_structure/GrammerStructure";
+import GrammerPattern from "./views/content/grammer_pattern/GrammerPattern";
 
 import "./App.css";
 import "./css/index.css";
 import "./css/layout.css";
 import "./css/light-theme.css";
-import CourseMixedVideo from "./views/course/course_mixed_video/CourseMixedVideo";
-import CourseMixedVideoCue from "./views/course/course_mixed_video_cue/CourseMixedVideoCue";
-
 function App() {
   const [loader, setLoader] = useState(false);
   // const [token, setToken] = useState(null);
@@ -36,7 +38,10 @@ function App() {
     organization_id: null,
     is_active: 1,
   });
-
+  const [courseIds, setCourseIds] = useState({
+    introVideoId: null,
+    mixedVideoId: null,
+  });
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} spin />;
 
   //Loader css
@@ -72,18 +77,6 @@ function App() {
             >
               <Route index element={<ViewIndex />}></Route>
               <Route
-                path="/word"
-                element={
-                  <WordIndex
-                    userData={userData}
-                    setUserData={setUserData}
-                    loader={loader}
-                    setLoader={setLoader}
-                  />
-                }
-              />
-              <Route path="/content" element={<ContentIndex />} />
-              <Route
                 path="/login"
                 element={
                   <Login
@@ -94,6 +87,54 @@ function App() {
                   />
                 }
               />
+              {/* -------------------------------------------- WORD -------------------------------------------- */}
+              <Route
+                path="/word"
+                element={
+                  <WordIndex
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                  />
+                }
+              />
+              {/* -------------------------------------------- CONTENT -------------------------------------------- */}
+              <Route path="/content" element={<ContentIndex />} />
+              <Route
+                path="/content/grammer"
+                element={
+                  <Grammer
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                  />
+                }
+              />
+              <Route
+                path="/content/grammer-structure"
+                element={
+                  <GrammerStructure
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                  />
+                }
+              />
+              <Route
+                path="/content/grammer-pattern"
+                element={
+                  <GrammerPattern
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                  />
+                }
+              />
+              {/* -------------------------------------------- COURSE -------------------------------------------- */}
               <Route
                 path="/course"
                 element={
@@ -113,6 +154,8 @@ function App() {
                     setUserData={setUserData}
                     loader={loader}
                     setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
                   />
                 }
               />
@@ -124,6 +167,8 @@ function App() {
                     setUserData={setUserData}
                     loader={loader}
                     setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
                   />
                 }
               />
@@ -135,6 +180,8 @@ function App() {
                     setUserData={setUserData}
                     loader={loader}
                     setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
                   />
                 }
               />
@@ -146,6 +193,8 @@ function App() {
                     setUserData={setUserData}
                     loader={loader}
                     setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
                   />
                 }
               />

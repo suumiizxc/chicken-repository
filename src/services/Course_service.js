@@ -94,11 +94,11 @@ export function insertIntoCueVideoAPI(data, token) {
 }
 // ----------------------------------------- START COURSE INTRO VIDEO CUE  -----------------------------------------
 // ----------------------------------------- GET All intro CUE video -----------------------------------------
-export function getAllIntoCueVideo(token) {
+export function getAllIntoCueVideo(id, token) {
   return new Promise((resolve, reject) => {
     axios({
       method: "get",
-      url: url + "/api/course-intro-video-cue/all",
+      url: url + "/api/course-intro-video-cue/profile-by-intro-video-id/" + id,
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
@@ -222,11 +222,11 @@ export function insertMixedVideoAPI(data, token) {
 
 // ----------------------------------------- START COURSE MIXED VIDEO "CUE"  -----------------------------------------
 // ----------------------------------------- GET All MIXED video "CUE" -----------------------------------------
-export function getAllMixedVideCueAPI(token) {
+export function getAllMixedVideCueAPI(id, token) {
   return new Promise((resolve, reject) => {
     axios({
       method: "get",
-      url: url + "/api/course-mixed-video-cue/all",
+      url: url + "/api/course-mixed-video-cue/profile-by-intro-video-id/" + id,
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",

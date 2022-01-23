@@ -7,30 +7,31 @@ import {
   Form,
   Input,
   Popconfirm,
-  Divider,
   Col,
   Row,
   message,
   Card,
   Spin,
   Checkbox,
+  Tooltip,
 } from "antd";
 import {
+  ArrowsAltOutlined,
   DeleteOutlined,
   EditOutlined,
   LoadingOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
-import CustomLoader from "../../../components/Loader";
-import CardLarge from "../../../components/CardLarge";
 import {
   deleteIntoVideoAPI,
   getAllIntoVideo,
   insertIntoVideoAPI,
   updateIntoVideoAPI,
 } from "../../../services/Course_service";
+import { useNavigate } from "react-router-dom";
 
 export default function Index(props) {
+  const navigate = useNavigate();
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} />;
   const [form] = Form.useForm();
 
@@ -41,6 +42,7 @@ export default function Index(props) {
     isModalVisible: false,
     data: null,
     action: null,
+    id: null,
     host_source: null,
     checkBoxOptions: ["YouTube", "Amazon"],
     insertData: {},
@@ -86,18 +88,32 @@ export default function Index(props) {
           >
             <Button icon={<DeleteOutlined style={{ color: "#FF6B72" }} />} />
           </Popconfirm>
-          <Button
-            onClick={() => {
-              console.log("edit intro video records==>", record);
-              console.log("introVideoStates updateIntroVideo");
-              getFormData(record);
-              introVideoStates.action = "EDIT";
-              introVideoStates.isModalVisible = true;
-              introVideoStates.updateData = record;
-              setIntroVideoStates({ ...introVideoStates });
-            }}
-            icon={<EditOutlined style={{ color: "#3e79f7" }} />}
-          />
+          <Tooltip placement="topRight" title="Засах">
+            <Button
+              onClick={() => {
+                console.log("edit intro video records==>", record);
+                console.log("introVideoStates updateIntroVideo");
+                getFormData(record);
+                introVideoStates.action = "EDIT";
+                introVideoStates.isModalVisible = true;
+                introVideoStates.updateData = record;
+                introVideoStates.id = record.id;
+                setIntroVideoStates({ ...introVideoStates });
+              }}
+              icon={<EditOutlined style={{ color: "#3e79f7" }} />}
+            />
+          </Tooltip>
+          <Tooltip placement="topRight" title="Cue руу үсрэх">
+            <Button
+              onClick={() => {
+                console.log("Cue button intro video records ID==>", record.id);
+                navigate("/course/intro-cue-video");
+                props.courseIds.introVideoId = record.id;
+                props.setCourseIds({ ...props.courseIds });
+              }}
+              icon={<ArrowsAltOutlined style={{ color: "#3e79f7" }} />}
+            />
+          </Tooltip>
         </Space>
       ),
     },
@@ -201,13 +217,15 @@ export default function Index(props) {
       });
   };
 
-  const updateIntroVideo = (value) => {
+  const updateIntroVideo = (values) => {
+    console.log("update values", values);
     introVideoStates.updateData = {
-      id: value.id,
-      name: value.name,
-      url: value.url,
-      host_source: value.host_source ? value.host_source[0] : "",
+      id: introVideoStates.id,
+      name: values.name,
+      url: values.url,
+      host_source: values.host_source ? values.host_source[0] : "",
     };
+    setIntroVideoStates({ ...introVideoStates });
     updateIntoVideoAPI(introVideoStates.updateData, introVideoStates.token)
       .then((res) => {
         introVideoStates.loader = false;
@@ -235,7 +253,7 @@ export default function Index(props) {
     introVideoStates.isModalVisible = false;
 
     if (introVideoStates.action === "EDIT") {
-      console.log("edit intro video running");
+      console.log("edit values", values);
       updateIntroVideo(values);
     } else {
       console.log("insert intro video running");
@@ -279,7 +297,7 @@ export default function Index(props) {
               marginBottom: 16,
             }}
           >
-            Үг нэмэх
+            Интро видео нэмэх
           </Button>
         </div>
         <Table columns={columns} dataSource={introVideoStates.data} />

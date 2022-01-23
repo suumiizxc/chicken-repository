@@ -13,8 +13,10 @@ import {
   Card,
   Spin,
   Checkbox,
+  Tooltip,
 } from "antd";
 import {
+  ArrowsAltOutlined,
   DeleteOutlined,
   EditOutlined,
   LoadingOutlined,
@@ -26,10 +28,12 @@ import {
   insertMixedVideoAPI,
   updateMixedVideoAPI,
 } from "../../../services/Course_service";
+import { useNavigate } from "react-router-dom";
 
 export default function Index(props) {
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} />;
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   const [mixedVideoStates, setMixedVideoStates] = useState({
     token: localStorage.getItem("token"),
@@ -85,22 +89,35 @@ export default function Index(props) {
           >
             <Button icon={<DeleteOutlined style={{ color: "#FF6B72" }} />} />
           </Popconfirm>
-          <Button
-            onClick={() => {
-              console.log("edit intro video records==>", record);
-              console.log("mixedVideoStates updateIntroVideo");
-              getFormData(record);
-              mixedVideoStates.action = "EDIT";
-              mixedVideoStates.isModalVisible = true;
-              mixedVideoStates.id = record.id;
-              record.host_source == 1
-                ? (mixedVideoStates.host_source_amazon = record.host_source)
-                : (mixedVideoStates.host_source_youtube = record.host_source);
-              mixedVideoStates.updateData = record;
-              setMixedVideoStates({ ...mixedVideoStates });
-            }}
-            icon={<EditOutlined style={{ color: "#3e79f7" }} />}
-          />
+          <Tooltip placement="topRight" title="Засах">
+            <Button
+              onClick={() => {
+                console.log("edit intro video records==>", record);
+                console.log("mixedVideoStates updateIntroVideo");
+                getFormData(record);
+                mixedVideoStates.action = "EDIT";
+                mixedVideoStates.isModalVisible = true;
+                mixedVideoStates.id = record.id;
+                record.host_source === 1
+                  ? (mixedVideoStates.host_source_amazon = record.host_source)
+                  : (mixedVideoStates.host_source_youtube = record.host_source);
+                mixedVideoStates.updateData = record;
+                setMixedVideoStates({ ...mixedVideoStates });
+              }}
+              icon={<EditOutlined style={{ color: "#3e79f7" }} />}
+            />
+          </Tooltip>
+          <Tooltip placement="topRight" title="Cue руу үсрэх">
+            <Button
+              onClick={() => {
+                console.log("Cue button intro video records ID==>", record.id);
+                navigate("/course/mixed-video-cue");
+                props.courseIds.mixedVideoId = record.id;
+                props.setCourseIds({ ...props.courseIds });
+              }}
+              icon={<ArrowsAltOutlined style={{ color: "#3e79f7" }} />}
+            />
+          </Tooltip>
         </Space>
       ),
     },
@@ -148,7 +165,7 @@ export default function Index(props) {
   const insertIntroVideo = (values) => {
     console.log("insert data values", values);
     mixedVideoStates.loader = true;
-    mixedVideoStates.host_source_youtube == null
+    mixedVideoStates.host_source_youtube === null
       ? (mixedVideoStates.host_source = mixedVideoStates.host_source_amazon)
       : (mixedVideoStates.host_source = mixedVideoStates.host_source_youtube);
 
@@ -218,7 +235,7 @@ export default function Index(props) {
   };
 
   const updateIntroVideo = (value) => {
-    mixedVideoStates.host_source_youtube == null
+    mixedVideoStates.host_source_youtube === null
       ? (mixedVideoStates.host_source = mixedVideoStates.host_source_amazon)
       : (mixedVideoStates.host_source = mixedVideoStates.host_source_youtube);
     mixedVideoStates.updateData = {
@@ -268,7 +285,7 @@ export default function Index(props) {
 
   const onChangeCheckYoutube = (checkedValues) => {
     console.log("checked values", checkedValues.target.defaultValue);
-    mixedVideoStates.host_source_youtube == null
+    mixedVideoStates.host_source_youtube === null
       ? (mixedVideoStates.host_source_youtube =
           checkedValues.target.defaultValue)
       : (mixedVideoStates.host_source_youtube = null);
@@ -276,7 +293,7 @@ export default function Index(props) {
   };
   const onChangeCheckAmazon = (checkedValues) => {
     console.log("checked values", checkedValues.target.defaultValue);
-    mixedVideoStates.host_source_amazon == null
+    mixedVideoStates.host_source_amazon === null
       ? (mixedVideoStates.host_source_amazon =
           checkedValues.target.defaultValue)
       : (mixedVideoStates.host_source_amazon = null);

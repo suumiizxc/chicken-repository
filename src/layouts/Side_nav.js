@@ -3,7 +3,6 @@ import { Button, Menu } from "antd";
 import {
   BankOutlined,
   BarsOutlined,
-  CalendarOutlined,
   MailOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -17,14 +16,12 @@ export default function Side_nav() {
   const navigate = useNavigate();
   const handleClick = (e) => {
     console.log("click ", e);
-    if (e.key == "3.1") {
+    if (e.key === "3.1") {
       navigate("/course/intro-video");
-    } else if (e.key == "3.2") {
-      navigate("/course/intro-cue-video");
-    } else if (e.key == "3.3") {
+    } else if (e.key === "3.2") {
       navigate("/course/mixed-video");
-    } else if (e.key == "3.4") {
-      navigate("/course/mixed-video-cue");
+    } else if (e.key === "2.1") {
+      navigate("/content/grammer");
     }
   };
   const toggleCollapsed = () => {
@@ -40,7 +37,7 @@ export default function Side_nav() {
     <div style={{ width: !collapse ? "18%" : "auto" }}>
       <Menu
         onClick={handleClick}
-        style={{ height: "100vh" }}
+        style={{ height: "100%" }}
         defaultSelectedKeys={["1"]}
         // defaultOpenKeys={["sub1"]}
         mode="inline"
@@ -75,15 +72,14 @@ export default function Side_nav() {
         <Menu.Item key="1" icon={<BarsOutlined />} onClick={onNavigate}>
           {"Үгсийн сан"}
         </Menu.Item>
-        <Menu.Item key="2" icon={<BankOutlined />}>
-          {"Контент"}
-        </Menu.Item>
+        <SubMenu key="2" icon={<BankOutlined />} title="Контент">
+          <Menu.Item key="2.1">{"Дүрэм"}</Menu.Item>
+          <Menu.Item key="2.2">{"Дүрэм pattern"}</Menu.Item>
+        </SubMenu>
         <SubMenu key="3" icon={<MailOutlined />} title="Курс">
           {/* <Menu.ItemGroup key="3.1" title="Курс"> */}
           <Menu.Item key="3.1">{"Интро видео"}</Menu.Item>
-          <Menu.Item key="3.2">{"Интро видео cue"}</Menu.Item>
-          <Menu.Item key="3.3">{"Mixed видео"}</Menu.Item>
-          <Menu.Item key="3.4">{"Mixed видео cue"}</Menu.Item>
+          <Menu.Item key="3.2">{"Mixed видео"}</Menu.Item>
           {/* </Menu.ItemGroup> */}
         </SubMenu>
         <SubMenu key="4" icon={<MailOutlined />} title="Coming soon">

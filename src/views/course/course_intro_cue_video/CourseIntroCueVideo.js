@@ -7,7 +7,6 @@ import {
   Form,
   Input,
   Popconfirm,
-  Divider,
   Col,
   Row,
   message,
@@ -22,19 +21,20 @@ import {
   MinusCircleOutlined,
   PlusCircleOutlined,
   PlusOutlined,
+  RollbackOutlined,
 } from "@ant-design/icons";
-import CustomLoader from "../../../components/Loader";
-import CardLarge from "../../../components/CardLarge";
 import {
   deleteIntoCueVideoAPI,
   getAllIntoCueVideo,
   insertIntoCueVideoAPI,
   updateIntoVideoCueAPI,
 } from "../../../services/Course_service";
+import { useNavigate } from "react-router-dom";
 
 export default function Index(props) {
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} />;
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   const [introVideoCueStates, setIntroVideoCueStates] = useState({
     token: localStorage.getItem("token"),
@@ -51,7 +51,7 @@ export default function Index(props) {
     },
     updateData: {
       id: null,
-      intro_video_id: 821,
+      // intro_video_id: 821,
       ordering: 1,
     },
   });
@@ -180,7 +180,7 @@ export default function Index(props) {
   const getAllIntroCueData = () => {
     introVideoCueStates.loader = true;
     setIntroVideoCueStates({ introVideoCueStates });
-    getAllIntoCueVideo(introVideoCueStates.token)
+    getAllIntoCueVideo(props.courseIds.introVideoId, introVideoCueStates.token)
       .then((res) => {
         introVideoCueStates.loader = false;
         setIntroVideoCueStates({ introVideoCueStates });
@@ -214,7 +214,7 @@ export default function Index(props) {
 
     var ids = {
       ordering: 1,
-      intro_video_id: 821,
+      intro_video_id: props.courseIds.introVideoId,
       from_language_id: 2,
       to_language_id: 1,
     };
@@ -223,11 +223,11 @@ export default function Index(props) {
       item["intro_video_id"] = ids.intro_video_id;
       item["from_language_id"] = ids.from_language_id;
       item["to_language_id"] = ids.to_language_id;
-      introVideoCueStates.from_language_is_default == null
+      introVideoCueStates.from_language_is_default === null
         ? (item["from_language_is_default"] = "0")
         : (item["from_language_is_default"] =
             introVideoCueStates.from_language_is_default);
-      introVideoCueStates.to_language_is_default == null
+      introVideoCueStates.to_language_is_default === null
         ? (item["to_language_is_default"] = "0")
         : (item["to_language_is_default"] =
             introVideoCueStates.to_language_is_default);
@@ -311,7 +311,7 @@ export default function Index(props) {
     introVideoCueStates.updateData = {
       id: introVideoCueStates.updateData.id,
       ordering: introVideoCueStates.updateData.ordering,
-      intro_video_id: introVideoCueStates.updateData.intro_video_id,
+      intro_video_id: props.courseIds.introVideoId,
       start_time: value.start_time,
       end_time: value.end_time,
       from_language_id: 1,
@@ -421,6 +421,21 @@ export default function Index(props) {
       >
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <Button
+            onClick={() => {
+              navigate("/course/mixed-video");
+            }}
+            icon={<RollbackOutlined />}
+            // type="alert"
+            style={{
+              marginBottom: 16,
+              marginRight: 16,
+              backgroundColor: "#FAAD14",
+              color: "#FFFFFF",
+            }}
+          >
+            Буцах
+          </Button>
+          <Button
             onClick={insertIntroVideoClicked}
             icon={<PlusCircleOutlined />}
             type="primary"
@@ -433,7 +448,7 @@ export default function Index(props) {
         </div>
         <Table columns={columns} dataSource={introVideoCueStates.data} />
         <Modal
-          title="Интро вилео cue"
+          title="Интро видео cue"
           width={"90%"}
           visible={introVideoCueStates.isModalVisible}
           footer={null}
