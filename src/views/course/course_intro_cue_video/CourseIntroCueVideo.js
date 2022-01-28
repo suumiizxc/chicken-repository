@@ -13,10 +13,14 @@ import {
   Card,
   Spin,
   Checkbox,
+  Divider,
+  Tooltip,
 } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
+  FullscreenOutlined,
   LoadingOutlined,
   MinusCircleOutlined,
   PlusCircleOutlined,
@@ -54,6 +58,8 @@ export default function Index(props) {
       // intro_video_id: 821,
       ordering: 1,
     },
+    cueWords: [],
+    cueWordsSplited: [],
   });
 
   const columns = [
@@ -130,19 +136,52 @@ export default function Index(props) {
           >
             <Button icon={<DeleteOutlined style={{ color: "#FF6B72" }} />} />
           </Popconfirm>
-          <Button
-            onClick={() => {
-              console.log("UPDATE/edit intro CUE video records==>", record);
-              console.log("introVideoCueStates updateIntroCueVideo");
-              introVideoCueStates.action = "EDIT";
-              setIntroVideoCueStates({ ...introVideoCueStates });
-              getFormData(record);
-              introVideoCueStates.updateData.id = record.id;
-              introVideoCueStates.isModalVisible = true;
-              setIntroVideoCueStates({ ...introVideoCueStates });
-            }}
-            icon={<EditOutlined style={{ color: "#3e79f7" }} />}
-          />
+          <Tooltip placement="topRight" title="Cue засах">
+            <Button
+              onClick={() => {
+                console.log("UPDATE/edit intro CUE video records==>", record);
+                console.log("introVideoCueStates updateIntroCueVideo");
+                introVideoCueStates.action = "EDIT";
+                setIntroVideoCueStates({ ...introVideoCueStates });
+                getFormData(record);
+                introVideoCueStates.updateData.id = record.id;
+                introVideoCueStates.isModalVisible = true;
+                setIntroVideoCueStates({ ...introVideoCueStates });
+              }}
+              icon={<EditOutlined style={{ color: "#3e79f7" }} />}
+            />
+          </Tooltip>
+          <Tooltip placement="topRight" title="Cue үг засах">
+            <Button
+              onClick={() => {
+                console.log("cue video word edit records==>", record);
+                introVideoCueStates.action = "EDIT_WORD";
+                setIntroVideoCueStates({ ...introVideoCueStates });
+                getFormData(record);
+                introVideoCueStates.updateData.id = record.id;
+                introVideoCueStates.isModalVisible = true;
+                introVideoCueStates.cueWords = record.from_language_translation;
+                introVideoCueStates.cueWordsSplited =
+                  introVideoCueStates.cueWords.split(/[.,';:\/ -]/);
+                setIntroVideoCueStates({ ...introVideoCueStates });
+              }}
+              icon={<FullscreenOutlined style={{ color: "#FAAD14" }} />}
+            />
+          </Tooltip>
+          <Tooltip placement="topRight" title="Харах">
+            <Button
+              onClick={() => {
+                console.log("cue video word edit records==>", record);
+                introVideoCueStates.action = "EDIT_WORD";
+                setIntroVideoCueStates({ ...introVideoCueStates });
+                getFormData(record);
+                introVideoCueStates.updateData.id = record.id;
+                introVideoCueStates.isModalVisible = true;
+                setIntroVideoCueStates({ ...introVideoCueStates });
+              }}
+              icon={<EyeOutlined style={{ color: "#FAAD14" }} />}
+            />
+          </Tooltip>
         </Space>
       ),
     },
@@ -307,7 +346,6 @@ export default function Index(props) {
       introVideoCueStates.from_language_is_default == null
         ? "0"
         : value.to_language_is_default;
-
     introVideoCueStates.updateData = {
       id: introVideoCueStates.updateData.id,
       ordering: introVideoCueStates.updateData.ordering,
@@ -398,9 +436,6 @@ export default function Index(props) {
     setIntroVideoCueStates({ ...introVideoCueStates });
   };
 
-  const test = () => {
-    console.log("test");
-  };
   useEffect(() => {
     console.log("intro video useffect");
     getAllIntroCueData();
@@ -461,262 +496,339 @@ export default function Index(props) {
             setIntroVideoCueStates({ ...introVideoCueStates });
           }}
         >
-          {introVideoCueStates.action !== "EDIT" ? (
-            <Form
-              form={form}
-              name="addWord"
-              labelCol={{ span: 24 }}
-              wrapperCol={{ span: 20 }}
-              initialValues={{ remember: true }}
-              onFinish={onFinishIntroVideo}
-              onFinishFailed={onFinishFailedIntroVideo}
-              autoComplete="off"
-            >
-              <Form.List name="video_cue">
-                {(fields, { add, remove }) => (
-                  <>
-                    {fields.map(({ key, name, ...restField }) => (
-                      <Space key={key}>
-                        <Form.Item
-                          label="Эхлэх цаг"
-                          {...restField}
-                          name={[name, "start_time"]}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Заавал бөглөнө үү!",
-                            },
-                          ]}
-                          labelCol={{ span: 24 }}
+          {(() => {
+            if (introVideoCueStates.action == "EDIT_WORD") {
+              return (
+                <Form
+                  form={form}
+                  name="addWord"
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 20 }}
+                  initialValues={{ remember: true }}
+                  onFinish={onFinishIntroVideo}
+                  onFinishFailed={onFinishFailedIntroVideo}
+                  autoComplete="off"
+                >
+                  <Row style={{ display: "flex", justifyContent: "center" }}>
+                    {introVideoCueStates.cueWordsSplited.map((word) => {
+                      return (
+                        <>
+                          <Col span={10}>
+                            <Form.Item
+                              label={word}
+                              name={word}
+                              // rules={[
+                              //   {
+                              //     required: true,
+                              //     message: "Заавал бөглөнө үү!",
+                              //   },
+                              // ]}
+                              labelCol={{ span: 10 }}
+                              // defaultValue={word}
+                            >
+                              <Input initialValues={word} defaultValue={word} />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10}>
+                            <Form.Item
+                              label="Зайгүй бол чеклэнэ"
+                              name="from_language_is_default"
+                              labelCol={{ span: 10 }}
+                              labelPosition={"right"}
+                            >
+                              <Checkbox
+                                onChange={onChangeCheckE}
+                                defaultValue={"0"}
+                                // checked={}
+                                // disabled={}
+                              ></Checkbox>
+                            </Form.Item>
+                          </Col>
+                        </>
+                      );
+                    })}
+                  </Row>
+                  <Row>
+                    <Col span={24}>
+                      <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
+                        <Button
+                          type="primary"
+                          htmlType="submit"
+                          // style={{ width: "100%" }}
                         >
-                          <Input />
-                        </Form.Item>
-                        <Form.Item
-                          label="Дуусах цаг"
-                          {...restField}
-                          name={[name, "end_time"]}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Заавал бөглөнө үү!",
-                            },
-                          ]}
-                          labelCol={{ span: 24 }}
-                        >
-                          <Input />
-                        </Form.Item>
-                        <Col span={24}>
-                          <Form.Item
-                            label="Англи текст"
-                            {...restField}
-                            name={[name, "from_language_translation"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Заавал бөглөнө үү!",
-                              },
-                            ]}
-                            labelCol={{ span: 24 }}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        <Form.Item
-                          label="E"
-                          {...restField}
-                          name={[name, "from_language_is_default"]}
-                          labelCol={{ span: 24 }}
-                        >
-                          <Checkbox
-                            onChange={onChangeCheckE}
-                            defaultValue={"2"}
-                            checked={
-                              introVideoCueStates.from_language_is_default
-                            }
-                            disabled={
-                              introVideoCueStates.to_language_is_default
-                            }
-                            // value={"English"}
-                          ></Checkbox>
-                        </Form.Item>
-                        <Form.Item
-                          label="Монгол текст"
-                          {...restField}
-                          name={[name, "to_language_translation"]}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Заавал бөглөнө үү!",
-                            },
-                          ]}
-                          labelCol={{ span: 24 }}
-                        >
-                          <Input />
-                        </Form.Item>
-                        <Form.Item
-                          label="М"
-                          {...restField}
-                          name={[name, "to_language_is_default"]}
-                          labelCol={{ span: 24 }}
-                        >
-                          <Checkbox
-                            onChange={onChangeCheckM}
-                            defaultValue={"1"}
-                            checked={introVideoCueStates.to_language_is_default}
-                            disabled={
-                              introVideoCueStates.from_language_is_default
-                            }
-                          ></Checkbox>
-                        </Form.Item>
-                        <Form.Item label={"Хасах"} labelCol={{ span: 24 }}>
-                          <MinusCircleOutlined
-                            style={{ color: "#FF4D4F" }}
-                            onClick={() => remove(name)}
-                          />
-                        </Form.Item>
-                      </Space>
-                    ))}
-                    <Form.Item
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Button
-                        type="dashed"
-                        onClick={() => add()}
-                        block
-                        icon={<PlusOutlined />}
+                          Хадгалах/CUE'S WORD/
+                        </Button>
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </Form>
+              );
+            } else if (introVideoCueStates.action == "EDIT") {
+              return (
+                /* CUE EDIT */
+                <Form
+                  form={form}
+                  name="addWord"
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 20 }}
+                  initialValues={{ remember: true }}
+                  onFinish={onFinishIntroVideo}
+                  onFinishFailed={onFinishFailedIntroVideo}
+                  autoComplete="off"
+                >
+                  <Row>
+                    <Col span={4}>
+                      <Form.Item
+                        label="Эхлэх цаг"
+                        name="start_time"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Заавал бөглөнө үү!",
+                          },
+                        ]}
+                        labelCol={{ span: 24 }}
                       >
-                        Шинээр нэмэх
-                      </Button>
-                    </Form.Item>
-                  </>
-                )}
-              </Form.List>
-
-              <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  style={{ width: "100%" }}
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col span={4}>
+                      <Form.Item
+                        label="Дуусах цаг"
+                        name="end_time"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Заавал бөглөнө үү!",
+                          },
+                        ]}
+                        labelCol={{ span: 24 }}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col span={6}>
+                      <Form.Item
+                        label="Англи текст"
+                        name="from_language_translation"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Заавал бөглөнө үү!",
+                          },
+                        ]}
+                        labelCol={{ span: 24 }}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col span={1}>
+                      <Form.Item
+                        label="E"
+                        name="from_language_is_default"
+                        labelCol={{ span: 24 }}
+                      >
+                        <Checkbox
+                          onChange={onChangeCheckE}
+                          defaultValue={"2"}
+                          checked={introVideoCueStates.from_language_is_default}
+                          disabled={introVideoCueStates.to_language_is_default}
+                        ></Checkbox>
+                      </Form.Item>
+                    </Col>
+                    <Col span={6}>
+                      <Form.Item
+                        label="Монгол текст"
+                        name="to_language_translation"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Заавал бөглөнө үү!",
+                          },
+                        ]}
+                        labelCol={{ span: 24 }}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col span={1}>
+                      <Form.Item
+                        label="М"
+                        name="to_language_is_default"
+                        labelCol={{ span: 24 }}
+                      >
+                        <Checkbox
+                          onChange={onChangeCheckM}
+                          defaultValue={"1"}
+                          checked={introVideoCueStates.to_language_is_default}
+                          disabled={
+                            introVideoCueStates.from_language_is_default
+                          }
+                        ></Checkbox>
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                  <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      style={{ width: "100%" }}
+                    >
+                      Хадгалах/UPDATE/
+                    </Button>
+                  </Form.Item>
+                </Form>
+              );
+            } else {
+              return (
+                /* CUE INSERT */
+                <Form
+                  form={form}
+                  name="addWord"
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 20 }}
+                  initialValues={{ remember: true }}
+                  onFinish={onFinishIntroVideo}
+                  onFinishFailed={onFinishFailedIntroVideo}
+                  autoComplete="off"
                 >
-                  Хадгалах
-                </Button>
-              </Form.Item>
-            </Form>
-          ) : (
-            <Form
-              form={form}
-              name="addWord"
-              labelCol={{ span: 24 }}
-              wrapperCol={{ span: 20 }}
-              initialValues={{ remember: true }}
-              onFinish={onFinishIntroVideo}
-              onFinishFailed={onFinishFailedIntroVideo}
-              autoComplete="off"
-            >
-              <Row>
-                <Col span={4}>
-                  <Form.Item
-                    label="Эхлэх цаг"
-                    name="start_time"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Заавал бөглөнө үү!",
-                      },
-                    ]}
-                    labelCol={{ span: 24 }}
-                  >
-                    <Input />
+                  <Form.List name="video_cue">
+                    {(fields, { add, remove }) => (
+                      <>
+                        {fields.map(({ key, name, ...restField }) => (
+                          <Space key={key}>
+                            <Form.Item
+                              label="Эхлэх цаг"
+                              {...restField}
+                              name={[name, "start_time"]}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Заавал бөглөнө үү!",
+                                },
+                              ]}
+                              labelCol={{ span: 24 }}
+                            >
+                              <Input />
+                            </Form.Item>
+                            <Form.Item
+                              label="Дуусах цаг"
+                              {...restField}
+                              name={[name, "end_time"]}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Заавал бөглөнө үү!",
+                                },
+                              ]}
+                              labelCol={{ span: 24 }}
+                            >
+                              <Input />
+                            </Form.Item>
+                            <Col span={24}>
+                              <Form.Item
+                                label="Англи текст"
+                                {...restField}
+                                name={[name, "from_language_translation"]}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: "Заавал бөглөнө үү!",
+                                  },
+                                ]}
+                                labelCol={{ span: 24 }}
+                              >
+                                <Input />
+                              </Form.Item>
+                            </Col>
+                            <Form.Item
+                              label="E"
+                              {...restField}
+                              name={[name, "from_language_is_default"]}
+                              labelCol={{ span: 24 }}
+                            >
+                              <Checkbox
+                                onChange={onChangeCheckE}
+                                defaultValue={"2"}
+                                checked={
+                                  introVideoCueStates.from_language_is_default
+                                }
+                                disabled={
+                                  introVideoCueStates.to_language_is_default
+                                }
+                                // value={"English"}
+                              ></Checkbox>
+                            </Form.Item>
+                            <Form.Item
+                              label="Монгол текст"
+                              {...restField}
+                              name={[name, "to_language_translation"]}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Заавал бөглөнө үү!",
+                                },
+                              ]}
+                              labelCol={{ span: 24 }}
+                            >
+                              <Input />
+                            </Form.Item>
+                            <Form.Item
+                              label="М"
+                              {...restField}
+                              name={[name, "to_language_is_default"]}
+                              labelCol={{ span: 24 }}
+                            >
+                              <Checkbox
+                                onChange={onChangeCheckM}
+                                defaultValue={"1"}
+                                checked={
+                                  introVideoCueStates.to_language_is_default
+                                }
+                                disabled={
+                                  introVideoCueStates.from_language_is_default
+                                }
+                              ></Checkbox>
+                            </Form.Item>
+                            <Form.Item label={"Хасах"} labelCol={{ span: 24 }}>
+                              <MinusCircleOutlined
+                                style={{ color: "#FF4D4F" }}
+                                onClick={() => remove(name)}
+                              />
+                            </Form.Item>
+                          </Space>
+                        ))}
+                        <Form.Item
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <Button
+                            type="dashed"
+                            onClick={() => add()}
+                            block
+                            icon={<PlusOutlined />}
+                          >
+                            Шинээр нэмэх
+                          </Button>
+                        </Form.Item>
+                      </>
+                    )}
+                  </Form.List>
+                  <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      style={{ width: "100%" }}
+                    >
+                      Хадгалах
+                    </Button>
                   </Form.Item>
-                </Col>
-                <Col span={4}>
-                  <Form.Item
-                    label="Дуусах цаг"
-                    name="end_time"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Заавал бөглөнө үү!",
-                      },
-                    ]}
-                    labelCol={{ span: 24 }}
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col span={6}>
-                  <Form.Item
-                    label="Англи текст"
-                    name="from_language_translation"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Заавал бөглөнө үү!",
-                      },
-                    ]}
-                    labelCol={{ span: 24 }}
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col span={1}>
-                  <Form.Item
-                    label="E"
-                    name="from_language_is_default"
-                    labelCol={{ span: 24 }}
-                  >
-                    <Checkbox
-                      onChange={onChangeCheckE}
-                      defaultValue={"2"}
-                      checked={introVideoCueStates.from_language_is_default}
-                      disabled={introVideoCueStates.to_language_is_default}
-                    ></Checkbox>
-                  </Form.Item>
-                </Col>
-                <Col span={6}>
-                  <Form.Item
-                    label="Монгол текст"
-                    name="to_language_translation"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Заавал бөглөнө үү!",
-                      },
-                    ]}
-                    labelCol={{ span: 24 }}
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col span={1}>
-                  <Form.Item
-                    label="М"
-                    name="to_language_is_default"
-                    labelCol={{ span: 24 }}
-                  >
-                    <Checkbox
-                      onChange={onChangeCheckM}
-                      defaultValue={"1"}
-                      checked={introVideoCueStates.to_language_is_default}
-                      disabled={introVideoCueStates.from_language_is_default}
-                    ></Checkbox>
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  style={{ width: "100%" }}
-                >
-                  Хадгалах/UPDATE/
-                </Button>
-              </Form.Item>
-            </Form>
-          )}
+                </Form>
+              );
+            }
+          })()}
         </Modal>
       </Spin>
     </Card>
