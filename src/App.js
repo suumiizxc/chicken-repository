@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./auth/login";
 import LayoutIndex from "./layouts/Index";
 import ViewIndex from "./views/index";
-import WordIndex from "./views/word";
+import WordIndex from "./views/word/Index";
 import CourseIndex from "./views/course/index";
 import CourseIntroVideo from "./views/course/course_intro_video/CourseIntroVideo";
 import CourseIntroCueVideo from "./views/course/course_intro_cue_video/CourseIntroCueVideo";

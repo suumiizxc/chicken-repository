@@ -92,6 +92,7 @@ export function insertIntoCueVideoAPI(data, token) {
       .catch((err) => reject(err));
   });
 }
+
 // ----------------------------------------- START COURSE INTRO VIDEO CUE  -----------------------------------------
 // ----------------------------------------- GET All intro CUE video -----------------------------------------
 export function getAllIntoCueVideo(id, token) {
@@ -184,6 +185,9 @@ export function deleteMixedVideoAPI(id, token) {
   });
 }
 
+
+
+
 // ----------------------------------------- PUT Update MIXED video -----------------------------------------
 export function updateMixedVideoAPI(data, token) {
   return new Promise((resolve, reject) => {
@@ -219,6 +223,60 @@ export function insertMixedVideoAPI(data, token) {
       .catch((err) => reject(err));
   });
 }
+
+
+// ----------------------------------------- POST Insert intro video CUE word -----------------------------------------
+export function insertIntoVideoCueWordAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/course-intro-video-cue-word/insert-many",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function getIntroVideoCueWordsAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/course-intro-video-cue-word/profile-by-cue-id/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function deleteIntroVideoCueWordsAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/course-intro-video-cue-word/delete-by-cue-id/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
 
 // ----------------------------------------- START COURSE MIXED VIDEO "CUE"  -----------------------------------------
 // ----------------------------------------- GET All MIXED video "CUE" -----------------------------------------

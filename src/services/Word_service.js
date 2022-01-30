@@ -20,6 +20,24 @@ export function getWords(token) {
   });
 }
 
+
+export function getFindWords(string,token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/dt-word/find-by-text/" + string,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
 // ----------------------------------------- Word module word-transaltion get id  -----------------------------------------
 export function getWordsId(id, token) {
   return new Promise((resolve, reject) => {

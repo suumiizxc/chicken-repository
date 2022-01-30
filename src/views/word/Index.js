@@ -30,7 +30,11 @@ import {
   insertWordTransalation,
   updateWordTranslation,
   deleteWordTranslation,
+
+  getFindWords,
 } from "../../services/Word_service";
+
+const { Search } = Input;
 
 export default function Index(props) {
   const { Option } = Select;
@@ -381,6 +385,12 @@ export default function Index(props) {
     setWordStates({ ...wordStates, isModalVisible: true });
   };
 
+  const wordAll = () => {
+    // setWordStates({ ...wordStates, isModalVisible: true });
+    getAllWords()
+  };
+
+
   const onLanguageChange = (value) => {
     setWordStates({ ...wordStates, language_id: value });
     console.log("worDsTATE", wordStates.language_id);
@@ -538,6 +548,23 @@ export default function Index(props) {
     }
   };
 
+  const onSearchWord = (val) => {
+    console.log("ON SEARCH")
+    const token = localStorage.getItem("token");
+
+    getFindWords(val, token)
+      .then((res) => {
+        console.log("success + ", res)
+        wordStates.data = [...res.data.equally, ...res.data.likely];
+        
+        setWordStates({...wordStates})
+      })
+      .catch((err) => {
+        console.log("failed :+", err)
+      })
+
+  }
+
   const getAllWords = () => {
     const token = localStorage.getItem("token");
     setWordLoader(true);
@@ -639,6 +666,23 @@ export default function Index(props) {
           marginTop: "-5.5rem",
         }}
       >
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Space direction="vertical" style={{marginBottom:16,}}>
+          <Search placeholder="input search text" onSearch={onSearchWord} style={{ width: 200 }} />
+        </Space>
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            onClick={wordAll}
+            icon={<PlusCircleOutlined />}
+            type="primary"
+            style={{
+              marginBottom: 16,
+            }}
+          >
+            Бүх үг
+          </Button>
+        </div>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <Button
             onClick={wordAdd}

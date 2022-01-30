@@ -15,6 +15,7 @@ import {
   Checkbox,
   Divider,
   Tooltip,
+  Descriptions
 } from "antd";
 import {
   DeleteOutlined,
@@ -32,6 +33,10 @@ import {
   getAllIntoCueVideo,
   insertIntoCueVideoAPI,
   updateIntoVideoCueAPI,
+
+  insertIntoVideoCueWordAPI,
+  getIntroVideoCueWordsAPI,
+  deleteIntroVideoCueWordsAPI,
 } from "../../../services/Course_service";
 import { useNavigate } from "react-router-dom";
 
@@ -58,10 +63,45 @@ export default function Index(props) {
       // intro_video_id: 821,
       ordering: 1,
     },
+    cueWordString : "",
     cueWords: [],
     cueWordsSplited: [],
   });
 
+  const columns_word = [
+    {
+      title : "Id",
+      dataIndex : "id",
+      key :"id"
+    },
+    {
+      title : "Cue id",
+      dataIndex : "cue_id",
+      key :"cue_id"
+    },
+    {
+      title : "Main text",
+      dataIndex : "main_text",
+      key :"main_text"
+    },
+    {
+      title : "Word value",
+      dataIndex : "word_value",
+      key :"word_value"
+    },
+    {
+      title : "Space next",
+      dataIndex : "space_next",
+      key :"space_next"
+    },
+    {
+      title : "Ordering",
+      dataIndex : "ordering",
+      key :"ordering"
+    }
+  ]
+
+  
   const columns = [
     {
       title: "Id",
@@ -160,10 +200,11 @@ export default function Index(props) {
                 getFormData(record);
                 introVideoCueStates.updateData.id = record.id;
                 introVideoCueStates.isModalVisible = true;
-                introVideoCueStates.cueWords = record.from_language_translation;
+                introVideoCueStates.cueWordString = record.from_language_translation;
                 introVideoCueStates.cueWordsSplited =
-                  introVideoCueStates.cueWords.split(/[.,';:\/ -]/);
+                  introVideoCueStates.cueWordString.split(/[.,';:\/ -]/);
                 setIntroVideoCueStates({ ...introVideoCueStates });
+                console.log("introVideoCueStates : ", introVideoCueStates)
               }}
               icon={<FullscreenOutlined style={{ color: "#FAAD14" }} />}
             />
@@ -172,12 +213,15 @@ export default function Index(props) {
             <Button
               onClick={() => {
                 console.log("cue video word edit records==>", record);
-                introVideoCueStates.action = "EDIT_WORD";
+                introVideoCueStates.action = "EDIT_WORD_SEE";
                 setIntroVideoCueStates({ ...introVideoCueStates });
                 getFormData(record);
                 introVideoCueStates.updateData.id = record.id;
                 introVideoCueStates.isModalVisible = true;
+                getCueWordsByCueIdData(record.id, introVideoCueStates.token)
+                console.log("Cue words : ",introVideoCueStates.cueWords)
                 setIntroVideoCueStates({ ...introVideoCueStates });
+                console.log("introVideoCueStates : ", introVideoCueStates);
               }}
               icon={<EyeOutlined style={{ color: "#FAAD14" }} />}
             />
@@ -215,6 +259,20 @@ export default function Index(props) {
     });
   };
 
+  const getCueWordsByCueIdData = (cue_id, token) => {
+    getIntroVideoCueWordsAPI(cue_id, token)
+      .then((res) => {
+        // console.log("SUCCESS : ", res)
+        introVideoCueStates.cueWords = [...res.data.data] 
+        setIntroVideoCueStates({...introVideoCueStates})
+        message.success("successfully get words")
+      })
+      .catch((err)=>{
+        console.log("error : ",err)
+        message.error("failed get words")
+      })
+  }
+  
   //GET All intro video list
   const getAllIntroCueData = () => {
     introVideoCueStates.loader = true;
@@ -240,6 +298,8 @@ export default function Index(props) {
         console.log(e);
       });
   };
+
+
 
   const insertIntroVideoClicked = () => {
     introVideoCueStates.isModalVisible = true;
@@ -402,6 +462,38 @@ export default function Index(props) {
     }
   };
 
+  const onFinishIntroVideoCueWord = (values) => {
+    console.log("onfinish");
+    introVideoCueStates.isModalVisible = false;
+
+    if (introVideoCueStates.action === "EDIT") {
+      console.log("edit intro video running=>");
+      updateIntroCueVideo(values);
+    } else {
+      console.log("insert intro video running");
+      console.log("Insert update values : ", values);
+      console.log("cue word states : ", introVideoCueStates.cueWordsSplited)
+
+      deleteIntroVideoCueWordsAPI(introVideoCueStates.updateData.id, introVideoCueStates.token)
+
+
+      var pisdaa_send = []
+      introVideoCueStates.cueWordsSplited.map((val, ind, arr) => {
+        let cue_word = {ordering : ind + 1, cue_id : introVideoCueStates.updateData.id, main_text : val, word_value : val.toLowerCase(), space_next : 0};
+
+        if(val !== values[val] && values[val] !== undefined) {
+          console.log("PISDAA : ", values[val])
+          cue_word.word_value = values[val]
+        } 
+        pisdaa_send.push(cue_word)
+      })
+      var send_values = {course_intro_video_cue_words : pisdaa_send}
+
+      insertIntoVideoCueWordAPI(send_values, introVideoCueStates.token);
+      message.success("Амжилттай")
+    }
+  };
+
   const onFinishFailedIntroVideo = () => {
     console.log("onfinish failed");
   };
@@ -505,7 +597,7 @@ export default function Index(props) {
                   labelCol={{ span: 24 }}
                   wrapperCol={{ span: 20 }}
                   initialValues={{ remember: true }}
-                  onFinish={onFinishIntroVideo}
+                  onFinish={onFinishIntroVideoCueWord}
                   onFinishFailed={onFinishFailedIntroVideo}
                   autoComplete="off"
                 >
@@ -529,21 +621,6 @@ export default function Index(props) {
                               <Input initialValues={word} defaultValue={word} />
                             </Form.Item>
                           </Col>
-                          <Col span={10}>
-                            <Form.Item
-                              label="Зайгүй бол чеклэнэ"
-                              name="from_language_is_default"
-                              labelCol={{ span: 10 }}
-                              labelPosition={"right"}
-                            >
-                              <Checkbox
-                                onChange={onChangeCheckE}
-                                defaultValue={"0"}
-                                // checked={}
-                                // disabled={}
-                              ></Checkbox>
-                            </Form.Item>
-                          </Col>
                         </>
                       );
                     })}
@@ -563,6 +640,61 @@ export default function Index(props) {
                   </Row>
                 </Form>
               );
+          } else if (introVideoCueStates.action == "EDIT_WORD_SEE") {
+            return (
+              // <Form
+              //   form={form}
+              //   name="addWord"
+              //   labelCol={{ span: 24 }}
+              //   wrapperCol={{ span: 20 }}
+              //   initialValues={{ remember: true }}
+              //   onFinish={onFinishIntroVideoCueWord}
+              //   onFinishFailed={onFinishFailedIntroVideo}
+              //   autoComplete="off"
+              // >
+              //   <Row style={{ display: "flex", justifyContent: "center" }}>
+              //     {introVideoCueStates.cueWords.map((word) => {
+              //       return (
+              //         <>
+              //           <Col span={10}>
+              //             <Form.Item
+              //               label={word.ordering}
+              //               name={word.ordering}
+              //               // rules={[
+              //               //   {
+              //               //     required: true,
+              //               //     message: "Заавал бөглөнө үү!",
+              //               //   },
+              //               // ]}
+              //               labelCol={{ span: 10 }}
+              //               // defaultValue={word}
+              //             >
+              //               <Input initialValues={word.cue_id} defaultValue={word.cue_id} />
+              //               <Input initialValues={word.word_text} defaultValue={word.word_text} />
+              //               <Input initialValues={word.word_value} defaultValue={word.word_value} />
+
+              //             </Form.Item>
+              //           </Col>
+              //         </>
+              //       );
+              //     })}
+              //   </Row>
+              //   <Row>
+              //     <Col span={24}>
+              //       <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
+              //         <Button
+              //           type="primary"
+              //           htmlType="submit"
+              //           // style={{ width: "100%" }}
+              //         >
+              //           Хадгалах/CUE'S WORD/
+              //         </Button>
+              //       </Form.Item>
+              //     </Col>
+              //   </Row>
+              // </Form>
+              <Table columns={columns_word} dataSource={introVideoCueStates.cueWords} />
+            );
             } else if (introVideoCueStates.action == "EDIT") {
               return (
                 /* CUE EDIT */
