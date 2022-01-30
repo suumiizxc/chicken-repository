@@ -22,7 +22,7 @@ export default function Side_nav() {
       navigate("/course/mixed-video");
     } else if (e.key === "2.1") {
       navigate("/content/grammer");
-    }
+    } 
   };
   const toggleCollapsed = () => {
     collapse ? setCollapse(false) : setCollapse(true);

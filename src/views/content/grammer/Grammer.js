@@ -65,6 +65,11 @@ export default function Index(props) {
       key: "name_eng",
     },
     {
+      title :"Өгүүлбэрийн төрөл",
+      dataIndex : "label",
+      key : "label",
+    },
+    {
       title: "Үйлдэл",
       key: "action",
       render: (text, record) => (
@@ -117,6 +122,7 @@ export default function Index(props) {
     form.setFieldsValue({
       name_mon: record.name_mon,
       name_eng: record.name_eng,
+      label : record.label,
     });
   };
 
@@ -158,6 +164,7 @@ export default function Index(props) {
     grammerStates.insertData = {
       name_mon: values.name_mon,
       name_eng: values.name_eng,
+      label : values.label,
     };
     insertIntoGrammerAPI(grammerStates.insertData, grammerStates.token)
       .then((res) => {
@@ -215,6 +222,7 @@ export default function Index(props) {
       id: grammerStates.id,
       name_mon: values.name_mon,
       name_eng: values.name_eng,
+      label : values.label,
     };
     setGrammerStates({ ...grammerStates });
     updateGrammerAPI(grammerStates.updateData, grammerStates.token)
@@ -297,7 +305,7 @@ export default function Index(props) {
         <Table columns={columns} dataSource={grammerStates.data} />
         <Modal
           title="Дүрэм"
-          width={"50%"}
+          width={"80%"}
           visible={grammerStates.isModalVisible}
           footer={null}
           onCancel={() => {
@@ -310,7 +318,7 @@ export default function Index(props) {
           <Form
             form={form}
             name="addWord"
-            labelCol={{ span: 8 }}
+            labelCol={{ span: 8}}
             wrapperCol={{ span: 16 }}
             initialValues={{ remember: true }}
             onFinish={onFinishIntroVideo}
@@ -318,7 +326,7 @@ export default function Index(props) {
             autoComplete="off"
           >
             <Row>
-              <Col span={24}>
+              <Col span={36}>
                 <Row>
                   <Col span={12}>
                     <Form.Item
@@ -331,7 +339,7 @@ export default function Index(props) {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col span={12}>
+                  <Col span={12} flex="auto">
                     <Form.Item
                       label="Англи нэр"
                       name="name_eng"
@@ -340,6 +348,17 @@ export default function Index(props) {
                       ]}
                     >
                       <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item 
+                      label="Өгүүлбэрийн төрөл" 
+                      name="label"
+                      rules={[
+                        {required:true, message: "Заавал бөглөнө үү!" },
+                      ]} 
+                    >
+                      <Input/>
                     </Form.Item>
                   </Col>
                 </Row>
