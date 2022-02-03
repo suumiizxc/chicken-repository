@@ -17,6 +17,8 @@ import CourseMixedVideoCue from "./views/course/course_mixed_video_cue/CourseMix
 import Grammer from "./views/content/grammer/Grammer";
 import GrammerStructure from "./views/content/grammer_structure/GrammerStructure";
 import GrammerPattern from "./views/content/grammer_pattern/GrammerPattern";
+import GrammerTableExample from "./views/content/grammar_table_example/GrammarTableExample";
+
 
 import "./App.css";
 import "./css/index.css";
@@ -127,6 +129,17 @@ function App() {
                 path="/content/grammer-pattern"
                 element={
                   <GrammerPattern
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                  />
+                }
+              />
+              <Route
+                path="/content/grammer-table-example"
+                element={
+                  <GrammerTableExample
                     userData={userData}
                     setUserData={setUserData}
                     loader={loader}

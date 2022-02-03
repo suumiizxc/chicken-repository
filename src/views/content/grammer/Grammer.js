@@ -13,11 +13,13 @@ import {
   Card,
   Spin,
   Tooltip,
+  Select,
 } from "antd";
 import {
   ArrowsAltOutlined,
   DeleteOutlined,
   EditOutlined,
+  CheckOutlined,
   LoadingOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
@@ -26,8 +28,20 @@ import {
   getAllGrammerAPI,
   insertIntoGrammerAPI,
   updateGrammerAPI,
+
+  getAllGrammerPatternAPI,
+  insertIntoGrammerStructureAPI,
+  getIntoGrammerStructureByGrammarIDAPI,
+  deleteIntoGrammerStructureByGrammarIDAPI,
+
+  insertGrammarTableExampleAPI,
+  getGrammarTableExampleByGrammarIDAPI,
 } from "../../../services/Content_service";
 import { useNavigate } from "react-router-dom";
+
+const { Option } = Select;
+
+const { TextArea } = Input;
 
 export default function Index(props) {
   const navigate = useNavigate();
@@ -46,7 +60,65 @@ export default function Index(props) {
     checkBoxOptions: ["YouTube", "Amazon"],
     insertData: {},
     updateData: {},
+    grammarPattern : [],
+    grammarBuildPattern : [],
+    insertGrammarStructure : {},
+    insertGrammarPattern : {},
+    getGrammarStructure : null,
+    insertGrammarTableExample : null,
+    getGrammarTableExample : null,
   });
+
+  const columns_grammar_structure = [
+    {
+      title : "Id",
+      dataIndex : "id",
+      key : "id",
+    },
+    {
+      title : "Grammar id",
+      dataIndex : "grammar_id",
+      key : "grammar_id",
+    },
+    {
+      title : "Pattern id",
+      dataIndex : "pattern_id",
+      key : "pattern_id",
+    },
+    {
+      title : "Ordering",
+      dataIndex : "ordering",
+      key : "ordering",
+    }, 
+    {
+      title : "Type label",
+      dataIndex : "type_label",
+      key : "type_label",
+    }
+  ];
+
+  const columns_grammar_example = [
+    {
+      title : "Id", 
+      dataIndex : "id",
+      key : "id",
+    }, 
+    {
+      title : "Grammar id",
+      dataIndex : "grammar_id",
+      key : "grammar_id",
+    }, 
+    {
+      title : "English text",
+      dataIndex : "eng_text",
+      key : "eng_text",
+    },
+    {
+      title : "Mongol text",
+      dataIndex : "mon_text",
+      key : "mon_text"
+    }
+  ];
 
   const columns = [
     {
@@ -87,7 +159,7 @@ export default function Index(props) {
           >
             <Button icon={<DeleteOutlined style={{ color: "#FF6B72" }} />} />
           </Popconfirm>
-          <Tooltip placement="topRight" title="Засах">
+          <Tooltip placement="topRight" title="Дүрэм Засах">
             <Button
               onClick={() => {
                 console.log("edit intro video records==>", record);
@@ -97,9 +169,97 @@ export default function Index(props) {
                 grammerStates.isModalVisible = true;
                 grammerStates.updateData = record;
                 grammerStates.id = record.id;
+
+                console.log("GRAMMAR STATES : ", grammerStates)
                 setGrammerStates({ ...grammerStates });
               }}
               icon={<EditOutlined style={{ color: "#3e79f7" }} />}
+            />
+          </Tooltip>
+          <Tooltip placement="topRight" title="Дүрэм бүтэц бүтээх">
+            <Button
+              onClick={() => {
+                console.log("edit intro video records==>", record);
+                console.log("grammerStates updateIntroVideo");
+                getFormData(record);
+                getAllIntroPatternData();
+                grammerStates.action = "BUILD_STRUCTURE";
+                grammerStates.isModalVisible = true;
+                grammerStates.updateData = record;
+                grammerStates.id = record.id;
+
+                console.log("GRAMMAR STATES : ", grammerStates)
+                grammerStates.loader = false;
+                setGrammerStates({ ...grammerStates });
+              }}
+              icon={<PlusCircleOutlined style={{ color: "#FAAD14" }} />}
+            />
+          </Tooltip>
+          <Tooltip placement="topRight" title="Дүрэм бүтэц харах">
+            <Button
+              onClick={() => {
+                console.log("see grammar structure records==>", record);
+                console.log("grammerStates updateIntroVideo");
+                getFormData(record);
+                grammerStates.action = "SEE_STRUCTURE";
+                grammerStates.isModalVisible = true;
+                grammerStates.updateData = record;
+                grammerStates.id = record.id;
+                getGrammarStructure(record.id);
+                console.log("GRAMMAR STATES : ", grammerStates)
+                grammerStates.loader = false;
+                setGrammerStates({ ...grammerStates });
+              }}
+              icon={<CheckOutlined style={{ color: "#FAAD14" }} />}
+            />
+          </Tooltip>
+          <Tooltip placement="topRight" title="Жишээ өгүүлбэр нэмэх">
+            <Button
+              onClick={() => {
+                console.log("see grammar structure records==>", record);
+                console.log("grammerStates updateIntroVideo");
+                getFormData(record);
+                grammerStates.action = "ADD_EXAMPLE";
+                grammerStates.isModalVisible = true;
+                grammerStates.updateData = record;
+                grammerStates.id = record.id;
+                getGrammarStructure(record.id);
+                console.log("GRAMMAR STATES : ", grammerStates)
+                grammerStates.loader = false;
+                setGrammerStates({ ...grammerStates });
+              }}
+              icon={<PlusCircleOutlined style={{ color: "#FAAD14" }} />}
+            />
+          </Tooltip>
+          <Tooltip placement="topRight" title="Жишээ өгүүлбэр харах">
+            <Button
+              onClick={() => {
+                console.log("see grammar structure records==>", record);
+                console.log("grammerStates updateIntroVideo");
+                getFormData(record);
+                grammerStates.action = "SEE_EXAMPLES";
+                grammerStates.isModalVisible = true;
+                grammerStates.updateData = record;
+                grammerStates.id = record.id;
+                getGrammarStructure(record.id);
+                // console.log("GRAMMAR STATES : ", grammerStates)
+                getGrammarTableExampleByGrammarID();
+                grammerStates.loader = false;
+                
+                setGrammerStates({ ...grammerStates });
+              }}
+              icon={<CheckOutlined style={{ color: "#FAAD14" }} />}
+            />
+          </Tooltip>
+          <Tooltip placement="topRight" title="Жишээ рүү үсрэх ЗАСВАРТАЙ ороод дэмий л байхдаа">
+            <Button
+              onClick={() => {
+                console.log("Cue button intro video records ID==>", record.id);
+                navigate("/content/grammar-table-example");
+                props.grammarId = record.id;
+                props.setCourseIds({ ...props.grammarId });
+              }}
+              icon={<ArrowsAltOutlined style={{ color: "#3e79f7" }} />}
             />
           </Tooltip>
           {/* <Tooltip placement="topRight" title="Cue руу үсрэх">
@@ -152,10 +312,91 @@ export default function Index(props) {
       });
   };
 
+  const getAllIntroPatternData = () => {
+    grammerStates.loader = true;
+    setGrammerStates({grammerStates});
+    getAllGrammerPatternAPI(grammerStates.token)
+      .then((res) => {
+        setGrammerStates({ grammerStates });
+        if (res && res.data && res.data.status && res.data.status === true) {
+          setGrammerStates({grammerStates});
+          grammerStates.grammarPattern = res.data.data;
+          setGrammerStates({ ...grammerStates });
+          console.log("success all pattern data : ", res.data.data);
+          console.log("GRAMMAR STATES : ", grammerStates);
+          // message.success("AMjilttai ");
+        } else {
+          message.error("Алдаа гарлаа Grammar pattern");
+        }
+      })
+      .catch((err) => {
+        props.setLoader(false);
+        message.error("Алдаа гарлаа Grammar pattern");
+        console.log(err);
+      })
+  }
+  const getGrammarStructure = (id) => {
+    grammerStates.loader = true;
+    setGrammerStates({grammerStates});
+    getIntoGrammerStructureByGrammarIDAPI(id, grammerStates.token)
+      .then((res) => {
+        setGrammerStates({ grammerStates });
+        if (res && res.data && res.data.status && res.data.status === true) {
+          setGrammerStates({grammerStates});
+          grammerStates.getGrammarStructure = res.data.data;
+          setGrammerStates({ ...grammerStates });
+          console.log("success all structure data : ", res.data.data);
+          console.log("GRAMMAR STATES : ", grammerStates);
+          // message.success("AMjilttai ");
+        } else {
+          message.error("Алдаа гарлаа Grammar pattern");
+        }
+      })
+      .catch((err) => {
+        props.setLoader(false);
+        message.error("Алдаа гарлаа Grammar pattern");
+        console.log(err);
+      })
+  }
+
+  const deleteGrammarStructure = (id) => {
+    grammerStates.loader = true;
+    setGrammerStates({grammerStates});
+    deleteIntoGrammerStructureByGrammarIDAPI(id, grammerStates.token)
+      .then((res) => {
+        grammerStates.loader = false;
+        setGrammerStates({ grammerStates });
+        if (res && res.data && res.data.status && res.data.status === true) {
+          //success
+          getAllIntroData();
+          message.success("Ажилттай устгагдлаа");
+          console.log("success all language", res.data.data);
+        } else {
+          //unsuccessful
+          message.error("Алдаа гарлаа /үгийг интро видео устгах үед/");
+        }
+      })
+      .catch((err) => {
+        props.setLoader(false);
+        message.error("Алдаа гарлаа Grammar pattern");
+        console.log(err);
+      })
+  }
+
+
   const insertIntroVideoClicked = () => {
     grammerStates.isModalVisible = true;
+    grammerStates.action = "ADD_GRAMMAR";
     setGrammerStates({ ...grammerStates });
   };
+
+  const onChangeGrammarStructure = (val) => {
+    
+    grammerStates.grammarBuildPattern = val;
+    setGrammerStates({...grammerStates})
+
+    console.log("grammar pattern on change :  ", grammerStates.grammarBuildPattern);
+  }
 
   const insertIntroVideo = (values) => {
     console.log("insert data values", values);
@@ -216,6 +457,29 @@ export default function Index(props) {
       });
   };
 
+
+  const insertGrammarStructure = (values) => {
+    insertIntoGrammerStructureAPI(values, grammerStates.token)
+    .then((res) => {
+      grammerStates.loader = false;
+      setGrammerStates({ ...grammerStates });
+      if (res && res.data && res.data.status && res.data.status === true) {
+        //success
+        message.success("Ажилттай бүтэц нэмлээ");
+        console.log("successfully inserted grammar structure", res.data.data);
+      } else {
+        //unsuccessful
+        message.error("Алдаа гарлаа ");
+      }
+    })
+    .catch((e) => {
+      //unsuccessful
+      props.setLoader(false);
+      message.error("Алдаа гарлаа");
+      console.log(e);
+    });
+  }
+
   const updateIntroVideo = (values) => {
     console.log("update values", values);
     grammerStates.updateData = {
@@ -263,9 +527,104 @@ export default function Index(props) {
     }
   };
 
+  const onFinishDeleteGrammarStructure = () => {
+    deleteGrammarStructure(grammerStates.id)
+    getGrammarStructure(grammerStates.id)
+    grammerStates.isModalVisible = false;
+  }
+
+  const onFinishAddExample = (values) => {
+    values.grammar_id = grammerStates.id;
+
+    insertGrammarTableExample(values)
+    console.log("onfinish PISDAAAAAA", values);    
+    grammerStates.isModalVisible = false;
+  }
+
+  const insertGrammarTableExample = (data) => {
+    grammerStates.loader = true;
+    setGrammerStates({grammerStates});
+    insertGrammarTableExampleAPI(data, grammerStates.token)
+      .then((res) => {
+        grammerStates.loader = false;
+        setGrammerStates({ grammerStates });
+        if (res && res.data && res.data.status && res.data.status === true) {
+          //success
+          getAllIntroData();
+          message.success("Ажилттай устгагдлаа");
+          console.log("success all language", res.data.data);
+        } else {
+          //unsuccessful
+          message.error("Алдаа гарлаа /үгийг интро видео устгах үед/");
+        }
+      })
+      .catch((err) => {
+        props.setLoader(false);
+        message.error("Алдаа гарлаа Grammar pattern");
+        console.log(err);
+      })
+  }
+
+  const getGrammarTableExampleByGrammarID = () => {
+    grammerStates.loader = true;
+    setGrammerStates({grammerStates});
+    getGrammarTableExampleByGrammarIDAPI(grammerStates.id, grammerStates.token)
+      .then((res) => {
+        grammerStates.loader = false;
+        setGrammerStates({ grammerStates });
+        if (res && res.data && res.data.status && res.data.status === true) {
+          //success
+          // getAllIntroData();
+          grammerStates.getGrammarTableExample = res.data.data;
+          setGrammerStates({ ...grammerStates });
+          // message.success("Ажилттай устгагдлаа");
+          console.log("success all grammar examples", res.data.data);
+        } else {
+          //unsuccessful
+          message.error("Алдаа гарлаа ");
+        }
+      })
+      .catch((err) => {
+        props.setLoader(false);
+        message.error("Алдаа гарлаа Grammar pattern");
+        console.log(err);
+      })
+  }
+
+
+  const onFinishGrammarPattern = (values) => {
+    console.log("onfinish");
+    
+    var structures = [];
+    grammerStates.grammarBuildPattern.map((val, ind, arr) => {
+      grammerStates.grammarPattern.map((val1, ind1, arr1) => {
+        // console.log("val1 : ", val1);
+        if(val === val1.name_eng) {
+          var obj = {grammar_id : grammerStates.id, pattern_id : val1.id, ordering : structures.length + 1, type_label : 0,}
+          structures.push(obj)
+        }
+      })
+    });
+
+    grammerStates.insertGrammarStructure = {course_grammar_structures : structures};
+
+
+
+    if (grammerStates.action === "EDIT") {
+      console.log("edit values", values);
+      // updateIntroVideo(values);
+    } else {
+      console.log("insert grammar structure insert running");
+      insertGrammarStructure(grammerStates.insertGrammarStructure);
+    }
+
+    console.log("states :",grammerStates);
+  };
+
   const onFinishFailedIntroVideo = () => {
     console.log("onfinish failed");
   };
+  
 
   const onChangeCheck = (checkedValues) => {
     console.log("checked values", checkedValues.toString());
@@ -315,65 +674,268 @@ export default function Index(props) {
             setGrammerStates({ ...grammerStates });
           }}
         >
-          <Form
-            form={form}
-            name="addWord"
-            labelCol={{ span: 8}}
-            wrapperCol={{ span: 16 }}
-            initialValues={{ remember: true }}
-            onFinish={onFinishIntroVideo}
-            onFinishFailed={onFinishFailedIntroVideo}
-            autoComplete="off"
-          >
-            <Row>
-              <Col span={36}>
+          {(() => {
+            if (grammerStates.action === "ADD_GRAMMAR") {
+              return (
+              <Form
+                form={form}
+                name="addWord"
+                labelCol={{ span: 8}}
+                wrapperCol={{ span: 16 }}
+                initialValues={{ remember: true }}
+                onFinish={onFinishIntroVideo}
+                onFinishFailed={onFinishFailedIntroVideo}
+                autoComplete="off"
+              >
                 <Row>
-                  <Col span={12}>
-                    <Form.Item
-                      label="Монгол нэр"
-                      name="name_mon"
-                      rules={[
-                        { required: true, message: "Заавал бөглөнө үү!" },
-                      ]}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12} flex="auto">
-                    <Form.Item
-                      label="Англи нэр"
-                      name="name_eng"
-                      rules={[
-                        { required: true, message: "Заавал бөглөнө үү!" },
-                      ]}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item 
-                      label="Өгүүлбэрийн төрөл" 
-                      name="label"
-                      rules={[
-                        {required:true, message: "Заавал бөглөнө үү!" },
-                      ]} 
-                    >
-                      <Input/>
-                    </Form.Item>
+                  <Col span={36}>
+                    <Row>
+                      <Col span={12}>
+                        <Form.Item
+                          label="Монгол нэр"
+                          name="name_mon"
+                          rules={[
+                            { required: true, message: "Заавал бөглөнө үү!" },
+                          ]}
+                        >
+                          <Input />
+                        </Form.Item>
+                      </Col>
+                      <Col span={12} flex="auto">
+                        <Form.Item
+                          label="Англи нэр"
+                          name="name_eng"
+                          rules={[
+                            { required: true, message: "Заавал бөглөнө үү!" },
+                          ]}
+                        >
+                          <Input />
+                        </Form.Item>
+                      </Col>
+                      <Col span={12}>
+                        <Form.Item 
+                          label="Өгүүлбэрийн төрөл" 
+                          name="label"
+                          rules={[
+                            {required:true, message: "Заавал бөглөнө үү!" },
+                          ]} 
+                        >
+                          <Input/>
+                        </Form.Item>
+                      </Col>
+                    </Row>
                   </Col>
                 </Row>
-              </Col>
-            </Row>
-            <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
-              <Button
-                type="primary"
-                htmlType="submit"
-                style={{ width: "100%" }}
-              >
-                Хадгалах
-              </Button>
-            </Form.Item>
-          </Form>
+                <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{ width: "100%" }}
+                  >
+                    Хадгалах
+                  </Button>
+                </Form.Item>
+              </Form>
+              );
+            }   else if (grammerStates.action === "EDIT") {
+                return (
+                <Form
+                  form={form}
+                  name="addWord"
+                  labelCol={{ span: 8}}
+                  wrapperCol={{ span: 16 }}
+                  initialValues={{ remember: true }}
+                  onFinish={onFinishIntroVideo}
+                  onFinishFailed={onFinishFailedIntroVideo}
+                  autoComplete="off"
+                >
+                  <Row>
+                    <Col span={36}>
+                      <Row>
+                        <Col span={12}>
+                          <Form.Item
+                            label="Монгол нэр"
+                            name="name_mon"
+                            rules={[
+                              { required: true, message: "Заавал бөглөнө үү!" },
+                            ]}
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col span={12} flex="auto">
+                          <Form.Item
+                            label="Англи нэр"
+                            name="name_eng"
+                            rules={[
+                              { required: true, message: "Заавал бөглөнө үү!" },
+                            ]}
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                          <Form.Item 
+                            label="Өгүүлбэрийн төрөл" 
+                            name="label"
+                            rules={[
+                              {required:true, message: "Заавал бөглөнө үү!" },
+                            ]} 
+                          >
+                            <Input/>
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                  <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      style={{ width: "100%" }}
+                    >
+                      Хадгалах
+                    </Button>
+                  </Form.Item>
+                </Form>
+                );
+            } else if (grammerStates.action === "BUILD_STRUCTURE") {
+              return (
+                <Form
+                  form={form}
+                  name="addWord"
+                  labelCol={{ span: 8}}
+                  wrapperCol={{ span: 16 }}
+                  initialValues={{ remember: true }}
+                  onFinish={onFinishGrammarPattern}
+                  onFinishFailed={onFinishFailedIntroVideo}
+                  autoComplete="off"
+                >
+                   <Select
+                    mode="multiple"
+                    style={{ width: '100%' }}
+                    placeholder="select"
+                    onChange={onChangeGrammarStructure}
+                    optionLabelProp="label"
+                  >
+                    {grammerStates.grammarPattern.map((option) => (
+                      <Option value={option.name_eng}>{option.name_eng}</Option>
+                    ))}
+                  </Select>
+                  <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      style={{ width: "100%" }}
+                    >
+                      Хадгалах
+                    </Button>
+                  </Form.Item>
+                </Form>
+                );
+            } 
+            else if (grammerStates.action === "ADD_EXAMPLE") {
+              return (
+                <Form
+                  form={form}
+                  name="add_example"
+                  labelCol={{ span: 8}}
+                  wrapperCol={{ span: 16 }}
+                  initialValues={{ remember: true }}
+                  onFinish={onFinishAddExample}
+                  onFinishFailed={onFinishFailedIntroVideo}
+                  autoComplete="off"
+                >
+                   <Row>
+                    <Col span={36}>
+                      <Row>
+                        <Col span={18} flex="auto">
+                          <Form.Item
+                            label="Англи текст"
+                            name="eng_text"
+                            rules={[
+                              { required: true, message: "Заавал бөглөнө үү!" },
+                            ]}
+                          >
+                            <TextArea rows={5} />
+                          </Form.Item>
+                        </Col>
+                        <Col span={18} flex="auto">
+                          <Form.Item 
+                            label="Монгол текст" 
+                            name="mon_text"
+                            rules={[
+                              {required:true, message: "Заавал бөглөнө үү!" },
+                            ]} 
+                          >
+                            <TextArea rows={5}/>
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                  <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      style={{ width: "100%" }}
+                    >
+                      Хадгалах
+                    </Button>
+                  </Form.Item>
+                </Form>
+                );
+            } else if (grammerStates.action === "SEE_STRUCTURE") {
+              return (
+                <Form
+                  form={form}
+                  name="addWord"
+                  labelCol={{ span: 8}}
+                  wrapperCol={{ span: 16 }}
+                  initialValues={{ remember: true }}
+                  onFinish={onFinishDeleteGrammarStructure}
+                  onFinishFailed={onFinishFailedIntroVideo}
+                  autoComplete="off"
+                >
+                  <Table columns={columns_grammar_structure} dataSource={grammerStates.getGrammarStructure} />
+                  <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      style={{ width: "100%" }}
+                    >
+                      УСТГАХ
+                    </Button>
+                  </Form.Item>
+                </Form>
+                );
+            } else if (grammerStates.action === "SEE_EXAMPLES") {
+              return (
+                <Form
+                  form={form}
+                  name="addWord"
+                  labelCol={{ span: 8}}
+                  wrapperCol={{ span: 16 }}
+                  initialValues={{ remember: true }}
+                  onFinish={onFinishDeleteGrammarStructure}
+                  onFinishFailed={onFinishFailedIntroVideo}
+                  autoComplete="off"
+                >
+                  <Table columns={columns_grammar_example} dataSource={grammerStates.getGrammarTableExample} />
+                  <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      style={{ width: "100%" }}
+                    >
+                      УСТГАХ
+                    </Button>
+                  </Form.Item>
+                </Form>
+                );
+            }
+          })()}
+          
         </Modal>
       </Spin>
     </Card>
