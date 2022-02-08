@@ -186,3 +186,97 @@ export function getGrammarTableExampleByGrammarIDAPI(id, token) {
       .catch((err) => reject(err));
   });
 }
+
+// ----------------------------------------- Delete  GRAMMER EXAMPLE -----------------------------------------
+
+export function deleteGrammarTableExampleByGrammarIDAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/course-grammar-table-example/delete/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+// ----------------------------------------- Update  GRAMMER EXAMPLE -----------------------------------------
+
+export function updateGrammarTableExampleByGrammarIDAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/api/course-grammar-table-example/update",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+// ----------------------------------------- POST insert GRAMMER EXAMPLE PATTERN -----------------------------------------
+
+export function insertGrammarTableExamplePatternAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/course-grammar-table-example-pattern/insert-many",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+// ----------------------------------------- GET get GRAMMER EXAMPLE PATTERN -----------------------------------------
+
+export function getGrammarTableExamplePatternByGrammarIDAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/course-grammar-table-example-pattern/profile-by-grammar-id/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+// ----------------------------------------- Delete del GRAMMER EXAMPLE PATTERNs -----------------------------------------
+
+export function deleteGrammarTableExamplePatternByGrammarIDAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/course-grammar-table-example-pattern/delete-by-grammar-id/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}

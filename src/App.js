@@ -43,6 +43,7 @@ function App() {
   const [courseIds, setCourseIds] = useState({
     introVideoId: null,
     mixedVideoId: null,
+    grammarId : null,
   });
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} spin />;
 
@@ -111,6 +112,8 @@ function App() {
                     setUserData={setUserData}
                     loader={loader}
                     setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
                   />
                 }
               />
@@ -122,6 +125,7 @@ function App() {
                     setUserData={setUserData}
                     loader={loader}
                     setLoader={setLoader}
+                    setCourseIds={setCourseIds}
                   />
                 }
               />
@@ -133,6 +137,7 @@ function App() {
                     setUserData={setUserData}
                     loader={loader}
                     setLoader={setLoader}
+                    setCourseIds={setCourseIds}
                   />
                 }
               />
@@ -144,6 +149,8 @@ function App() {
                     setUserData={setUserData}
                     loader={loader}
                     setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
                   />
                 }
               />

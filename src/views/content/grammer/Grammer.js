@@ -255,9 +255,9 @@ export default function Index(props) {
             <Button
               onClick={() => {
                 console.log("Cue button intro video records ID==>", record.id);
-                navigate("/content/grammar-table-example");
-                props.grammarId = record.id;
-                props.setCourseIds({ ...props.grammarId });
+                navigate("/content/grammer-table-example");
+                props.courseIds.grammarId = record.id;
+                props.setCourseIds({ ...props.courseIds });
               }}
               icon={<ArrowsAltOutlined style={{ color: "#3e79f7" }} />}
             />
