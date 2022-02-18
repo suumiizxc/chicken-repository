@@ -18,7 +18,8 @@ import Grammer from "./views/content/grammer/Grammer";
 import GrammerStructure from "./views/content/grammer_structure/GrammerStructure";
 import GrammerPattern from "./views/content/grammer_pattern/GrammerPattern";
 import GrammerTableExample from "./views/content/grammar_table_example/GrammarTableExample";
-
+import Writing from "./views/writing/writing";
+import WritingVideo from "./views/writing/writingVideo";
 
 import "./App.css";
 import "./css/index.css";
@@ -44,6 +45,7 @@ function App() {
     introVideoId: null,
     mixedVideoId: null,
     grammarId : null,
+    writingId : null,
   });
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} spin />;
 
@@ -145,6 +147,32 @@ function App() {
                 path="/content/grammer-table-example"
                 element={
                   <GrammerTableExample
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/content/writing"
+                element={
+                  <Writing
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+               <Route
+                path="/content/writing-video"
+                element={
+                  <WritingVideo
                     userData={userData}
                     setUserData={setUserData}
                     loader={loader}

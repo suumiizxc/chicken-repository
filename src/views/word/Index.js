@@ -35,6 +35,7 @@ import {
 } from "../../services/Word_service";
 
 const { Search } = Input;
+const { TextArea } = Input;
 
 export default function Index(props) {
   const { Option } = Select;
@@ -48,6 +49,7 @@ export default function Index(props) {
     types: null,
     language_id: null,
     word_id: null,
+    get_word_count : 0,
     insertWord: {
       language_id: null,
       word: null,
@@ -202,13 +204,18 @@ export default function Index(props) {
       title: "Ажилтан",
       dataIndex: "created_by",
       key: "created_by",
+      render: (text, record) => (
+        <Space size="middle">
+          {record.created_user.first_name + " " + record.created_user.last_name}
+        </Space>
+      ),
     },
     {
       title: "Үйлдэл",
       key: "action",
       render: (text, record) => (
         <Space size="middle">
-          <Popconfirm
+          {/* <Popconfirm
             placement="topLeft"
             htmlType="submit"
             title={"Мэдээллийг устгахад итгэлтэй байна уу?"}
@@ -220,7 +227,7 @@ export default function Index(props) {
             cancelText="Үгүй"
           >
             <Button icon={<DeleteOutlined style={{ color: "#FF6B72" }} />} />
-          </Popconfirm>
+          </Popconfirm> */}
           <Button
             onClick={() => {
               wordStates.isModalVisible = true;
@@ -455,7 +462,7 @@ export default function Index(props) {
             wordStates.isModalVisible = false;
             setWordStates(wordStates);
             getAllWords();
-            message.success("Ажилттай засагдлаа");
+            message.success("Амжилттай засагдлаа");
             form.resetFields();
           } else {
             //unsuccessful
@@ -523,7 +530,7 @@ export default function Index(props) {
             setWordStates({ ...wordStates });
             // Translation inser
             form.resetFields();
-            message.success("Ажилттай нэмэгдлээ..");
+            message.success("Амжилттай нэмэгдлээ..");
           } else {
             //unsuccessful
             setWordLoader(false);
@@ -555,7 +562,8 @@ export default function Index(props) {
     getFindWords(val, token)
       .then((res) => {
         console.log("success + ", res)
-        wordStates.data = [...res.data.equally, ...res.data.likely];
+        wordStates.data = [ ...res.data.likely];
+        wordStates.get_word_count = wordStates.data.length;
         
         setWordStates({...wordStates})
       })
@@ -577,6 +585,7 @@ export default function Index(props) {
 
           console.log("success all words", res.data.data);
           wordStates.data = res.data.data;
+          wordStates.get_word_count = wordStates.data.length;
           setWordStates({ ...wordStates });
         } else {
           //unsuccessful
@@ -653,6 +662,12 @@ export default function Index(props) {
   //   }
   // }, [setShowWordStateOption]);
 
+
+
+
+
+  
+
   return (
     <Card title={"Үгсийн сан"} style={{ margin: 15, width: "100%" }}>
       <Spin
@@ -670,6 +685,9 @@ export default function Index(props) {
         <Space direction="vertical" style={{marginBottom:16,}}>
           <Search placeholder="input search text" onSearch={onSearchWord} style={{ width: 200 }} />
         </Space>
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <label>Бүх үгийн тоо : {wordStates.get_word_count}</label>
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <Button
@@ -749,7 +767,8 @@ export default function Index(props) {
                         { required: true, message: "Заавал бөглөнө үү!" },
                       ]}
                     >
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
@@ -807,64 +826,82 @@ export default function Index(props) {
                 <Row>
                   <Col span={12}>
                     <Form.Item label={"noun"} name={"noun"}>
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
                     <Form.Item label={"verb"} name={"verb"}>
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
                     <Form.Item label={"adjective"} name={"adjective"}>
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
                     <Form.Item label={"adverb"} name={"adverb"}>
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
                     <Form.Item label={"pronoun"} name={"pronoun"}>
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
                     <Form.Item label={"preposition"} name={"preposition"}>
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
                     <Form.Item label={"conjunction"} name={"conjunction"}>
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
 
                     <Form.Item label={"determiner"} name={"determiner"}>
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
                     <Form.Item label={"exclamation"} name={"exclamation"}>
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
                   </Col>
                   <Col span={12}>
                     <Form.Item label={"modal_verb"} name={"modal_verb"}>
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
                     <Form.Item label={"phrasal_verb"} name={"phrasal_verb"}>
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
                     <Form.Item label={"idiom"} name={"idiom"}>
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
                     <Form.Item label={"auxilary_verb"} name={"auxilary_verb"}>
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
                     <Form.Item label={"phrase"} name={"phrase"}>
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
                     <Form.Item label={"example_1"} name={"example_1"}>
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
                     <Form.Item label={"example_2"} name={"example_2"}>
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
                     <Form.Item label={"example_3"} name={"example_3"}>
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
                     <Form.Item
                       label={"translation_to_origin"}
                       name={"translation_to_origin"}
                     >
-                      <Input />
+                      {/* <Input /> */}
+                      <TextArea autoSize={{ minRows: 3}}/>
                     </Form.Item>
                   </Col>
                 </Row>

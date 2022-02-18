@@ -9,8 +9,8 @@ export const LoginForm = (props) => {
   const { showForgetPassword, onForgetPasswordClick } = props;
 
   const initialCredential = {
-    email: "contentmaker4@gmail.com",
-    password: "mongol",
+    // email: "contentmaker4@gmail.com",
+    // password: "mongol",
   };
 
   const onFailed = () => {

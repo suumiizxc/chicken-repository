@@ -53,7 +53,7 @@ export default function Index(props) {
     },
     updateData: {
       id: null,
-      mixed_video_id: 821,
+      mixed_video_id: null,
       ordering: 1,
     },
   });
@@ -153,6 +153,8 @@ export default function Index(props) {
               setIntroVideoCueStates({ ...introVideoCueStates });
               getFormData(record);
               introVideoCueStates.updateData.id = record.id;
+              introVideoCueStates.updateData.mixed_video_id = record.mixed_video_id;
+              introVideoCueStates.updateData.ordering = record.ordering;
               introVideoCueStates.isModalVisible = true;
               setIntroVideoCueStates({ ...introVideoCueStates });
             }}
@@ -327,18 +329,27 @@ export default function Index(props) {
   };
 
   const updateIntroCueVideo = (value) => {
-    console.log("UPDATE VALUES-->", value);
-    var update_from_language_is_default =
-      introVideoCueStates.from_language_is_default == null
-        ? "0"
-        : value.from_language_is_default;
-    var update_to_language_is_default =
-      introVideoCueStates.from_language_is_default == null
-        ? "0"
-        : value.to_language_is_default;
+    console.log("UPDATE VALUES--> PISDAAA", introVideoCueStates);
+    // var update_from_language_is_default =
+    //   introVideoCueStates.from_language_is_default === "1"
+    //     ? "1"
+    //     : "";
+    // var update_to_language_is_default =
+    //   introVideoCueStates.to_language_is_default === "1"
+    //     ? "1"
+    //     : "";
+    var update_from_language_is_default, update_to_language_is_default;
+
+    if(introVideoCueStates.from_language_is_default === "1") {
+      update_from_language_is_default = "1";
+      update_to_language_is_default = ""
+    } else {
+      update_from_language_is_default = "";
+      update_to_language_is_default = "1"
+    }
     var update_grammar_is_highlighted =
-      introVideoCueStates.grammar_is_highlighted == null
-        ? "0"
+      introVideoCueStates.grammar_is_highlighted === null
+        ? ""
         : value.grammar_is_highlighted;
 
     introVideoCueStates.updateData = {
@@ -347,14 +358,14 @@ export default function Index(props) {
       mixed_video_id: introVideoCueStates.updateData.mixed_video_id,
       start_time: value.start_time,
       end_time: value.end_time,
-      from_language_id: 1,
+      from_language_id: 2,
       from_language_translation: value.from_language_translation,
       from_language_is_default: update_from_language_is_default,
-      to_language_id: 2,
+      to_language_id: 1,
       to_language_translation: value.to_language_translation,
       to_language_is_default: update_to_language_is_default,
       grammar_description: value.grammar_description,
-      grammar_is_highlighted: update_grammar_is_highlighted,
+      grammar_is_highlighted: introVideoCueStates.grammar_is_highlighted != null ? (String(introVideoCueStates.grammar_is_highlighted)) : (""),
     };
     setIntroVideoCueStates({ ...introVideoCueStates });
     updateMixedVideoCueAPI(
@@ -441,7 +452,7 @@ export default function Index(props) {
     );
     introVideoCueStates.grammar_is_highlighted == null
       ? (introVideoCueStates.grammar_is_highlighted =
-          checkedValues.target.defaultValue)
+          1)
       : (introVideoCueStates.grammar_is_highlighted = null);
     setIntroVideoCueStates({ ...introVideoCueStates });
   };
@@ -581,7 +592,7 @@ export default function Index(props) {
                         >
                           <Checkbox
                             onChange={onChangeCheckE}
-                            defaultValue={"2"}
+                            defaultValue={"1"}
                             checked={
                               introVideoCueStates.from_language_is_default
                             }
@@ -747,7 +758,7 @@ export default function Index(props) {
                   >
                     <Checkbox
                       onChange={onChangeCheckE}
-                      defaultValue={"2"}
+                      defaultValue={"1"}
                       checked={introVideoCueStates.from_language_is_default}
                       disabled={introVideoCueStates.to_language_is_default}
                     ></Checkbox>
@@ -788,7 +799,7 @@ export default function Index(props) {
                     name="grammar_description"
                     rules={[
                       {
-                        required: true,
+                        required: false,
                         message: "Заавал бөглөнө үү!",
                       },
                     ]}

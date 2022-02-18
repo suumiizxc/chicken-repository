@@ -23,7 +23,7 @@ export default function Side_nav() {
     } else if (e.key === "2.1") {
       navigate("/content/grammer");
     } else if (e.key === "2.2") {
-      navigate("/content/grammer-table-example");
+      navigate("/content/writing");
     } 
   };
   const toggleCollapsed = () => {
@@ -76,7 +76,7 @@ export default function Side_nav() {
         </Menu.Item>
         <SubMenu key="2" icon={<BankOutlined />} title="Контент">
           <Menu.Item key="2.1">{"Дүрэм"}</Menu.Item>
-          <Menu.Item key="2.2">{"Дүрэм жишээ"}</Menu.Item>
+          <Menu.Item key="2.2">{"Writing"}</Menu.Item>
         </SubMenu>
         <SubMenu key="3" icon={<MailOutlined />} title="Курс">
           {/* <Menu.ItemGroup key="3.1" title="Курс"> */}

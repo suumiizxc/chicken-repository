@@ -320,7 +320,7 @@ export function updateMixedVideoCueAPI(data, token) {
   return new Promise((resolve, reject) => {
     axios({
       method: "put",
-      url: url + "/course-intro-video-cue/update",
+      url: url + "/api/course-mixed-video-cue/update",
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
