@@ -25,6 +25,9 @@ export default function Side_nav() {
     } else if (e.key === "2.2") {
       navigate("/content/writing");
     } 
+    else if (e.key === "2.3") {
+      navigate("/content/listening");
+    }
   };
   const toggleCollapsed = () => {
     collapse ? setCollapse(false) : setCollapse(true);
@@ -77,6 +80,7 @@ export default function Side_nav() {
         <SubMenu key="2" icon={<BankOutlined />} title="Контент">
           <Menu.Item key="2.1">{"Дүрэм"}</Menu.Item>
           <Menu.Item key="2.2">{"Writing"}</Menu.Item>
+          <Menu.Item key="2.3">{"Listening"}</Menu.Item>
         </SubMenu>
         <SubMenu key="3" icon={<MailOutlined />} title="Курс">
           {/* <Menu.ItemGroup key="3.1" title="Курс"> */}

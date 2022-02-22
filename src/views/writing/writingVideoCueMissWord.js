@@ -30,10 +30,14 @@ import {
   ArrowsAltOutlined,
 } from "@ant-design/icons";
 import {
-    getAllWritingVideoByWIDAPI,
-    insertWritingVideoAPI,
-    deleteWritingVideoAPI,
-    updateWritingVideoAPI,
+    getAllWritingVideoCueByVIDAPI,
+    getAllWritingVideoCueMissWordByCIDAPI,
+    insertWritingVideoCueAPI,
+    insertWritingVideoCueMissWordAPI,
+    deleteWritingVideoCueAPI,
+    deleteWritingVideoCueMissWordAPI,
+    updateWritingVideoCueAPI,
+    updateWritingVideoCueMissWordAPI,
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
 
@@ -52,6 +56,9 @@ export default function Index(props) {
     host_source: null,
     insertData: null,
     id : null,
+    maxOrdering : 1, 
+    writingVideoId : null,
+    writingVideoCueId : null,
     updateData:{
         id : null
     },
@@ -63,24 +70,44 @@ export default function Index(props) {
       key :"id"
     },
     {
-      title : "Writing Id",
-      dataIndex : "writing_id",
-      key :"writing_id"
+      title : "Cue id",
+      dataIndex : "cue_id",
+      key : "cue_id"  
     },
     {
-        title : "Host Url",
-        dataIndex : "host_url",
-        key : "host_url",
+      title : "Ordering",
+      dataIndex : "ordering",
+      key : "ordering"  
     },
     {
-        title : "Ordering",
-        dataIndex : "ordering",
-        key : "ordering",
+      title : "Main text",
+      dataIndex : "main_text",
+      key : "main_text",  
     },
     {
-        title : "IsActive",
-        dataIndex : "is_active",
-        key : "is_active",
+        title : "Word value",
+        dataIndex : "word_value",
+        key : "word_value",  
+    },
+    {
+        title : "Space next",
+        dataIndex : "space_next",
+        key : "space_next",  
+    },
+    {
+        title : "Is visible",
+        dataIndex : "is_visible",
+        key : "is_visible",  
+    },
+    {
+        title : "Has hint",
+        dataIndex : "has_hint",
+        key : "has_hint",  
+    },
+    {
+        title : "Hint text",
+        dataIndex : "hint_text",
+        key : "hint_text",  
     },
     {
         title : "Үйлдэл",
@@ -95,7 +122,7 @@ export default function Index(props) {
                     title={"Мэдээллийг устгахад итгэлтэй байна уу?"}
                     onConfirm={() => {
                     console.log("delete record", record);
-                    deleteWritingVideoData(record.id);
+                    deleteWritingVideoCueData(record.id);
                     }}
                     okText="Тийм"
                     cancelText="Үгүй"
@@ -117,17 +144,17 @@ export default function Index(props) {
                     }}
                     icon={<EditOutlined style={{ color: "#3e79f7" }} />}
                 />
-                <Tooltip placement="topRight" title="Видео руу үсрэх">
+                {/* <Tooltip placement="topRight" title="Видео руу үсрэх">
                     <Button
                     onClick={() => {
                         console.log("Cue button intro video records ID==>", record.id);
-                        navigate("/content/writing-video-cue");
-                        props.courseIds.writingVideoId = record.id;
+                        navigate("/content/writing-video-cue-miss-word");
+                        props.courseIds.writingVideoCueId = record.id;
                         props.setCourseIds({ ...props.courseIds });
                     }}
                     icon={<ArrowsAltOutlined style={{ color: "#3e79f7" }} />}
                     />
-                </Tooltip>
+                </Tooltip> */}
             </Space>
         )
     }
@@ -138,18 +165,23 @@ export default function Index(props) {
   
     // setIntroVideoCueStates({ ...introVideoCueStates });
     form.setFieldsValue({
-        writing_id : record.writing_id,
-        host_url : record.host_url,
+        id : record.id,
+        cue_id : record.cue_id,
         ordering : record.ordering,
-        is_active : record.is_active,
+        main_text : record.main_text,
+        word_value : record.word_value,
+        space_next : record.space_next,
+        is_visible : record.is_visible,
+        has_hint : record.has_hint,
+        hint_text : record.hint_text,
     });
   };
 
   //GET All writing list
-  const getAllWritingVideo = (id) => {
+  const getAllWritingVideoCue = (id) => {
     writingVideoStates.loader = true;
     setWritingVideoStates({ writingVideoStates });
-    getAllWritingVideoByWIDAPI(id,writingVideoStates.token)
+    getAllWritingVideoCueMissWordByCIDAPI(id,writingVideoStates.token)
       .then((res) => {
         writingVideoStates.loader = false;
         setWritingVideoStates({ writingVideoStates });
@@ -171,20 +203,21 @@ export default function Index(props) {
       });
   };
 
-  const deleteWritingVideoData = (id) => {
+  const deleteWritingVideoCueData = (id) => {
     writingVideoStates.loader = true;
     setWritingVideoStates({writingVideoStates})
-    deleteWritingVideoAPI(id, writingVideoStates.token)
+    deleteWritingVideoCueMissWordAPI(id, writingVideoStates.token)
     .then((res) => {
       writingVideoStates.loader = false;
       setWritingVideoStates({ writingVideoStates });
       if (res && res.data && res.data.status && res.data.status === true) {
         //success
         // writingVideoStates.data = res.data.data;
-        getAllWritingVideo(props.courseIds.writingId);
-        setWritingVideoStates({ ...writingVideoStates });
-        console.log("success delete writing", res.data.data);
-        getAllWritingVideo(props.courseIds.writingId);
+        // getAllWritingVideoCue(props.courseIds.writingId);
+        // setWritingVideoStates({ ...writingVideoStates });
+        // console.log("success delete writing", res.data.data);
+        message.success("Амжилттай устгалаа")
+        getAllWritingVideoCue(writingVideoStates.writingVideoCueId);
       } else {
         //unsuccessful
         message.error("Алдаа гарлаа");
@@ -201,22 +234,34 @@ export default function Index(props) {
 
   const insertWritingVideo = () => {
     
-    writingVideoStates.action = "ADD_WRITING_VIDEO";
+    writingVideoStates.action = "ADD_WRITING_VIDEO_CUE";
     writingVideoStates.isModalVisible = true;
+    getFormData({
+        id : "",
+        cue_id : "",
+        ordering : "",
+        main_text : "",
+        word_value : "",
+        space_next : "",
+        is_visible : "",
+        has_hint : "",
+        hint_text : "",
+    })
     setWritingVideoStates({ ...writingVideoStates });
   };
 
 
-  const insertWritingVideoData = (data) => {
+  const insertWritingVideoCueData = (data) => {
     writingVideoStates.loader = true;
     setWritingVideoStates({writingVideoStates})
-    insertWritingVideoAPI(data, writingVideoStates.token)
+    insertWritingVideoCueMissWordAPI(data, writingVideoStates.token)
       .then((res) => {
         writingVideoStates.loader = false;
         setWritingVideoStates({writingVideoStates})
         if (res && res.data && res.data.status && res.data.status === true) {
           //success
           writingVideoStates.insertData = res.data.data;
+          getAllWritingVideoCue(props.courseIds.writingVideoCueId);
           setWritingVideoStates({ ...writingVideoStates });
           console.log("success all writing", res.data.data);
         } else {
@@ -226,22 +271,24 @@ export default function Index(props) {
       })
       .catch((e) => {
         props.setLoader(false);
-        message.error("Алдаа гарлаа Сумъяад мэдэгдэнэ үү");
+        message.error("Алдаа гарлаа ");
         console.log(e);
       })
   }
 
-  const updateWritingVideoData = (data) => {
+  const updateWritingVideoCueData = (data) => {
     writingVideoStates.loader = true;
     setWritingVideoStates({writingVideoStates})
-    updateWritingVideoAPI(data, writingVideoStates.token)
+    updateWritingVideoCueMissWordAPI(data, writingVideoStates.token)
       .then((res) => {
         writingVideoStates.loader = false;
         setWritingVideoStates({writingVideoStates})
         if (res && res.data && res.data.status && res.data.status === true) {
           //success
           writingVideoStates.updateData = res.data.data;
+          getAllWritingVideoCue(props.courseIds.writingVideoCueId);
           setWritingVideoStates({ ...writingVideoStates });
+          message.success("Амжилттай заслаа")
           console.log("success update writing", res.data.data);
         } else {
           //unsuccessful
@@ -250,7 +297,7 @@ export default function Index(props) {
       })
       .catch((e) => {
         props.setLoader(false);
-        message.error("Алдаа гарлаа Сумъяад мэдэгдэнэ үү");
+        message.error("Алдаа гарлаа");
         console.log(e);
       })
   }
@@ -258,16 +305,35 @@ export default function Index(props) {
 
   const onFinishVideoWriting = (values) => {
       console.log("on finish writing")
-      if(writingVideoStates.action == "ADD_WRITING_VIDEO") {
-        var insertObj = {writing_id : props.courseIds.writingId, host_url : values.host_url, ordering : parseInt(values.ordering), is_active : parseInt(values.is_active)};
-        insertWritingVideoData(insertObj)
-        getAllWritingVideo(props.courseIds.writingId);
+      if(writingVideoStates.action == "ADD_WRITING_VIDEO_CUE") {
+        var insertObj = {
+            cue_id : props.courseIds.writingVideoCueId,
+            ordering : parseInt(values.ordering),
+            main_text : values.main_text,
+            word_value : values.word_value,
+            space_next : parseInt(values.space_next),
+            is_visible : parseInt(values.is_visible),
+            has_hint : parseInt(values.has_hint),
+            hint_text : values.hint_text,
+        };
+        insertWritingVideoCueData(insertObj)
+        getAllWritingVideoCue(writingVideoStates.writingVideoCueId);
         
       } else if (writingVideoStates.action == "EDIT") {
-        var updateObj = {id : writingVideoStates.id, writing_id : props.courseIds.writingId, host_url : values.host_url, ordering : parseInt(values.ordering), is_active : parseInt(values.is_active)};
-        console.log("PISDAAAADASDADA : ", updateObj)
-        updateWritingVideoData(updateObj)
-        getAllWritingVideo(props.courseIds.writingId);
+        var updateObj = {
+            id : writingVideoStates.id, 
+            cue_id : props.courseIds.writingVideoCueId,
+            ordering : parseInt(values.ordering),
+            main_text : values.main_text,
+            word_value : values.word_value,
+            space_next : parseInt(values.space_next),
+            is_visible : parseInt(values.is_visible),
+            has_hint : parseInt(values.has_hint),
+            hint_text : values.hint_text,
+        };
+        console.log("UPDATE OBJ : ", updateObj)
+        updateWritingVideoCueData(updateObj)
+        getAllWritingVideoCue(props.courseIds.writingVideoCueId);
       }
       writingVideoStates.isModalVisible = false;
       setWritingVideoStates({ ...writingVideoStates });
@@ -278,7 +344,9 @@ export default function Index(props) {
 
   useEffect(() => {
     console.log("writing useffect");
-    getAllWritingVideo(props.courseIds.writingId);
+    getAllWritingVideoCue(props.courseIds.writingVideoCueId);
+    writingVideoStates.writingVideoCueId = props.courseIds.writingVideoCueId;
+
   }, []);
 
 return (
@@ -321,7 +389,7 @@ return (
               color: "#FFFFFF",
             }}
           >
-            Writing видео нэмэх
+            Writing видео cue нэмэх
           </Button>
         </div>
         <Table columns={columns} dataSource={writingVideoStates.data} />
@@ -351,12 +419,13 @@ return (
               autoComplete="off"
             >
                   <Row>
+                  <Divider>Word add</Divider>
                       <Col span={24}>
                           <Row>
                               <Col span={8}>
                                   <Form.Item
-                                  name={"host_url"}
-                                  label="Host url"
+                                  name={"cue_id"}
+                                  label="Cue id"
                                   >
                                       <Input />
                                   </Form.Item>
@@ -371,12 +440,61 @@ return (
                               </Col>
                               <Col span={8}>
                                   <Form.Item
-                                  name={"is_active"}
-                                  label="Is active"
+                                  name={"main_text"}
+                                  label="Main text"
                                   >
                                       <Input />
                                   </Form.Item>
                               </Col>
+                              {/* <Col span={8}>
+                                  <Form.Item
+                                  name={"video_id"}
+                                  label="Video id"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col> */}
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"word_value"}
+                                  label="Word value"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"space_next"}
+                                  label="Space next"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"is_visible"}
+                                  label="Is visible"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"has_hint"}
+                                  label="Has hint"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"hint_text"}
+                                  label="Hint text"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              
                           </Row>
                       </Col>
                   </Row>
@@ -391,7 +509,7 @@ return (
                         </Form.Item>
               </Form>
             )
-            } else if (writingVideoStates.action == "ADD_WRITING_VIDEO") {
+            } else if (writingVideoStates.action == "ADD_WRITING_VIDEO_CUE") {
               return(
               <Form
               form={form}
@@ -409,14 +527,6 @@ return (
                           <Row>
                               <Col span={8}>
                                   <Form.Item
-                                  name={"host_url"}
-                                  label="Host url"
-                                  >
-                                      <Input />
-                                  </Form.Item>
-                              </Col>
-                              <Col span={8}>
-                                  <Form.Item
                                   name={"ordering"}
                                   label="Ordering"
                                   >
@@ -425,12 +535,53 @@ return (
                               </Col>
                               <Col span={8}>
                                   <Form.Item
-                                  name={"is_active"}
-                                  label="Is active"
+                                  name={"main_text"}
+                                  label="Main text"
                                   >
                                       <Input />
                                   </Form.Item>
                               </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"word_value"}
+                                  label="Word value"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"space_next"}
+                                  label="Space next"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"is_visible"}
+                                  label="Is visible"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"has_hint"}
+                                  label="Has hint"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"hint_text"}
+                                  label="Hint text"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              
                           </Row>
                       </Col>
                   </Row>

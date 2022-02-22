@@ -82,7 +82,7 @@ export default function Index(props) {
     },
     {
       title : "Pattern id",
-      dataIndex : "pattern_id",
+      dataIndex : ["pattern", "name_eng"],
       key : "pattern_id",
     },
     {
@@ -634,6 +634,7 @@ export default function Index(props) {
   useEffect(() => {
     console.log("intro video useffect");
     getAllIntroData();
+    getAllIntroPatternData()
   }, []);
 
   return (

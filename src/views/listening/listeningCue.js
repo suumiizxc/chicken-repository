@@ -30,10 +30,10 @@ import {
   ArrowsAltOutlined,
 } from "@ant-design/icons";
 import {
-    getAllWritingVideoByWIDAPI,
-    insertWritingVideoAPI,
-    deleteWritingVideoAPI,
-    updateWritingVideoAPI,
+    getAllListeningCueByListeningAPI,
+    insertListeningCueAPI,
+    deleteListeningCueVideoAPI,
+    updateListeningCueAPI,
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
 
@@ -42,7 +42,7 @@ export default function Index(props) {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  const [writingVideoStates, setWritingVideoStates] = useState({
+  const [listeningCueStates, setListeningCueStates] = useState({
     token: localStorage.getItem("token"),
     card_title: "Видео интро",
     loader: false,
@@ -63,24 +63,29 @@ export default function Index(props) {
       key :"id"
     },
     {
-      title : "Writing Id",
-      dataIndex : "writing_id",
-      key :"writing_id"
+      title : "Listening id",
+      dataIndex : "listening_id",
+      key :"listening_id"
     },
     {
-        title : "Host Url",
-        dataIndex : "host_url",
-        key : "host_url",
+      title : "Host url",
+      dataIndex : "host_url",
+      key :"host_url"
     },
     {
-        title : "Ordering",
-        dataIndex : "ordering",
-        key : "ordering",
+      title : "Host source type",
+      dataIndex : "host_source_type",
+      key :"host_source_type"
     },
     {
-        title : "IsActive",
-        dataIndex : "is_active",
-        key : "is_active",
+      title : "Is active",
+      dataIndex : "is_active",
+      key :"is_active"
+    },
+    {
+      title : "Ordering",
+      dataIndex : "ordering",
+      key :"ordering"
     },
     {
         title : "Үйлдэл",
@@ -106,23 +111,23 @@ export default function Index(props) {
                     onClick={() => {
                     console.log("UPDATE/edit intro CUE video records==>", record);
                     console.log("introVideoCueStates updateIntroCueVideo");
-                    writingVideoStates.action = "EDIT";
-                    // setWritingVideoStates({ ...writingVideoStates });
+                    listeningCueStates.action = "EDIT";
+                    // setListeningCueStates({ ...listeningCueStates });
                     // getAllWriting(record);
-                    writingVideoStates.updateData = record;
-                    writingVideoStates.id = record.id;
-                    writingVideoStates.isModalVisible = true;
+                    listeningCueStates.updateData = record;
+                    listeningCueStates.id = record.id;
+                    listeningCueStates.isModalVisible = true;
                     getFormData(record);
-                    setWritingVideoStates({ ...writingVideoStates });
+                    setListeningCueStates({ ...listeningCueStates });
                     }}
                     icon={<EditOutlined style={{ color: "#3e79f7" }} />}
                 />
-                <Tooltip placement="topRight" title="Видео руу үсрэх">
+                <Tooltip placement="topRight" title="Question руу үсрэх">
                     <Button
                     onClick={() => {
                         console.log("Cue button intro video records ID==>", record.id);
-                        navigate("/content/writing-video-cue");
-                        props.courseIds.writingVideoId = record.id;
+                        navigate("/content/listening-question");
+                        props.courseIds.listeningCueId = record.id;
                         props.setCourseIds({ ...props.courseIds });
                     }}
                     icon={<ArrowsAltOutlined style={{ color: "#3e79f7" }} />}
@@ -140,6 +145,7 @@ export default function Index(props) {
     form.setFieldsValue({
         writing_id : record.writing_id,
         host_url : record.host_url,
+        host_source_type : record.host_source_type,
         ordering : record.ordering,
         is_active : record.is_active,
     });
@@ -147,16 +153,16 @@ export default function Index(props) {
 
   //GET All writing list
   const getAllWritingVideo = (id) => {
-    writingVideoStates.loader = true;
-    setWritingVideoStates({ writingVideoStates });
-    getAllWritingVideoByWIDAPI(id,writingVideoStates.token)
+    listeningCueStates.loader = true;
+    setListeningCueStates({ listeningCueStates });
+    getAllListeningCueByListeningAPI(id,listeningCueStates.token)
       .then((res) => {
-        writingVideoStates.loader = false;
-        setWritingVideoStates({ writingVideoStates });
+        listeningCueStates.loader = false;
+        setListeningCueStates({ listeningCueStates });
         if (res && res.data && res.data.status && res.data.status === true) {
           //success
-          writingVideoStates.data = res.data.data;
-          setWritingVideoStates({ ...writingVideoStates });
+          listeningCueStates.data = res.data.data;
+          setListeningCueStates({ ...listeningCueStates });
           console.log("success all writing", res.data.data);
         } else {
           //unsuccessful
@@ -172,19 +178,19 @@ export default function Index(props) {
   };
 
   const deleteWritingVideoData = (id) => {
-    writingVideoStates.loader = true;
-    setWritingVideoStates({writingVideoStates})
-    deleteWritingVideoAPI(id, writingVideoStates.token)
+    listeningCueStates.loader = true;
+    setListeningCueStates({listeningCueStates})
+    deleteListeningCueVideoAPI(id, listeningCueStates.token)
     .then((res) => {
-      writingVideoStates.loader = false;
-      setWritingVideoStates({ writingVideoStates });
+      listeningCueStates.loader = false;
+      setListeningCueStates({ listeningCueStates });
       if (res && res.data && res.data.status && res.data.status === true) {
         //success
-        // writingVideoStates.data = res.data.data;
-        getAllWritingVideo(props.courseIds.writingId);
-        setWritingVideoStates({ ...writingVideoStates });
+        // listeningCueStates.data = res.data.data;
+        // getAllWritingVideo(props.courseIds.listeningId);
+        setListeningCueStates({ ...listeningCueStates });
         console.log("success delete writing", res.data.data);
-        getAllWritingVideo(props.courseIds.writingId);
+        getAllWritingVideo(props.courseIds.listeningId);
       } else {
         //unsuccessful
         message.error("Алдаа гарлаа");
@@ -199,25 +205,25 @@ export default function Index(props) {
   }
 
 
-  const insertWritingVideo = () => {
+  const insertListeningCue = () => {
     
-    writingVideoStates.action = "ADD_WRITING_VIDEO";
-    writingVideoStates.isModalVisible = true;
-    setWritingVideoStates({ ...writingVideoStates });
+    listeningCueStates.action = "ADD_LISTENING_CUE";
+    listeningCueStates.isModalVisible = true;
+    setListeningCueStates({ ...listeningCueStates });
   };
 
 
-  const insertWritingVideoData = (data) => {
-    writingVideoStates.loader = true;
-    setWritingVideoStates({writingVideoStates})
-    insertWritingVideoAPI(data, writingVideoStates.token)
+  const insertListeningCueData = (data) => {
+    listeningCueStates.loader = true;
+    setListeningCueStates({listeningCueStates})
+    insertListeningCueAPI(data, listeningCueStates.token)
       .then((res) => {
-        writingVideoStates.loader = false;
-        setWritingVideoStates({writingVideoStates})
+        listeningCueStates.loader = false;
+        setListeningCueStates({listeningCueStates})
         if (res && res.data && res.data.status && res.data.status === true) {
           //success
-          writingVideoStates.insertData = res.data.data;
-          setWritingVideoStates({ ...writingVideoStates });
+          listeningCueStates.insertData = res.data.data;
+          setListeningCueStates({ ...listeningCueStates });
           console.log("success all writing", res.data.data);
         } else {
           //unsuccessful
@@ -231,17 +237,18 @@ export default function Index(props) {
       })
   }
 
-  const updateWritingVideoData = (data) => {
-    writingVideoStates.loader = true;
-    setWritingVideoStates({writingVideoStates})
-    updateWritingVideoAPI(data, writingVideoStates.token)
+  const updateListeningCueData = (data) => {
+    listeningCueStates.loader = true;
+    setListeningCueStates({listeningCueStates})
+    updateListeningCueAPI(data, listeningCueStates.token)
       .then((res) => {
-        writingVideoStates.loader = false;
-        setWritingVideoStates({writingVideoStates})
+        listeningCueStates.loader = false;
+        setListeningCueStates({listeningCueStates})
         if (res && res.data && res.data.status && res.data.status === true) {
           //success
-          writingVideoStates.updateData = res.data.data;
-          setWritingVideoStates({ ...writingVideoStates });
+          listeningCueStates.updateData = res.data.data;
+          // getAllWritingVideo(listeningCueStates.courseIds.listeningId);
+          setListeningCueStates({ ...listeningCueStates });
           console.log("success update writing", res.data.data);
         } else {
           //unsuccessful
@@ -256,21 +263,21 @@ export default function Index(props) {
   }
 
 
-  const onFinishVideoWriting = (values) => {
+  const onFinishListening = (values) => {
       console.log("on finish writing")
-      if(writingVideoStates.action == "ADD_WRITING_VIDEO") {
-        var insertObj = {writing_id : props.courseIds.writingId, host_url : values.host_url, ordering : parseInt(values.ordering), is_active : parseInt(values.is_active)};
-        insertWritingVideoData(insertObj)
-        getAllWritingVideo(props.courseIds.writingId);
+      if(listeningCueStates.action == "ADD_LISTENING_CUE") {
+        var insertObj = {listening_id : props.courseIds.listeningId, host_url : values.host_url, host_source_type : parseInt(values.host_source_type),  ordering : parseInt(values.ordering), is_active : parseInt(values.is_active)};
+        insertListeningCueData(insertObj)
+        getAllWritingVideo(props.courseIds.listeningId);
         
-      } else if (writingVideoStates.action == "EDIT") {
-        var updateObj = {id : writingVideoStates.id, writing_id : props.courseIds.writingId, host_url : values.host_url, ordering : parseInt(values.ordering), is_active : parseInt(values.is_active)};
+      } else if (listeningCueStates.action == "EDIT") {
+        var updateObj = {id : listeningCueStates.id, listening_id : props.courseIds.listeningId, host_url : values.host_url, host_source_type : parseInt(values.host_source_type), ordering : parseInt(values.ordering), is_active : parseInt(values.is_active)};
         console.log("PISDAAAADASDADA : ", updateObj)
-        updateWritingVideoData(updateObj)
-        getAllWritingVideo(props.courseIds.writingId);
+        updateListeningCueData(updateObj)
+        getAllWritingVideo(props.courseIds.listeningId);
       }
-      writingVideoStates.isModalVisible = false;
-      setWritingVideoStates({ ...writingVideoStates });
+      listeningCueStates.isModalVisible = false;
+      setListeningCueStates({ ...listeningCueStates });
   }
   const onFinishFailedWriting = () => {
       console.log("on finish failed writing")
@@ -278,14 +285,14 @@ export default function Index(props) {
 
   useEffect(() => {
     console.log("writing useffect");
-    getAllWritingVideo(props.courseIds.writingId);
+    getAllWritingVideo(props.courseIds.listeningId);
   }, []);
 
 return (
     <Card title={"Writing"} style={{ margin: 15, width: "100%" }}>
       <Spin
         tip=""
-        spinning={writingVideoStates.loader}
+        spinning={listeningCueStates.loader}
         indicator={antIcon}
         style={{
           position: "absolute",
@@ -297,7 +304,7 @@ return (
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <Button
             onClick={() => {
-              navigate("/content/writing");
+              navigate("/content/listening");
             }}
             icon={<RollbackOutlined />}
             // type="alert"
@@ -311,7 +318,7 @@ return (
             Буцах
           </Button>
           <Button
-            onClick={insertWritingVideo}
+            onClick={insertListeningCue}
             icon={<PlusCircleOutlined />}
             // type="alert"
             style={{
@@ -324,21 +331,21 @@ return (
             Writing видео нэмэх
           </Button>
         </div>
-        <Table columns={columns} dataSource={writingVideoStates.data} />
+        <Table columns={columns} dataSource={listeningCueStates.data} />
         <Modal
           title="Writing видео нэмэх"
           width={"90%"}
-          visible={writingVideoStates.isModalVisible}
+          visible={listeningCueStates.isModalVisible}
           footer={null}
           onCancel={() => {
             form.resetFields();
-            writingVideoStates.isModalVisible = false;
-            writingVideoStates.action = null;
-            setWritingVideoStates({ ...writingVideoStates });
+            listeningCueStates.isModalVisible = false;
+            listeningCueStates.action = null;
+            setListeningCueStates({ ...listeningCueStates });
           }}
         >
           {(() => {   
-            if(writingVideoStates.action == "EDIT") {
+            if(listeningCueStates.action == "EDIT") {
               return (
             <Form
               form={form}
@@ -346,7 +353,7 @@ return (
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 16 }}
               initialValues={{ remember: true }}
-              onFinish={onFinishVideoWriting}
+              onFinish={onFinishListening}
               onFinishFailed={onFinishFailedWriting}
               autoComplete="off"
             >
@@ -363,8 +370,8 @@ return (
                               </Col>
                               <Col span={8}>
                                   <Form.Item
-                                  name={"ordering"}
-                                  label="Ordering"
+                                  name={"host_source_type"}
+                                  label="Host source type"
                                   >
                                       <Input />
                                   </Form.Item>
@@ -373,6 +380,14 @@ return (
                                   <Form.Item
                                   name={"is_active"}
                                   label="Is active"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"ordering"}
+                                  label="ordering"
                                   >
                                       <Input />
                                   </Form.Item>
@@ -391,7 +406,7 @@ return (
                         </Form.Item>
               </Form>
             )
-            } else if (writingVideoStates.action == "ADD_WRITING_VIDEO") {
+            } else if (listeningCueStates.action == "ADD_LISTENING_CUE") {
               return(
               <Form
               form={form}
@@ -399,7 +414,7 @@ return (
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 16 }}
               initialValues={{ remember: true }}
-              onFinish={onFinishVideoWriting}
+              onFinish={onFinishListening}
               onFinishFailed={onFinishFailedWriting}
               autoComplete="off"
             >
@@ -417,8 +432,8 @@ return (
                               </Col>
                               <Col span={8}>
                                   <Form.Item
-                                  name={"ordering"}
-                                  label="Ordering"
+                                  name={"host_source_type"}
+                                  label="Host source type"
                                   >
                                       <Input />
                                   </Form.Item>
@@ -427,6 +442,14 @@ return (
                                   <Form.Item
                                   name={"is_active"}
                                   label="Is active"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"ordering"}
+                                  label="Ordering"
                                   >
                                       <Input />
                                   </Form.Item>

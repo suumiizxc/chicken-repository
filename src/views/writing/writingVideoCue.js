@@ -30,10 +30,10 @@ import {
   ArrowsAltOutlined,
 } from "@ant-design/icons";
 import {
-    getAllWritingVideoByWIDAPI,
-    insertWritingVideoAPI,
-    deleteWritingVideoAPI,
-    updateWritingVideoAPI,
+    getAllWritingVideoCueByVIDAPI,
+    insertWritingVideoCueAPI,
+    deleteWritingVideoCueAPI,
+    updateWritingVideoCueAPI,
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
 
@@ -52,6 +52,8 @@ export default function Index(props) {
     host_source: null,
     insertData: null,
     id : null,
+    maxOrdering : 1, 
+    writingVideoId : null,
     updateData:{
         id : null
     },
@@ -63,14 +65,14 @@ export default function Index(props) {
       key :"id"
     },
     {
-      title : "Writing Id",
-      dataIndex : "writing_id",
-      key :"writing_id"
+        title : "Start time",
+        dataIndex : "start_time",
+        key : "start_time",
     },
     {
-        title : "Host Url",
-        dataIndex : "host_url",
-        key : "host_url",
+        title : "End time",
+        dataIndex : "end_time",
+        key : "end_time",
     },
     {
         title : "Ordering",
@@ -78,10 +80,47 @@ export default function Index(props) {
         key : "ordering",
     },
     {
-        title : "IsActive",
-        dataIndex : "is_active",
-        key : "is_active",
+        title : "Video id",
+        dataIndex : "video_id",
+        key : "video_id",
     },
+    
+    {
+        title : "From language id",
+        dataIndex : "from_language_id",
+        key : "from_language_id",
+    },
+    {
+        title : "From language translation",
+        dataIndex : "from_language_translation",
+        key : "from_language_translation",
+    },
+    {
+        title : "From language is default",
+        dataIndex : "from_language_is_default",
+        key : "from_language_is_default",
+    },
+    {
+        title : "To language id",
+        dataIndex : "to_language_id",
+        key : "to_language_id",
+    },
+    {
+        title : "To language translation",
+        dataIndex : "to_language_translation",
+        key : "to_language_translation",
+    },
+    {
+        title : "To language is default",
+        dataIndex : "to_language_is_default",
+        key : "to_language_is_default",
+    },
+    {
+        title : "Miss word required",
+        dataIndex : "miss_word_required",
+        key : "miss_word_required",
+    },
+    
     {
         title : "Үйлдэл",
         key : "action",
@@ -95,7 +134,7 @@ export default function Index(props) {
                     title={"Мэдээллийг устгахад итгэлтэй байна уу?"}
                     onConfirm={() => {
                     console.log("delete record", record);
-                    deleteWritingVideoData(record.id);
+                    deleteWritingVideoCueData(record.id);
                     }}
                     okText="Тийм"
                     cancelText="Үгүй"
@@ -121,8 +160,8 @@ export default function Index(props) {
                     <Button
                     onClick={() => {
                         console.log("Cue button intro video records ID==>", record.id);
-                        navigate("/content/writing-video-cue");
-                        props.courseIds.writingVideoId = record.id;
+                        navigate("/content/writing-video-cue-miss-word");
+                        props.courseIds.writingVideoCueId = record.id;
                         props.setCourseIds({ ...props.courseIds });
                     }}
                     icon={<ArrowsAltOutlined style={{ color: "#3e79f7" }} />}
@@ -138,18 +177,25 @@ export default function Index(props) {
   
     // setIntroVideoCueStates({ ...introVideoCueStates });
     form.setFieldsValue({
-        writing_id : record.writing_id,
-        host_url : record.host_url,
+        video_id : record.video_id,
         ordering : record.ordering,
-        is_active : record.is_active,
+        from_language_id : record.from_language_id,
+        from_language_translation : record.from_language_translation,
+        from_language_is_default : record.from_language_is_default,
+        to_language_id : record.to_language_id,
+        to_language_translation : record.to_language_translation,
+        to_language_is_default : record.to_language_is_default,
+        miss_word_required : record.miss_word_required,
+        start_time : record.start_time,
+        end_time : record.end_time,
     });
   };
 
   //GET All writing list
-  const getAllWritingVideo = (id) => {
+  const getAllWritingVideoCue = (id) => {
     writingVideoStates.loader = true;
     setWritingVideoStates({ writingVideoStates });
-    getAllWritingVideoByWIDAPI(id,writingVideoStates.token)
+    getAllWritingVideoCueByVIDAPI(id,writingVideoStates.token)
       .then((res) => {
         writingVideoStates.loader = false;
         setWritingVideoStates({ writingVideoStates });
@@ -171,20 +217,21 @@ export default function Index(props) {
       });
   };
 
-  const deleteWritingVideoData = (id) => {
+  const deleteWritingVideoCueData = (id) => {
     writingVideoStates.loader = true;
     setWritingVideoStates({writingVideoStates})
-    deleteWritingVideoAPI(id, writingVideoStates.token)
+    deleteWritingVideoCueAPI(id, writingVideoStates.token)
     .then((res) => {
       writingVideoStates.loader = false;
       setWritingVideoStates({ writingVideoStates });
       if (res && res.data && res.data.status && res.data.status === true) {
         //success
         // writingVideoStates.data = res.data.data;
-        getAllWritingVideo(props.courseIds.writingId);
-        setWritingVideoStates({ ...writingVideoStates });
-        console.log("success delete writing", res.data.data);
-        getAllWritingVideo(props.courseIds.writingId);
+        // getAllWritingVideoCue(props.courseIds.writingId);
+        // setWritingVideoStates({ ...writingVideoStates });
+        // console.log("success delete writing", res.data.data);
+        message.success("Амжилттай устгалаа")
+        getAllWritingVideoCue(writingVideoStates.writingVideoId);
       } else {
         //unsuccessful
         message.error("Алдаа гарлаа");
@@ -201,22 +248,36 @@ export default function Index(props) {
 
   const insertWritingVideo = () => {
     
-    writingVideoStates.action = "ADD_WRITING_VIDEO";
+    writingVideoStates.action = "ADD_WRITING_VIDEO_CUE";
     writingVideoStates.isModalVisible = true;
+    getFormData({
+        video_id : "",
+        ordering : "",
+        from_language_id : "",
+        from_language_translation : "",
+        from_language_is_default : "",
+        to_language_id : "",
+        to_language_translation : "",
+        to_language_is_default : "",
+        miss_word_required : "",
+        start_time : "",
+        end_time : "",
+    })
     setWritingVideoStates({ ...writingVideoStates });
   };
 
 
-  const insertWritingVideoData = (data) => {
+  const insertWritingVideoCueData = (data) => {
     writingVideoStates.loader = true;
     setWritingVideoStates({writingVideoStates})
-    insertWritingVideoAPI(data, writingVideoStates.token)
+    insertWritingVideoCueAPI(data, writingVideoStates.token)
       .then((res) => {
         writingVideoStates.loader = false;
         setWritingVideoStates({writingVideoStates})
         if (res && res.data && res.data.status && res.data.status === true) {
           //success
           writingVideoStates.insertData = res.data.data;
+          getAllWritingVideoCue(props.courseIds.writingVideoId);
           setWritingVideoStates({ ...writingVideoStates });
           console.log("success all writing", res.data.data);
         } else {
@@ -226,22 +287,24 @@ export default function Index(props) {
       })
       .catch((e) => {
         props.setLoader(false);
-        message.error("Алдаа гарлаа Сумъяад мэдэгдэнэ үү");
+        message.error("Алдаа гарлаа ");
         console.log(e);
       })
   }
 
-  const updateWritingVideoData = (data) => {
+  const updateWritingVideoCueData = (data) => {
     writingVideoStates.loader = true;
     setWritingVideoStates({writingVideoStates})
-    updateWritingVideoAPI(data, writingVideoStates.token)
+    updateWritingVideoCueAPI(data, writingVideoStates.token)
       .then((res) => {
         writingVideoStates.loader = false;
         setWritingVideoStates({writingVideoStates})
         if (res && res.data && res.data.status && res.data.status === true) {
           //success
           writingVideoStates.updateData = res.data.data;
+          getAllWritingVideoCue(props.courseIds.writingVideoId);
           setWritingVideoStates({ ...writingVideoStates });
+          message.success("Амжилттай заслаа")
           console.log("success update writing", res.data.data);
         } else {
           //unsuccessful
@@ -258,16 +321,41 @@ export default function Index(props) {
 
   const onFinishVideoWriting = (values) => {
       console.log("on finish writing")
-      if(writingVideoStates.action == "ADD_WRITING_VIDEO") {
-        var insertObj = {writing_id : props.courseIds.writingId, host_url : values.host_url, ordering : parseInt(values.ordering), is_active : parseInt(values.is_active)};
-        insertWritingVideoData(insertObj)
-        getAllWritingVideo(props.courseIds.writingId);
+      if(writingVideoStates.action == "ADD_WRITING_VIDEO_CUE") {
+        var insertObj = {
+            ordering : parseInt(values.ordering),
+            video_id : parseInt(props.courseIds.writingVideoId), 
+            from_language_id : parseInt(values.from_language_id),
+            from_language_translation : values.from_language_translation,
+            from_language_is_default : parseInt(values.from_language_is_default),
+            to_language_id : parseInt(values.to_language_id),
+            to_language_translation : values.to_language_translation,
+            to_language_is_default : parseInt(values.to_language_is_default),
+            miss_word_required : parseInt(values.miss_word_required),
+            start_time : values.start_time,
+            end_time : values.end_time,
+        };
+        insertWritingVideoCueData(insertObj)
+        getAllWritingVideoCue(props.courseIds.writingVideoId);
         
       } else if (writingVideoStates.action == "EDIT") {
-        var updateObj = {id : writingVideoStates.id, writing_id : props.courseIds.writingId, host_url : values.host_url, ordering : parseInt(values.ordering), is_active : parseInt(values.is_active)};
-        console.log("PISDAAAADASDADA : ", updateObj)
-        updateWritingVideoData(updateObj)
-        getAllWritingVideo(props.courseIds.writingId);
+        var updateObj = {
+            id : writingVideoStates.id, 
+            ordering : parseInt(values.ordering),
+            video_id : parseInt(writingVideoStates.updateData.video_id), 
+            from_language_id : parseInt(values.from_language_id),
+            from_language_translation : values.from_language_translation,
+            from_language_is_default : parseInt(values.from_language_is_default),
+            to_language_id : parseInt(values.to_language_id),
+            to_language_translation : values.to_language_translation,
+            to_language_is_default : parseInt(values.to_language_is_default),
+            miss_word_required : parseInt(values.miss_word_required),
+            start_time : values.start_time,
+            end_time : values.end_time,
+        };
+        console.log("UPDATE OBJ : ", updateObj)
+        updateWritingVideoCueData(updateObj)
+        getAllWritingVideoCue(props.courseIds.writingVideoId);
       }
       writingVideoStates.isModalVisible = false;
       setWritingVideoStates({ ...writingVideoStates });
@@ -278,7 +366,9 @@ export default function Index(props) {
 
   useEffect(() => {
     console.log("writing useffect");
-    getAllWritingVideo(props.courseIds.writingId);
+    getAllWritingVideoCue(props.courseIds.writingVideoId);
+    writingVideoStates.writingVideoId = props.courseIds.writingVideoId;
+
   }, []);
 
 return (
@@ -321,7 +411,7 @@ return (
               color: "#FFFFFF",
             }}
           >
-            Writing видео нэмэх
+            Writing видео cue нэмэх
           </Button>
         </div>
         <Table columns={columns} dataSource={writingVideoStates.data} />
@@ -351,12 +441,21 @@ return (
               autoComplete="off"
             >
                   <Row>
+                  <Divider>Word add</Divider>
                       <Col span={24}>
                           <Row>
                               <Col span={8}>
                                   <Form.Item
-                                  name={"host_url"}
-                                  label="Host url"
+                                  name={"start_time"}
+                                  label="Start time"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"end_time"}
+                                  label="End time"
                                   >
                                       <Input />
                                   </Form.Item>
@@ -369,10 +468,66 @@ return (
                                       <Input />
                                   </Form.Item>
                               </Col>
+                              {/* <Col span={8}>
+                                  <Form.Item
+                                  name={"video_id"}
+                                  label="Video id"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col> */}
                               <Col span={8}>
                                   <Form.Item
-                                  name={"is_active"}
-                                  label="Is active"
+                                  name={"from_language_id"}
+                                  label="From language id"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"from_language_translation"}
+                                  label="From language translation"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"from_language_is_default"}
+                                  label="From language is default"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"to_language_id"}
+                                  label="To language id"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"to_language_translation"}
+                                  label="To language translation"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"to_language_is_default"}
+                                  label="To language is default"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"miss_word_required"}
+                                  label="Miss word required"
                                   >
                                       <Input />
                                   </Form.Item>
@@ -391,7 +546,7 @@ return (
                         </Form.Item>
               </Form>
             )
-            } else if (writingVideoStates.action == "ADD_WRITING_VIDEO") {
+            } else if (writingVideoStates.action == "ADD_WRITING_VIDEO_CUE") {
               return(
               <Form
               form={form}
@@ -409,8 +564,16 @@ return (
                           <Row>
                               <Col span={8}>
                                   <Form.Item
-                                  name={"host_url"}
-                                  label="Host url"
+                                  name={"start_time"}
+                                  label="Start time"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"end_time"}
+                                  label="End time"
                                   >
                                       <Input />
                                   </Form.Item>
@@ -423,10 +586,66 @@ return (
                                       <Input />
                                   </Form.Item>
                               </Col>
+                              {/* <Col span={8}>
+                                  <Form.Item
+                                  name={"video_id"}
+                                  label="Video id"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col> */}
                               <Col span={8}>
                                   <Form.Item
-                                  name={"is_active"}
-                                  label="Is active"
+                                  name={"from_language_id"}
+                                  label="From language id"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"from_language_translation"}
+                                  label="From language translation"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"from_language_is_default"}
+                                  label="From language is default"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"to_language_id"}
+                                  label="To language id"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"to_language_translation"}
+                                  label="To language translation"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"to_language_is_default"}
+                                  label="To language is default"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"miss_word_required"}
+                                  label="Miss word required"
                                   >
                                       <Input />
                                   </Form.Item>

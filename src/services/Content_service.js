@@ -428,3 +428,415 @@ export function updateWritingVideoAPI(data, token) {
       .catch((err) => reject(err));
   });
 }
+
+// ----------------------------------------- GET ALL WRITING VIDEO CUE-----------------------------------------
+
+export function getAllWritingVideoCueByVIDAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/course-writing-video-cue/profile-by-video-id/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function updateWritingVideoCueAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/api/course-writing-video-cue/update",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function insertWritingVideoCueAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/course-writing-video-cue/insert",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function deleteWritingVideoCueAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/course-writing-video-cue/delete/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function getAllWritingVideoCueMissWordByCIDAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/course-writing-video-cue-missword/profile-by-cue-id/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function insertWritingVideoCueMissWordAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/course-writing-video-cue-missword/insert",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function deleteWritingVideoCueMissWordAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/course-writing-video-cue-missword/delete/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function updateWritingVideoCueMissWordAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/api/course-writing-video-cue-missword/update",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+
+export function getAllListeningAPI(token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/course-listening/all",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function insertListeningAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/course-listening/insert",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function updateListeningAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/api/course-listening/update",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function deleteListeningAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/course-listening/delete/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function getAllListeningCueByListeningAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/course-listening-cue/profile-by-listening/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function insertListeningCueAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/course-listening-cue/insert",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function updateListeningCueAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/api/course-listening-cue/update",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function deleteListeningCueVideoAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/course-listening-cue/delete/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function getAllListeningQuestionByCueAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/course-listening-question/profile-by-cue/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function insertListeningQuestionAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/course-listening-question/insert",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function deleteListeningQuestionAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/course-listening-question/delete/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function updateListeningQuestionAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/api/course-listening-question/update",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+
+export function getAllListeningAnswerByQuestionAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/course-listening-answer/profile-by-question/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function insertListeningAnswerAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/course-listening-answer/insert",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function deleteListeningAnswerAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/course-listening-answer/delete/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function updateListeningListeningAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/api/course-listening-answer/update",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}

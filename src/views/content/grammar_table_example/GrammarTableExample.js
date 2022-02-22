@@ -64,63 +64,64 @@ export default function Index(props) {
     grammarExamplePatterns : [],
     grammarExamplePattern : null,
     getGrammarExamplePattern : null,
+    test_data : [],
   });
 
 
-  const test_data = [
-		{
-			"id": 8,
-			"name_eng": "Main Verb",
-			"name_mon": "Гол үйл үг",
-			"short_eng_name": "MV"
-		},
-		{
-			"id": 5,
-			"name_eng": "Possesive pronoun",
-			"name_mon": "Харьяалах төлөөний үг",
-			"short_eng_name": "PP"
-		},
-		{
-			"id": 6,
-			"name_eng": "Subject Complement",
-			"name_mon": "Өгүүлэгдэхүүнийг тодорхойлогч",
-			"short_eng_name": "SC"
-		},
-		{
-			"id": 7,
-			"name_eng": "Auxiliary verb",
-			"name_mon": "Туслах үйл үг",
-			"short_eng_name": "AV"
-		},
-		{
-			"id": 1,
-			"name_eng": "Subject",
-			"name_mon": "Өгүүлэгдэхүүн",
-			"short_eng_name": "S"
-		},
-		{
-			"id": 2,
-			"name_eng": "Tobe",
-			"name_mon": "Байх",
-			"short_eng_name": "Tobe"
-		},
-		{
-			"id": 3,
-			"name_eng": "Object",
-			"name_mon": "Тусагдахуун",
-			"short_eng_name": "Obj"
-		},
-		{
-			"id": 4,
-			"name_eng": "Adverb",
-			"name_mon": "Дайвар үг",
-			"short_eng_name": "Adv"
-		},
-    {
-      "name_eng" : "NULL",
-      "name_mon" : "NULL"
-    }
-	];
+  // const test_data = [
+	// 	{
+	// 		"id": 8,
+	// 		"name_eng": "Main Verb",
+	// 		"name_mon": "Гол үйл үг",
+	// 		"short_eng_name": "MV"
+	// 	},
+	// 	{
+	// 		"id": 5,
+	// 		"name_eng": "Possesive pronoun",
+	// 		"name_mon": "Харьяалах төлөөний үг",
+	// 		"short_eng_name": "PP"
+	// 	},
+	// 	{
+	// 		"id": 6,
+	// 		"name_eng": "Subject Complement",
+	// 		"name_mon": "Өгүүлэгдэхүүнийг тодорхойлогч",
+	// 		"short_eng_name": "SC"
+	// 	},
+	// 	{
+	// 		"id": 7,
+	// 		"name_eng": "Auxiliary verb",
+	// 		"name_mon": "Туслах үйл үг",
+	// 		"short_eng_name": "AV"
+	// 	},
+	// 	{
+	// 		"id": 1,
+	// 		"name_eng": "Subject",
+	// 		"name_mon": "Өгүүлэгдэхүүн",
+	// 		"short_eng_name": "S"
+	// 	},
+	// 	{
+	// 		"id": 2,
+	// 		"name_eng": "Tobe",
+	// 		"name_mon": "Байх",
+	// 		"short_eng_name": "Tobe"
+	// 	},
+	// 	{
+	// 		"id": 3,
+	// 		"name_eng": "Object",
+	// 		"name_mon": "Тусагдахуун",
+	// 		"short_eng_name": "Obj"
+	// 	},
+	// 	{
+	// 		"id": 4,
+	// 		"name_eng": "Adverb",
+	// 		"name_mon": "Дайвар үг",
+	// 		"short_eng_name": "Adv"
+	// 	},
+  //   {
+  //     "name_eng" : "NULL",
+  //     "name_mon" : "NULL"
+  //   }
+	// ];
 
   const columns_example_pattern_get = [
     {
@@ -140,7 +141,7 @@ export default function Index(props) {
     },
     {
       title : "Pattern id",
-      dataIndex : "pattern_id",
+      dataIndex : ["pattern", "name_eng"],
       key : "pattern_id",
     },
     {
@@ -191,7 +192,7 @@ export default function Index(props) {
           }}
           optionLabelProp="label"
         >
-          {test_data.map((option) => (
+          {grammarExampleStates.test_data.map((option) => (
             <Option value={option.name_eng}>{option.name_eng}</Option>
           ))}
         </Select>
@@ -316,6 +317,7 @@ export default function Index(props) {
   useEffect(() => {
     console.log("grammar table example initialize");
     getAllGrammarTableExample(props.courseIds.grammarId);
+    getAllIntroPatternData();
   }, []);
 
   const getFormData = (record) => {
@@ -334,7 +336,7 @@ export default function Index(props) {
         setGrammarExampleStates({ grammarExampleStates });
         if (res && res.data && res.data.status && res.data.status === true) {
           setGrammarExampleStates({grammarExampleStates});
-          grammarExampleStates.grammarPattern = res.data.data;
+          grammarExampleStates.test_data = res.data.data;
           setGrammarExampleStates({ ...grammarExampleStates });
           console.log("success all pattern data : ", res.data.data);
           console.log("GRAMMAR STATES : ", grammarExampleStates);
@@ -379,9 +381,9 @@ export default function Index(props) {
           if(max_epoch != 0 && max_row != null) {
             console.log("max_row : ", max_row);
             var id = null;
-            if (max_row.pattern_name !== "NULL") {
+            if (max_row.pattern_name !== "null") {
               if (max_row.pattern_name != undefined) {
-                test_data.map((val) => {
+                grammarExampleStates.test_data.map((val) => {
                   if (val.name_eng == max_row.pattern_name) {
                     id = val.id;
                   }

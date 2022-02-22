@@ -525,7 +525,7 @@ export default function Index(props) {
             //success
             console.log("success insert word", res);
             getAllWords();
-            wordStates.word_id = res.data.data.word.id;
+            // wordStates.word_id = res.data.data.word.id;
             wordStates.isModalVisible = false;
             setWordStates({ ...wordStates });
             // Translation inser
@@ -547,7 +547,7 @@ export default function Index(props) {
           console.log(e);
           wordStates.isModalVisible = false;
           setWordStates({ ...wordStates });
-          message.success("Ажилттай нэмэгдлээ CATCH");
+          message.error("Алдаа гарлаа");
           form.resetFields();
 
           // message.error("Алдаа гарлаа /үг нэмэх үед catch.../");
@@ -716,10 +716,11 @@ export default function Index(props) {
         <Table columns={columns} dataSource={wordStates.data} />
         {/* {wordStates.isModalVisible ? ( */}
         <Modal
-          title="Үг нэмэх"
+          title={wordStates.action === "EDIT" ? "Үг засах" : "Үг нэмэх"}
           width={"70%"}
           visible={wordStates.isModalVisible}
           footer={null}
+          
           onCancel={() => {
             form.resetFields();
             wordStates.isModalVisible = false;
@@ -733,6 +734,9 @@ export default function Index(props) {
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
             initialValues={{ remember: true }}
+            style={{
+              backgroundColor : wordStates.action === "EDIT" ? "#eeafaf":  "#afeeee",
+            }}
             onFinish={onFinishWord}
             onFinishFailed={onFinishFailedWord}
             autoComplete="off"

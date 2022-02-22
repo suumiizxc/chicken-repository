@@ -20,6 +20,12 @@ import GrammerPattern from "./views/content/grammer_pattern/GrammerPattern";
 import GrammerTableExample from "./views/content/grammar_table_example/GrammarTableExample";
 import Writing from "./views/writing/writing";
 import WritingVideo from "./views/writing/writingVideo";
+import WritingVideoCue from "./views/writing/writingVideoCue";
+import WritingVideoCueMissWord from "./views/writing/writingVideoCueMissWord";
+import Listening from "./views/listening/listening"
+import ListeningCue from "./views/listening/listeningCue"
+import ListeningQuestion from "./views/listening/listeningQuestion"
+import ListeningAnswer from "./views/listening/listeningAnswer"
 
 import "./App.css";
 import "./css/index.css";
@@ -46,6 +52,11 @@ function App() {
     mixedVideoId: null,
     grammarId : null,
     writingId : null,
+    writingVideoId : null,
+    writingVideoCueId : null,
+    listeningId : null,
+    listeningCueId : null,
+    listeningQuestionId : null,
   });
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} spin />;
 
@@ -173,6 +184,84 @@ function App() {
                 path="/content/writing-video"
                 element={
                   <WritingVideo
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+               <Route
+                path="/content/writing-video-cue"
+                element={
+                  <WritingVideoCue
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/content/writing-video-cue-miss-word"
+                element={
+                  <WritingVideoCueMissWord
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/content/listening"
+                element={
+                  <Listening
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/content/listening-cue"
+                element={
+                  <ListeningCue
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/content/listening-question"
+                element={
+                  <ListeningQuestion
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/content/listening-answer"
+                element={
+                  <ListeningAnswer
                     userData={userData}
                     setUserData={setUserData}
                     loader={loader}
