@@ -840,3 +840,207 @@ export function updateListeningListeningAPI(data, token) {
       .catch((err) => reject(err));
   });
 }
+
+export function getAllReadingAPI(token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/course-reading/all",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function deleteReadingAPI(id,token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/course-reading/delete/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function updateReadingAPI(data,token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/api/course-reading/update",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function insertReadingAPI(data,token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/course-reading/insert",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function getAllReadingCueByReadingAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/course-reading-cue/profile-by-reading-id/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function insertReadingCueAPI(data,token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/course-reading-cue/insert",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function updateReadingCueAPI(data,token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/api/course-reading-cue/update",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function deleteReadingCueAPI(id,token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/course-reading-cue/delete/" +id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function getAllReadingCueWordByCueAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/course-reading-cue-word/profile-by-cue-id/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function insertReadingCueWordAPI(data,token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/course-reading-cue-word/insert",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function updateReadingCueWordAPI(data,token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/api/course-reading-cue-word/update",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function deleteReadingCueWordAPI(id,token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/api/course-reading-cue-word/delete/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}

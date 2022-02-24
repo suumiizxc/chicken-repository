@@ -182,6 +182,7 @@ export default function Index(props) {
           mode="multiple"
           style={{ width: 300 }}
           placeholder="select"
+          // initialValues="Main verb"
           onChange={(val)=>{
             console.log("record ID : ", record);
             var pushPatterns = record;
@@ -226,6 +227,11 @@ export default function Index(props) {
       title : "Mongol text",
       dataIndex : "mon_text",
       key : "mon_text",
+    },
+    {
+      title : "Group number",
+      dataIndex : "group_number",
+      key : "group_number",
     },
     {
       title: "Үйлдэл",
@@ -325,6 +331,7 @@ export default function Index(props) {
       eng_text: record.eng_text,
       // url: record.url,
       mon_text: record.mon_text,
+      group_number : record.group_number,
     });
   };
 
@@ -543,7 +550,8 @@ export default function Index(props) {
       id : grammarExampleStates.id,
       grammar_id : props.courseIds.grammarId,
       eng_text : values.eng_text,
-      mon_text : values.mon_text, 
+      mon_text : values.mon_text,
+      group_number : parseInt(values.group_number), 
     };
 
     console.log("Update data : ", grammarExampleStates.updateData)
@@ -619,6 +627,17 @@ export default function Index(props) {
                         <Form.Item
                           label="Монгол текст"
                           name="mon_text"
+                          rules={[
+                            { required: true, message: "Заавал бөглөнө үү!" },
+                          ]}
+                        >
+                          <TextArea/>
+                        </Form.Item>
+                      </Col>
+                      <Col span={12} flex="auto">
+                        <Form.Item
+                          label="Group number"
+                          name="group_number"
                           rules={[
                             { required: true, message: "Заавал бөглөнө үү!" },
                           ]}

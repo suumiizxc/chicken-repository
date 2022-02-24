@@ -535,7 +535,7 @@ export default function Index(props) {
 
   const onFinishAddExample = (values) => {
     values.grammar_id = grammerStates.id;
-
+    values.group_number = parseInt(values.group_number);
     insertGrammarTableExample(values)
     console.log("onfinish PISDAAAAAA", values);    
     grammerStates.isModalVisible = false;
@@ -544,6 +544,7 @@ export default function Index(props) {
   const insertGrammarTableExample = (data) => {
     grammerStates.loader = true;
     setGrammerStates({grammerStates});
+
     insertGrammarTableExampleAPI(data, grammerStates.token)
       .then((res) => {
         grammerStates.loader = false;
@@ -873,6 +874,17 @@ export default function Index(props) {
                           </Form.Item>
                         </Col>
                       </Row>
+                      <Col span={18} flex="auto">
+                          <Form.Item 
+                            label="Group number" 
+                            name="group_number"
+                            rules={[
+                              {required:true, message: "Заавал бөглөнө үү!" },
+                            ]} 
+                          >
+                            <TextArea rows={5}/>
+                          </Form.Item>
+                        </Col>
                     </Col>
                   </Row>
                   <Form.Item wrapperCol={{ offset: 17, span: 7 }}>

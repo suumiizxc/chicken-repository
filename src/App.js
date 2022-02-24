@@ -26,6 +26,10 @@ import Listening from "./views/listening/listening"
 import ListeningCue from "./views/listening/listeningCue"
 import ListeningQuestion from "./views/listening/listeningQuestion"
 import ListeningAnswer from "./views/listening/listeningAnswer"
+import Reading from "./views/reading/reading"
+import ReadingCue from "./views/reading/readingCue"
+import ReadingCueWord from "./views/reading/readingCueWord"
+
 
 import "./App.css";
 import "./css/index.css";
@@ -57,6 +61,8 @@ function App() {
     listeningId : null,
     listeningCueId : null,
     listeningQuestionId : null,
+    readingId : null,
+    readingCueId :null,
   });
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} spin />;
 
@@ -262,6 +268,45 @@ function App() {
                 path="/content/listening-answer"
                 element={
                   <ListeningAnswer
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/content/reading"
+                element={
+                  <Reading
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/content/reading-cue"
+                element={
+                  <ReadingCue
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/content/reading-cue-word"
+                element={
+                  <ReadingCueWord
                     userData={userData}
                     setUserData={setUserData}
                     loader={loader}
