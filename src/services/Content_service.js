@@ -1044,3 +1044,275 @@ export function deleteReadingCueWordAPI(id,token) {
       .catch((err) => reject(err));
   });
 }
+
+export function getAllPPVContentAPI(token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/ppv-content/all",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function insertPPVContentAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/ppv-content/insert",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function deletePPVContentAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/ppv-content/delete/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function updatePPVContentAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/api/ppv-content/update",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function getAllContentMovieByContentAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/ppv-content-movie/profile-by-content/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function inserContentMovieAPI(data,token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/ppv-content-movie/insert",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function deleteContentMovieAPI(id,token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/ppv-content-movie/delete/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function updateContentMovieAPI(data,token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/api/ppv-content-movie/update",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function getAllContentMovieCueByMovieAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/ppv-content-movie-cue/profile-by-movie/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function insertContentMovieCueAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/ppv-content-movie-cue/insert",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function updateContentMovieCueAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/api/ppv-content-movie-cue/update",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function deleteContentMovieCueAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/ppv-content-movie-cue/delete/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function getAllContentMovieCueWordByCueAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/ppv-content-movie-cue-word/profile-by-cue-id/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function insertContentMovieCueWordAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/ppv-content-movie-cue-word/insert",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function updateContentMovieCueWordAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/api/ppv-content-movie-cue-word/update",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function deleteContentMovieCueWordAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/ppv-content-movie-cue-word/delete/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}

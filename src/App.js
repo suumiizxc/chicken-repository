@@ -29,6 +29,10 @@ import ListeningAnswer from "./views/listening/listeningAnswer"
 import Reading from "./views/reading/reading"
 import ReadingCue from "./views/reading/readingCue"
 import ReadingCueWord from "./views/reading/readingCueWord"
+import PPVContent from "./views/ppv/ppvContent"
+import PPVContentMovie from "./views/ppv/ppvContentMovie"
+import PPVContentMovieCue from "./views/ppv/ppvContentMovieCue"
+import PPVContentMovieCueWord from "./views/ppv/ppvContentMovieCueWord"
 
 
 import "./App.css";
@@ -63,6 +67,9 @@ function App() {
     listeningQuestionId : null,
     readingId : null,
     readingCueId :null,
+    ppvContentId : null,
+    ppvContentMovieId : null,
+    ppvContentMovieCueId : null,
   });
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} spin />;
 
@@ -380,7 +387,60 @@ function App() {
                   />
                 }
               />
-            </Route>
+              <Route
+                path="/ppv/content"
+                element={
+                  <PPVContent
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/ppv/content-movie"
+                element={
+                  <PPVContentMovie
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/ppv/content-movie-cue"
+                element={
+                  <PPVContentMovieCue
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/ppv/content-movie-cue-word"
+                element={
+                  <PPVContentMovieCueWord
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              </Route>
+            
 
             <Route path="*" element={<PageNotFound />}></Route>
           </Routes>
