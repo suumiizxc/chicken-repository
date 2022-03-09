@@ -33,6 +33,9 @@ import PPVContent from "./views/ppv/ppvContent"
 import PPVContentMovie from "./views/ppv/ppvContentMovie"
 import PPVContentMovieCue from "./views/ppv/ppvContentMovieCue"
 import PPVContentMovieCueWord from "./views/ppv/ppvContentMovieCueWord"
+import Conversation from "./views/conversation/conversation"
+import ConversationCue from "./views/conversation/conversationCue"
+import ConversationCueWord from "./views/conversation/conversationCueWord"
 
 
 import "./App.css";
@@ -70,6 +73,8 @@ function App() {
     ppvContentId : null,
     ppvContentMovieId : null,
     ppvContentMovieCueId : null,
+    conversationId : null,
+    conversationCueId : null,
   });
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} spin />;
 
@@ -430,6 +435,45 @@ function App() {
                 path="/ppv/content-movie-cue-word"
                 element={
                   <PPVContentMovieCueWord
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/conversation"
+                element={
+                  <Conversation
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/conversation-cue"
+                element={
+                  <ConversationCue
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/conversation-cue-word"
+                element={
+                  <ConversationCueWord
                     userData={userData}
                     setUserData={setUserData}
                     loader={loader}
