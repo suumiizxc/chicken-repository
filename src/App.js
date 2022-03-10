@@ -14,6 +14,9 @@ import ContentIndex from "./views/content/index";
 import PageNotFound from "./views/PageNotFound";
 import CourseMixedVideo from "./views/course/course_mixed_video/CourseMixedVideo";
 import CourseMixedVideoCue from "./views/course/course_mixed_video_cue/CourseMixedVideoCue";
+
+import CourseMixedVideoCueWord from "./views/course/course_mixed_video_cue_word/CourseMixedVideoCueWord"
+
 import Grammer from "./views/content/grammer/Grammer";
 import GrammerStructure from "./views/content/grammer_structure/GrammerStructure";
 import GrammerPattern from "./views/content/grammer_pattern/GrammerPattern";
@@ -61,6 +64,7 @@ function App() {
   const [courseIds, setCourseIds] = useState({
     introVideoId: null,
     mixedVideoId: null,
+    mixedVideoCueId : null,
     grammarId : null,
     writingId : null,
     writingVideoId : null,
@@ -383,6 +387,19 @@ function App() {
                 path="/course/mixed-video-cue"
                 element={
                   <CourseMixedVideoCue
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/course/mixed-video-cue-word"
+                element={
+                  <CourseMixedVideoCueWord
                     userData={userData}
                     setUserData={setUserData}
                     loader={loader}

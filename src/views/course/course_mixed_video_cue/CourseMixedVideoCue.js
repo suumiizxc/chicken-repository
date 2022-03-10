@@ -23,6 +23,7 @@ import {
   PlusCircleOutlined,
   PlusOutlined,
   RollbackOutlined,
+  ArrowsAltOutlined,
 } from "@ant-design/icons";
 import {
   deleteMixedVideoCueAPI,
@@ -160,6 +161,15 @@ export default function Index(props) {
             }}
             icon={<EditOutlined style={{ color: "#3e79f7" }} />}
           />
+          <Button
+              onClick={() => {
+                console.log("Cue button intro video records ID==>", record.id);
+                navigate("/course/mixed-video-cue-word");
+                props.courseIds.mixedVideoCueId = record.id;
+                props.setCourseIds({ ...props.courseIds });
+              }}
+              icon={<ArrowsAltOutlined style={{ color: "#3e79f7" }} />}
+            />
         </Space>
       ),
     },

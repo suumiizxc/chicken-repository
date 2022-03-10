@@ -389,6 +389,7 @@ export default function Index(props) {
   };
 
   const wordAdd = () => {
+    wordStates.action = null;
     setWordStates({ ...wordStates, isModalVisible: true });
   };
 
