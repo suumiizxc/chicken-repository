@@ -3,7 +3,7 @@ import axios from "axios";
 const url = "https://adminback.medlegten.com";
 
 // ----------------------------------------- Word module get all -----------------------------------------
-export function getWords(token) {
+export function getWords(token, page, limit) {
   return new Promise((resolve, reject) => {
     axios({
       method: "get",
@@ -12,6 +12,10 @@ export function getWords(token) {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
         Authorization: token,
+      },
+      params : {
+        page : page,
+        limit : limit,
       },
       data: "",
     })

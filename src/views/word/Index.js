@@ -14,6 +14,7 @@ import {
   Col,
   Row,
   message,
+  Pagination,
 } from "antd";
 import {
   DeleteOutlined,
@@ -48,6 +49,8 @@ export default function Index(props) {
     all_language: null,
     types: null,
     language_id: null,
+    page : 1,
+    limit : 20, 
     word_id: null,
     get_word_count : 0,
     insertWord: {
@@ -578,7 +581,7 @@ export default function Index(props) {
     const token = localStorage.getItem("token");
     setWordLoader(true);
     //1. Get table all words request
-    getWords(token)
+    getWords(token, wordStates.page, wordStates.limit)
       .then((res) => {
         setWordLoader(false);
         if (res && res.data && res.data.status && res.data.status === true) {
@@ -586,7 +589,7 @@ export default function Index(props) {
 
           console.log("success all words", res.data.data);
           wordStates.data = res.data.data;
-          wordStates.get_word_count = wordStates.data.length;
+          wordStates.get_word_count = res.data.total_count;
           setWordStates({ ...wordStates });
         } else {
           //unsuccessful
@@ -646,9 +649,17 @@ export default function Index(props) {
       });
   };
 
+  const pageChange = (values) => {
+    wordStates.page = values;
+
+    setWordStates({ ...wordStates });
+    getAllWords();
+  }
+
   useEffect(() => {
     console.log("word useffect");
     getAllWords();
+
   }, []);
 
   // useEffect(() => {
@@ -714,7 +725,8 @@ export default function Index(props) {
             Үг нэмэх
           </Button>
         </div>
-        <Table columns={columns} dataSource={wordStates.data} />
+        <Table columns={columns} dataSource={wordStates.data} pagination={false}/>
+        <Pagination onChange={pageChange} defaultCurrent={1} total={Math.floor(wordStates.get_word_count / wordStates.limit) + 1} />
         {/* {wordStates.isModalVisible ? ( */}
         <Modal
           title={wordStates.action === "EDIT" ? "Үг засах" : "Үг нэмэх"}
