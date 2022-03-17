@@ -39,6 +39,8 @@ import PPVContentMovieCueWord from "./views/ppv/ppvContentMovieCueWord"
 import Conversation from "./views/conversation/conversation"
 import ConversationCue from "./views/conversation/conversationCue"
 import ConversationCueWord from "./views/conversation/conversationCueWord"
+import Article from "./views/article/article"
+import ArticleCue from "./views/article/articleCue"
 
 
 import "./App.css";
@@ -491,6 +493,32 @@ function App() {
                 path="/conversation-cue-word"
                 element={
                   <ConversationCueWord
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/article"
+                element={
+                  <Article
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/article-cue"
+                element={
+                  <ArticleCue
                     userData={userData}
                     setUserData={setUserData}
                     loader={loader}
