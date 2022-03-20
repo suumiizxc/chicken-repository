@@ -14,6 +14,7 @@ import {
   Card,
   Spin,
   Checkbox,
+  Tooltip,
 } from "antd";
 import {
   DeleteOutlined,
@@ -24,13 +25,18 @@ import {
   PlusOutlined,
   RollbackOutlined,
   ArrowsAltOutlined,
+  EyeOutlined
 } from "@ant-design/icons";
 import {
   deleteMixedVideoCueAPI,
   getAllMixedVideCueAPI,
   insertMixedVideoCueAPI,
   updateMixedVideoCueAPI,
+ 
 } from "../../../services/Course_service";
+import  {
+  getAllMixedVideoCueWordByCueAPI
+} from "../../../services/Content_service"
 
 import { useNavigate } from "react-router-dom";
 
@@ -163,6 +169,22 @@ export default function Index(props) {
           />
           <Button
               onClick={() => {
+                console.log("cue video word edit records==>", record);
+                introVideoCueStates.action = "EDIT_WORD_SEE";
+                setIntroVideoCueStates({ ...introVideoCueStates });
+                getFormData(record);
+                introVideoCueStates.updateData.id = record.id;
+                introVideoCueStates.isModalVisible = true;
+
+                getCueWordsByCueIdData(record.id, introVideoCueStates.token)
+                console.log("Cue words : ",introVideoCueStates.cueWords)
+                setIntroVideoCueStates({ ...introVideoCueStates });
+                console.log("introVideoCueStates : ", introVideoCueStates);
+              }}
+              icon={<EyeOutlined style={{ color: "#FAAD14" }} />}
+            />
+          <Button
+              onClick={() => {
                 console.log("Cue button intro video records ID==>", record.id);
                 navigate("/course/mixed-video-cue-word");
                 props.courseIds.mixedVideoCueId = record.id;
@@ -211,6 +233,20 @@ export default function Index(props) {
     });
   };
 
+
+  const getCueWordsByCueIdData = (cue_id, token) => {
+    getAllMixedVideoCueWordByCueAPI(cue_id, token)
+      .then((res) => {
+        // console.log("SUCCESS : ", res)
+        introVideoCueStates.cueWords = [...res.data.data] 
+        setIntroVideoCueStates({...introVideoCueStates})
+        message.success("successfully get words")
+      })
+      .catch((err)=>{
+        console.log("error : ",err)
+        message.error("failed get words")
+      })
+  }
   //GET All intro video list
   const getAllIntroCueData = () => {
     introVideoCueStates.loader = true;

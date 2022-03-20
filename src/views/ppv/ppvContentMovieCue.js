@@ -34,6 +34,7 @@ import {
     insertContentMovieCueAPI,
     updateContentMovieCueAPI,
     deleteContentMovieCueAPI,
+    getAllContentMovieCueWordByCueAPI
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
 
@@ -55,6 +56,38 @@ export default function Index(props) {
         id : null
     },
   });
+  const columns_word = [
+    {
+      title : "Id",
+      dataIndex : "id",
+      key :"id"
+    },
+    {
+      title : "Cue id",
+      dataIndex : "cue_id",
+      key :"cue_id"
+    },
+    {
+      title : "Main text",
+      dataIndex : "main_text",
+      key :"main_text"
+    },
+    {
+      title : "Word value",
+      dataIndex : "word_value",
+      key :"word_value"
+    },
+    {
+      title : "Space next",
+      dataIndex : "space_next",
+      key :"space_next"
+    },
+    {
+      title : "Ordering",
+      dataIndex : "ordering",
+      key :"ordering"
+    }
+  ]
   const columns = [
     {
         title : "Id",
@@ -125,7 +158,7 @@ export default function Index(props) {
                 <Button
                     onClick={() => {
                     console.log("UPDATE/edit intro CUE video records==>", record);
-                    console.log("introVideoCueStates updateIntroCueVideo");
+                    console.log("ppvContentMovieCueStates updateIntroCueVideo");
                     ppvContentMovieCueStates.action = "EDIT";
                     // setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
                     // getAllReading(record);
@@ -137,6 +170,24 @@ export default function Index(props) {
                     }}
                     icon={<EditOutlined style={{ color: "#3e79f7" }} />}
                 />
+                </Tooltip>
+                <Tooltip placement="topRight" title="Харах">
+                    <Button
+                    onClick={() => {
+                        console.log("cue video word edit records==>", record);
+                        ppvContentMovieCueStates.action = "EDIT_WORD_SEE";
+                        setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
+                        getFormData(record);
+                        ppvContentMovieCueStates.updateData.id = record.id;
+                        ppvContentMovieCueStates.isModalVisible = true;
+
+                        getCueWordsByCueIdData(record.id, ppvContentMovieCueStates.token)
+                        console.log("Cue words : ",ppvContentMovieCueStates.cueWords)
+                        setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
+                        console.log("ppvContentMovieCueStates : ", ppvContentMovieCueStates);
+                    }}
+                    icon={<EyeOutlined style={{ color: "#FAAD14" }} />}
+                    />
                 </Tooltip>
                 <Tooltip placement="topRight" title="Cue руу үсрэх">
                     <Button
@@ -158,7 +209,7 @@ export default function Index(props) {
 
   const getFormData = (record) => {
   
-    // setIntroVideoCueStates({ ...introVideoCueStates });
+    // setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
     form.setFieldsValue({
       movie_id : record.movie_id, 
       ordering : record.ordering, 
@@ -198,6 +249,19 @@ export default function Index(props) {
       });
   };
 
+  const getCueWordsByCueIdData = (cue_id, token) => {
+    getAllContentMovieCueWordByCueAPI(cue_id, token)
+      .then((res) => {
+        // console.log("SUCCESS : ", res)
+        ppvContentMovieCueStates.cueWords = [...res.data.data] 
+        setPPVContentMovieCueStates({...ppvContentMovieCueStates})
+        message.success("successfully get words")
+      })
+      .catch((err)=>{
+        console.log("error : ",err)
+        message.error("failed get words")
+      })
+  }
   const insertListeningData = (values) => {
       ppvContentMovieCueStates.loader = true;
       setPPVContentMovieCueStates({ppvContentMovieCueStates});
@@ -491,7 +555,11 @@ return (
                         </Form.Item>
                     </Form>
                 )
-             } else if(ppvContentMovieCueStates.action == "ADD_READING") {
+             } else if (ppvContentMovieCueStates.action == "EDIT_WORD_SEE") {
+                return (
+                  <Table columns={columns_word} dataSource={ppvContentMovieCueStates.cueWords} />
+                );
+            } else if(ppvContentMovieCueStates.action == "ADD_READING") {
                 return (
                    <Form
                    form={form}

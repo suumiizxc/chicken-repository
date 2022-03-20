@@ -243,6 +243,58 @@ export function insertIntoVideoCueWordAPI(data, token) {
   });
 }
 
+export function insertIntroVideoCueWordAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/course-intro-video-cue-word/insert",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function updateIntroVideoCueWordAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/api/course-intro-video-cue-word/update",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function deleteIntroVideoCueWordAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/course-intro-video-cue-word/delete/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+
 export function getIntroVideoCueWordsAPI(id, token) {
   return new Promise((resolve, reject) => {
     axios({

@@ -30,11 +30,11 @@ import {
   ArrowsAltOutlined,
 } from "@ant-design/icons";
 import {
-    getAllContentMovieCueWordByCueAPI,
-    insertContentMovieCueWordAPI,
-    updateContentMovieCueWordAPI,
-    deleteContentMovieCueWordAPI,
-} from "../../services/Content_service";
+    getIntroVideoCueWordsAPI,
+    insertIntroVideoCueWordAPI,
+    updateIntroVideoCueWordAPI,
+    deleteIntroVideoCueWordAPI,
+}  from "../../../services/Course_service";
 import { useNavigate } from "react-router-dom";
 
 export default function Index(props) {
@@ -42,7 +42,7 @@ export default function Index(props) {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  const [ppvContentMovieCueWordStates, setPPVContentMovieCueWordStates] = useState({
+  const [conversationCueWordStates, setConversationCueWordStates] = useState({
     token: localStorage.getItem("token"),
     card_title: "Видео интро",
     loader: false,
@@ -111,14 +111,14 @@ export default function Index(props) {
                     onClick={() => {
                     console.log("UPDATE/edit intro CUE video records==>", record);
                     console.log("introVideoCueStates updateIntroCueVideo");
-                    ppvContentMovieCueWordStates.action = "EDIT";
-                    // setPPVContentMovieCueWordStates({ ...ppvContentMovieCueWordStates });
+                    conversationCueWordStates.action = "EDIT";
+                    // setConversationCueWordStates({ ...conversationCueWordStates });
                     // getAllReading(record);
-                    ppvContentMovieCueWordStates.updateData = record;
-                    ppvContentMovieCueWordStates.id = record.id;
-                    ppvContentMovieCueWordStates.isModalVisible = true;
+                    conversationCueWordStates.updateData = record;
+                    conversationCueWordStates.id = record.id;
+                    conversationCueWordStates.isModalVisible = true;
                     getFormData(record);
-                    setPPVContentMovieCueWordStates({ ...ppvContentMovieCueWordStates });
+                    setConversationCueWordStates({ ...conversationCueWordStates });
                     }}
                     icon={<EditOutlined style={{ color: "#3e79f7" }} />}
                 />
@@ -145,30 +145,25 @@ export default function Index(props) {
   
     // setIntroVideoCueStates({ ...introVideoCueStates });
     form.setFieldsValue({
-      movie_id : record.movie_id, 
-      ordering : record.ordering, 
-      start_time : record.start_time, 
-      end_time : record.end_time, 
-      from_language_id : record.from_language_id,
-      from_language_translation : record.from_language_translation,
-      to_language_id : record.to_language_id,
-      to_language_translation : record.to_language_translation,
-      
+      main_text : record.main_text,
+      word_value : record.word_value,
+      space_next : record.space_next,
+      ordering : record.ordering,
     });
   };
 
   //GET All writing list
   const getAllReading = (id) => {
-    ppvContentMovieCueWordStates.loader = true;
-    setPPVContentMovieCueWordStates({ ppvContentMovieCueWordStates });
-    getAllContentMovieCueWordByCueAPI(id, ppvContentMovieCueWordStates.token)
+    conversationCueWordStates.loader = true;
+    setConversationCueWordStates({ conversationCueWordStates });
+    getIntroVideoCueWordsAPI(id, conversationCueWordStates.token)
       .then((res) => {
-        ppvContentMovieCueWordStates.loader = false;
-        setPPVContentMovieCueWordStates({ ppvContentMovieCueWordStates });
+        conversationCueWordStates.loader = false;
+        setConversationCueWordStates({ conversationCueWordStates });
         if (res && res.data && res.data.status && res.data.status === true) {
           //success
-          ppvContentMovieCueWordStates.data = res.data.data;
-          setPPVContentMovieCueWordStates({ ...ppvContentMovieCueWordStates });
+          conversationCueWordStates.data = res.data.data;
+          setConversationCueWordStates({ ...conversationCueWordStates });
           console.log("success all writing", res.data.data);
         } else {
           //unsuccessful
@@ -184,18 +179,18 @@ export default function Index(props) {
   };
 
   const insertListeningData = (values) => {
-      ppvContentMovieCueWordStates.loader = true;
-      setPPVContentMovieCueWordStates({ppvContentMovieCueWordStates});
+      conversationCueWordStates.loader = true;
+      setConversationCueWordStates({conversationCueWordStates});
       console.log("SHINE PISDA : ", values);
-      insertContentMovieCueWordAPI(values, ppvContentMovieCueWordStates.token)
+      insertIntroVideoCueWordAPI(values, conversationCueWordStates.token)
         .then((res) => {
-            ppvContentMovieCueWordStates.loader = false;
-            setPPVContentMovieCueWordStates({ppvContentMovieCueWordStates});
+            conversationCueWordStates.loader = false;
+            setConversationCueWordStates({conversationCueWordStates});
             if (res && res.data && res.data.status && res.data.status === true) {
                 //success
-                ppvContentMovieCueWordStates.insertData = res.data.data;
-                setPPVContentMovieCueWordStates({ ...ppvContentMovieCueWordStates });
-                getAllReading(props.courseIds.ppvContentMovieCueId);
+                conversationCueWordStates.insertData = res.data.data;
+                setConversationCueWordStates({ ...conversationCueWordStates });
+                getAllReading(props.courseIds.introVideoCueId);
                 console.log("success insert writing", res.data.data);
                 message.success("Амжилттай writing хадгаллаа 😍😊✅")
               } else {
@@ -212,17 +207,17 @@ export default function Index(props) {
   }
 
   const updateListeningData = (values) => {
-      ppvContentMovieCueWordStates.loader = true;
-      setPPVContentMovieCueWordStates({ppvContentMovieCueWordStates})
-      updateContentMovieCueWordAPI(values, ppvContentMovieCueWordStates.token)
+      conversationCueWordStates.loader = true;
+      setConversationCueWordStates({conversationCueWordStates})
+      updateIntroVideoCueWordAPI(values, conversationCueWordStates.token)
         .then((res) => {
-            ppvContentMovieCueWordStates.loader = false;
-            setPPVContentMovieCueWordStates({ppvContentMovieCueWordStates});
+            conversationCueWordStates.loader = false;
+            setConversationCueWordStates({conversationCueWordStates});
             if (res && res.data && res.data.status && res.data.status === true) {
                 //success
-                ppvContentMovieCueWordStates.updateData = res.data.data;
-                setPPVContentMovieCueWordStates({ ...ppvContentMovieCueWordStates });
-                getAllReading(props.courseIds.ppvContentMovieCueId);
+                conversationCueWordStates.updateData = res.data.data;
+                setConversationCueWordStates({ ...conversationCueWordStates });
+                getAllReading(props.courseIds.introVideoCueId);
                 console.log("success insert writing", res.data.data);
                 message.success("Амжилттай writing хадгаллаа 😍😊✅")
               } else {
@@ -239,17 +234,17 @@ export default function Index(props) {
   
 
   const deleteListeningData = (values) => {
-      ppvContentMovieCueWordStates.loader = true; 
-      setPPVContentMovieCueWordStates({ppvContentMovieCueWordStates})
-      deleteContentMovieCueWordAPI(values.id, ppvContentMovieCueWordStates.token)
+      conversationCueWordStates.loader = true; 
+      setConversationCueWordStates({conversationCueWordStates})
+      deleteIntroVideoCueWordAPI(values.id, conversationCueWordStates.token)
         .then((res) => {
-            ppvContentMovieCueWordStates.loader = false;
-            setPPVContentMovieCueWordStates({ppvContentMovieCueWordStates})
+            conversationCueWordStates.loader = false;
+            setConversationCueWordStates({conversationCueWordStates})
             if (res && res.data && res.data.status && res.data.status === true) {
                 //success
-                ppvContentMovieCueWordStates.updateData = res.data.data;
-                setPPVContentMovieCueWordStates({ ...ppvContentMovieCueWordStates });
-                getAllReading(props.courseIds.ppvContentMovieCueId);
+                conversationCueWordStates.updateData = res.data.data;
+                setConversationCueWordStates({ ...conversationCueWordStates });
+                getAllReading(props.courseIds.introVideoCueId);
                 console.log("success insert writing", res.data.data);
                 message.success("Амжилттай writing устгав 😍😊✅")
               } else {
@@ -265,11 +260,11 @@ export default function Index(props) {
   const onFinishWriting = (values) => {
       console.log("on finish writing : ", values);
 
-      ppvContentMovieCueWordStates.isModalVisible = false;
-      if (ppvContentMovieCueWordStates.action == "ADD_READING") {
+      conversationCueWordStates.isModalVisible = false;
+      if (conversationCueWordStates.action == "ADD_READING") {
         //   values.is_active = parseInt(values.is_active);
           var insObj = {
-              cue_id : parseInt(props.courseIds.ppvContentMovieCueId),
+              cue_id : parseInt(props.courseIds.introVideoCueId),
               main_text : values.main_text,
               word_value : values.word_value,
               space_next : parseInt(values.space_next),
@@ -277,12 +272,13 @@ export default function Index(props) {
 
           };
           insertListeningData(insObj);
+          form.resetFields();
           
-        //   getAllReading(props.courseIds.ppvContentMovieCueId);;
-      } else if (ppvContentMovieCueWordStates.action == "EDIT") {
+        //   getAllReading(props.courseIds.introVideoCueId);;
+      } else if (conversationCueWordStates.action == "EDIT") {
           var updObj = {
-            id : ppvContentMovieCueWordStates.id,
-            cue_id : parseInt(props.courseIds.ppvContentMovieCueId),
+            id : conversationCueWordStates.id,
+            cue_id : parseInt(props.courseIds.introVideoCueId),
             main_text : values.main_text,
             word_value : values.word_value,
             space_next : parseInt(values.space_next),
@@ -291,7 +287,7 @@ export default function Index(props) {
           };
           updateListeningData(updObj);
           form.resetFields();
-          getAllReading(props.courseIds.ppvContentMovieCueId);;
+          getAllReading(props.courseIds.introVideoCueId);;
       }
   }
   const onFinishFailedWriting = () => {
@@ -299,22 +295,22 @@ export default function Index(props) {
   }
 
   const insertWriting = () => {
-    ppvContentMovieCueWordStates.isModalVisible = true;
-    ppvContentMovieCueWordStates.action = "ADD_READING";
-    setPPVContentMovieCueWordStates({ ...ppvContentMovieCueWordStates });
+    conversationCueWordStates.isModalVisible = true;
+    conversationCueWordStates.action = "ADD_READING";
+    setConversationCueWordStates({ ...conversationCueWordStates });
   };
 
 
   useEffect(() => {
     console.log("listening useffect");
-    getAllReading(props.courseIds.ppvContentMovieCueId);;
+    getAllReading(props.courseIds.introVideoCueId);;
   }, []);
 
 return (
     <Card title={"Listening"} style={{ margin: 15, width: "100%" }}>
       <Spin
         tip=""
-        spinning={ppvContentMovieCueWordStates.loader}
+        spinning={conversationCueWordStates.loader}
         indicator={antIcon}
         style={{
           position: "absolute",
@@ -335,21 +331,21 @@ return (
             Reading нэмэх
           </Button>
         </div>
-        <Table columns={columns} dataSource={ppvContentMovieCueWordStates.data} />
+        <Table columns={columns} dataSource={conversationCueWordStates.data} />
         <Modal
           title="Writing edit"
           width={"90%"}
-          visible={ppvContentMovieCueWordStates.isModalVisible}
+          visible={conversationCueWordStates.isModalVisible}
           footer={null}
           onCancel={() => {
             form.resetFields();
-            ppvContentMovieCueWordStates.isModalVisible = false;
-            ppvContentMovieCueWordStates.action = null;
-            setPPVContentMovieCueWordStates({ ...ppvContentMovieCueWordStates });
+            conversationCueWordStates.isModalVisible = false;
+            conversationCueWordStates.action = null;
+            setConversationCueWordStates({ ...conversationCueWordStates });
           }}
         >
          {(() => {   
-             if(ppvContentMovieCueWordStates.action == "EDIT") {
+             if(conversationCueWordStates.action == "EDIT") {
                  return (
                     <Form
                     form={form}
@@ -430,7 +426,7 @@ return (
                         </Form.Item>
                     </Form>
                 )
-             } else if(ppvContentMovieCueWordStates.action == "ADD_READING") {
+             } else if(conversationCueWordStates.action == "ADD_READING") {
                 return (
                    <Form
                    form={form}

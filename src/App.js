@@ -14,7 +14,7 @@ import ContentIndex from "./views/content/index";
 import PageNotFound from "./views/PageNotFound";
 import CourseMixedVideo from "./views/course/course_mixed_video/CourseMixedVideo";
 import CourseMixedVideoCue from "./views/course/course_mixed_video_cue/CourseMixedVideoCue";
-
+import CourseIntroVideoCueWord from "./views/course/course_intro_video_cue_word/courseIntroVideoCueWord"
 import CourseMixedVideoCueWord from "./views/course/course_mixed_video_cue_word/CourseMixedVideoCueWord"
 
 import Grammer from "./views/content/grammer/Grammer";
@@ -65,6 +65,7 @@ function App() {
   });
   const [courseIds, setCourseIds] = useState({
     introVideoId: null,
+    introVideoCueId : null,
     mixedVideoId: null,
     mixedVideoCueId : null,
     grammarId : null,
@@ -363,6 +364,19 @@ function App() {
                 path="/course/intro-cue-video"
                 element={
                   <CourseIntroCueVideo
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/course/intro-cue-video-word"
+                element={
+                  <CourseIntroVideoCueWord
                     userData={userData}
                     setUserData={setUserData}
                     loader={loader}

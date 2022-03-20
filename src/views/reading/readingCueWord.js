@@ -360,9 +360,7 @@ return (
                                         <Form.Item
                                         name={"word_value"}
                                         label="Word value"
-                                        rules={[
-                                            { required: true, message: "Заавал бөглөнө үү!" },
-                                        ]}
+                                        
                                         
                                         >
                                             <Input />
@@ -436,9 +434,7 @@ return (
                                        <Form.Item
                                        name={"word_value"}
                                        label="Word value"
-                                       rules={[
-                                           { required: true, message: "Заавал бөглөнө үү!" },
-                                       ]}
+                                      
                                        >
                                            <Input />
                                        </Form.Item>

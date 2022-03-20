@@ -18,6 +18,7 @@ import {
   Descriptions
 } from "antd";
 import {
+  ArrowsAltOutlined,
   DeleteOutlined,
   EditOutlined,
   EyeOutlined,
@@ -49,6 +50,7 @@ export default function Index(props) {
     token: localStorage.getItem("token"),
     card_title: "Видео интро",
     loader: false,
+    orderingId : null,
     isModalVisible: false,
     data: null,
     action: null,
@@ -191,7 +193,7 @@ export default function Index(props) {
               icon={<EditOutlined style={{ color: "#3e79f7" }} />}
             />
           </Tooltip>
-          <Tooltip placement="topRight" title="Cue үг засах">
+          {/* <Tooltip placement="topRight" title="Cue үг засах">
             <Button
               onClick={() => {
                 console.log("cue video word edit records==>", record);
@@ -200,6 +202,7 @@ export default function Index(props) {
                 getFormData(record);
                 introVideoCueStates.updateData.id = record.id;
                 introVideoCueStates.isModalVisible = true;
+                introVideoCueStates.orderingId = record.ordering;
                 introVideoCueStates.cueWordString = record.from_language_translation;
                 introVideoCueStates.cueWordsSplited =
                   introVideoCueStates.cueWordString.split(/[.,';:\/ -]/);
@@ -208,7 +211,7 @@ export default function Index(props) {
               }}
               icon={<FullscreenOutlined style={{ color: "#FAAD14" }} />}
             />
-          </Tooltip>
+          </Tooltip> */}
           <Tooltip placement="topRight" title="Харах">
             <Button
               onClick={() => {
@@ -218,6 +221,7 @@ export default function Index(props) {
                 getFormData(record);
                 introVideoCueStates.updateData.id = record.id;
                 introVideoCueStates.isModalVisible = true;
+
                 getCueWordsByCueIdData(record.id, introVideoCueStates.token)
                 console.log("Cue words : ",introVideoCueStates.cueWords)
                 setIntroVideoCueStates({ ...introVideoCueStates });
@@ -225,6 +229,18 @@ export default function Index(props) {
               }}
               icon={<EyeOutlined style={{ color: "#FAAD14" }} />}
             />
+          </Tooltip>
+          <Tooltip placement="topRight" title="Cue руу үсрэх">
+              <Button
+              onClick={() => {
+                  console.log("Cue button intro video records ID==>", record.id);
+                  console.log(props.courseIds)
+                  navigate("/course/intro-cue-video-word");
+                  props.courseIds.introVideoCueId = record.id;
+                  props.setCourseIds({ ...props.courseIds });
+              }}
+              icon={<ArrowsAltOutlined style={{ color: "#3e79f7" }} />}
+              />
           </Tooltip>
         </Space>
       ),
@@ -408,7 +424,7 @@ export default function Index(props) {
         : value.to_language_is_default;
     introVideoCueStates.updateData = {
       id: introVideoCueStates.updateData.id,
-      ordering: introVideoCueStates.updateData.ordering,
+      ordering: introVideoCueStates.orderingId,
       intro_video_id: props.courseIds.introVideoId,
       start_time: value.start_time,
       end_time: value.end_time,
@@ -633,7 +649,7 @@ export default function Index(props) {
                           htmlType="submit"
                           // style={{ width: "100%" }}
                         >
-                          Хадгалах/CUE'S WORD/
+                          Хадгалах/CUE'S WORD PISDA/
                         </Button>
                       </Form.Item>
                     </Col>
@@ -642,57 +658,6 @@ export default function Index(props) {
               );
           } else if (introVideoCueStates.action == "EDIT_WORD_SEE") {
             return (
-              // <Form
-              //   form={form}
-              //   name="addWord"
-              //   labelCol={{ span: 24 }}
-              //   wrapperCol={{ span: 20 }}
-              //   initialValues={{ remember: true }}
-              //   onFinish={onFinishIntroVideoCueWord}
-              //   onFinishFailed={onFinishFailedIntroVideo}
-              //   autoComplete="off"
-              // >
-              //   <Row style={{ display: "flex", justifyContent: "center" }}>
-              //     {introVideoCueStates.cueWords.map((word) => {
-              //       return (
-              //         <>
-              //           <Col span={10}>
-              //             <Form.Item
-              //               label={word.ordering}
-              //               name={word.ordering}
-              //               // rules={[
-              //               //   {
-              //               //     required: true,
-              //               //     message: "Заавал бөглөнө үү!",
-              //               //   },
-              //               // ]}
-              //               labelCol={{ span: 10 }}
-              //               // defaultValue={word}
-              //             >
-              //               <Input initialValues={word.cue_id} defaultValue={word.cue_id} />
-              //               <Input initialValues={word.word_text} defaultValue={word.word_text} />
-              //               <Input initialValues={word.word_value} defaultValue={word.word_value} />
-
-              //             </Form.Item>
-              //           </Col>
-              //         </>
-              //       );
-              //     })}
-              //   </Row>
-              //   <Row>
-              //     <Col span={24}>
-              //       <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
-              //         <Button
-              //           type="primary"
-              //           htmlType="submit"
-              //           // style={{ width: "100%" }}
-              //         >
-              //           Хадгалах/CUE'S WORD/
-              //         </Button>
-              //       </Form.Item>
-              //     </Col>
-              //   </Row>
-              // </Form>
               <Table columns={columns_word} dataSource={introVideoCueStates.cueWords} />
             );
             } else if (introVideoCueStates.action == "EDIT") {

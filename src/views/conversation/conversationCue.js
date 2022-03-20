@@ -34,6 +34,7 @@ import {
     insertConversationCueAPI,
     updateConversationCueAPI,
     deleteConversationCueAPI,
+    getAllConversationCueWordByCueAPI,
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
 
@@ -55,6 +56,38 @@ export default function Index(props) {
         id : null
     },
   });
+  const columns_word = [
+    {
+      title : "Id",
+      dataIndex : "id",
+      key :"id"
+    },
+    {
+      title : "Cue id",
+      dataIndex : "cue_id",
+      key :"cue_id"
+    },
+    {
+      title : "Main text",
+      dataIndex : "main_text",
+      key :"main_text"
+    },
+    {
+      title : "Word value",
+      dataIndex : "word_value",
+      key :"word_value"
+    },
+    {
+      title : "Space next",
+      dataIndex : "space_next",
+      key :"space_next"
+    },
+    {
+      title : "Ordering",
+      dataIndex : "ordering",
+      key :"ordering"
+    }
+  ]
   const columns = [
     {
         title : "Id",
@@ -136,7 +169,7 @@ export default function Index(props) {
                 <Button
                     onClick={() => {
                     console.log("UPDATE/edit intro CUE video records==>", record);
-                    console.log("introVideoCueStates updateIntroCueVideo");
+                    console.log("conversationCueStates updateIntroCueVideo");
                     conversationCueStates.action = "EDIT";
                     // setConversationCueStates({ ...conversationCueStates });
                     // getAllReading(record);
@@ -147,6 +180,25 @@ export default function Index(props) {
                     setConversationCueStates({ ...conversationCueStates });
                     }}
                     icon={<EditOutlined style={{ color: "#3e79f7" }} />}
+                />
+                
+                </Tooltip>
+                <Tooltip placement="topRight" title="Харах">
+                <Button
+                    onClick={() => {
+                    console.log("cue video word edit records==>", record);
+                    conversationCueStates.action = "EDIT_WORD_SEE";
+                    setConversationCueStates({ ...conversationCueStates });
+                    getFormData(record);
+                    conversationCueStates.updateData.id = record.id;
+                    conversationCueStates.isModalVisible = true;
+
+                    getCueWordsByCueIdData(record.id, conversationCueStates.token)
+                    console.log("Cue words : ",conversationCueStates.cueWords)
+                    setConversationCueStates({ ...conversationCueStates });
+                    console.log("conversationCueStates : ", conversationCueStates);
+                    }}
+                    icon={<EyeOutlined style={{ color: "#FAAD14" }} />}
                 />
                 </Tooltip>
                 <Tooltip placement="topRight" title="Cue руу үсрэх">
@@ -169,7 +221,7 @@ export default function Index(props) {
 
   const getFormData = (record) => {
   
-    // setIntroVideoCueStates({ ...introVideoCueStates });
+    // setConversationCueStates({ ...conversationCueStates });
     form.setFieldsValue({
       ordering : record.ordering,
       start_time : record.start_time, 
@@ -209,6 +261,20 @@ export default function Index(props) {
       });
   };
 
+
+  const getCueWordsByCueIdData = (cue_id, token) => {
+    getAllConversationCueWordByCueAPI(cue_id, token)
+      .then((res) => {
+        // console.log("SUCCESS : ", res)
+        conversationCueStates.cueWords = [...res.data.data] 
+        setConversationCueStates({...conversationCueStates})
+        message.success("successfully get words")
+      })
+      .catch((err)=>{
+        console.log("error : ",err)
+        message.error("failed get words")
+      })
+  }
   const insertListeningData = (values) => {
       conversationCueStates.loader = true;
       setConversationCueStates({conversationCueStates});
@@ -529,7 +595,11 @@ return (
                         </Form.Item>
                     </Form>
                 )
-             } else if(conversationCueStates.action == "ADD_READING") {
+             }else if (conversationCueStates.action == "EDIT_WORD_SEE") {
+                return (
+                  <Table columns={columns_word} dataSource={conversationCueStates.cueWords} />
+                );  
+                 } else if(conversationCueStates.action == "ADD_READING") {
                 return (
                    <Form
                    form={form}

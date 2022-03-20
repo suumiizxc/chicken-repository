@@ -146,7 +146,7 @@ export default function Index(props) {
     // setIntroVideoCueStates({ ...introVideoCueStates });
     form.setFieldsValue({
       main_text : record.main_text,
-      word_value : record.word_valuel,
+      word_value : record.word_value,
       space_next : record.space_next,
       ordering : record.ordering,
     });
@@ -377,9 +377,7 @@ return (
                                         <Form.Item
                                         name={"word_value"}
                                         label="Word value"
-                                        rules={[
-                                            { required: true, message: "Заавал бөглөнө үү!" },
-                                        ]}
+                                        
                                         
                                         >
                                             <Input />

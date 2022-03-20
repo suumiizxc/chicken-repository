@@ -34,6 +34,7 @@ import {
     insertWritingVideoCueAPI,
     deleteWritingVideoCueAPI,
     updateWritingVideoCueAPI,
+    getAllWritingVideoCueMissWordByCIDAPI,
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
 
@@ -58,6 +59,40 @@ export default function Index(props) {
         id : null
     },
   });
+
+  const columns_word = [
+    {
+      title : "Id",
+      dataIndex : "id",
+      key :"id"
+    },
+    {
+      title : "Cue id",
+      dataIndex : "cue_id",
+      key :"cue_id"
+    },
+    {
+      title : "Main text",
+      dataIndex : "main_text",
+      key :"main_text"
+    },
+    {
+      title : "Word value",
+      dataIndex : "word_value",
+      key :"word_value"
+    },
+    {
+      title : "Space next",
+      dataIndex : "space_next",
+      key :"space_next"
+    },
+    {
+      title : "Ordering",
+      dataIndex : "ordering",
+      key :"ordering"
+    }
+  ]
+
   const columns = [
     {
       title : "Id",
@@ -144,7 +179,7 @@ export default function Index(props) {
                 <Button
                     onClick={() => {
                     console.log("UPDATE/edit intro CUE video records==>", record);
-                    console.log("introVideoCueStates updateIntroCueVideo");
+                    console.log("writingVideoStates updateIntroCueVideo");
                     writingVideoStates.action = "EDIT";
                     // setWritingVideoStates({ ...writingVideoStates });
                     // getAllWriting(record);
@@ -156,6 +191,24 @@ export default function Index(props) {
                     }}
                     icon={<EditOutlined style={{ color: "#3e79f7" }} />}
                 />
+                <Tooltip placement="topRight" title="Харах">
+                  <Button
+                    onClick={() => {
+                      console.log("cue video word edit records==>", record);
+                      writingVideoStates.action = "EDIT_WORD_SEE";
+                      setWritingVideoStates({ ...writingVideoStates });
+                      getFormData(record);
+                      writingVideoStates.updateData.id = record.id;
+                      writingVideoStates.isModalVisible = true;
+
+                      getCueWordsByCueIdData(record.id, writingVideoStates.token)
+                      console.log("Cue words : ",writingVideoStates.cueWords)
+                      setWritingVideoStates({ ...writingVideoStates });
+                      console.log("writingVideoStates : ", writingVideoStates);
+                    }}
+                    icon={<EyeOutlined style={{ color: "#FAAD14" }} />}
+                  />
+                </Tooltip>
                 <Tooltip placement="topRight" title="Видео руу үсрэх">
                     <Button
                     onClick={() => {
@@ -175,7 +228,7 @@ export default function Index(props) {
 
   const getFormData = (record) => {
   
-    // setIntroVideoCueStates({ ...introVideoCueStates });
+    // setWritingVideoStates({ ...writingVideoStates });
     form.setFieldsValue({
         video_id : record.video_id,
         ordering : record.ordering,
@@ -217,6 +270,21 @@ export default function Index(props) {
       });
   };
 
+
+  const getCueWordsByCueIdData = (cue_id, token) => {
+    getAllWritingVideoCueMissWordByCIDAPI(cue_id, token)
+      .then((res) => {
+        // console.log("SUCCESS : ", res)
+        writingVideoStates.cueWords = [...res.data.data] 
+        setWritingVideoStates({...writingVideoStates})
+        message.success("successfully get words")
+      })
+      .catch((err)=>{
+        console.log("error : ",err)
+        message.error("failed get words")
+      })
+  }
+  
   const deleteWritingVideoCueData = (id) => {
     writingVideoStates.loader = true;
     setWritingVideoStates({writingVideoStates})
@@ -546,7 +614,11 @@ return (
                         </Form.Item>
               </Form>
             )
-            } else if (writingVideoStates.action == "ADD_WRITING_VIDEO_CUE") {
+            }else if (writingVideoStates.action == "EDIT_WORD_SEE") {
+              return (
+                <Table columns={columns_word} dataSource={writingVideoStates.cueWords} />
+              );
+            }  else if (writingVideoStates.action == "ADD_WRITING_VIDEO_CUE") {
               return(
               <Form
               form={form}
