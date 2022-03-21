@@ -41,6 +41,7 @@ import ConversationCue from "./views/conversation/conversationCue"
 import ConversationCueWord from "./views/conversation/conversationCueWord"
 import Article from "./views/article/article"
 import ArticleCue from "./views/article/articleCue"
+import ArticleCueWord from "./views/article/articleCueWord"
 
 
 import "./App.css";
@@ -82,6 +83,8 @@ function App() {
     ppvContentMovieCueId : null,
     conversationId : null,
     conversationCueId : null,
+    articleId : null,
+    articleCueId : null,
   });
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} spin />;
 
@@ -533,6 +536,19 @@ function App() {
                 path="/article-cue"
                 element={
                   <ArticleCue
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+                }
+              />
+              <Route
+                path="/article-cue-word"
+                element={
+                  <ArticleCueWord
                     userData={userData}
                     setUserData={setUserData}
                     loader={loader}

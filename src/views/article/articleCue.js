@@ -30,10 +30,10 @@ import {
   ArrowsAltOutlined,
 } from "@ant-design/icons";
 import {
-    getAllListeningCueByListeningAPI,
-    insertListeningCueAPI,
-    deleteListeningCueVideoAPI,
-    updateListeningCueAPI,
+    getAllArticleCueByArticleAPI,
+    insertArticleCueAPI,
+    deleteArticleCueAPI,
+    updateArticleCueAPI,
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
 
@@ -63,29 +63,34 @@ export default function Index(props) {
       key :"id"
     },
     {
-      title : "Listening id",
-      dataIndex : "listening_id",
-      key :"listening_id"
+      title : "Article id",
+      dataIndex : "article_id",
+      key :"article_id"
     },
     {
-      title : "Host url",
-      dataIndex : "host_url",
-      key :"host_url"
+      title : "From language id",
+      dataIndex : "from_language_id",
+      key :"from_language_id"
     },
     {
-      title : "Host source type",
-      dataIndex : "host_source_type",
-      key :"host_source_type"
+      title : "From language translation",
+      dataIndex : "from_language_translation",
+      key :"from_language_translation"
+    },
+    {
+      title : "To language id",
+      dataIndex : "to_language_id",
+      key : "to_language_id",
+    },
+    {
+      title : "To language translation",
+      dataIndex : "to_language_translation",
+      key : "to_language_translation"
     },
     {
       title : "Is active",
       dataIndex : "is_active",
-      key :"is_active"
-    },
-    {
-      title : "Title",
-      dataIndex : "title",
-      key : "title",
+      key : "is_active"
     },
     {
       title : "Ordering",
@@ -131,8 +136,8 @@ export default function Index(props) {
                     <Button
                     onClick={() => {
                         console.log("Cue button intro video records ID==>", record.id);
-                        navigate("/content/listening-question");
-                        props.courseIds.listeningCueId = record.id;
+                        navigate("/article-cue-word");
+                        props.courseIds.articleCueId = record.id;
                         props.setCourseIds({ ...props.courseIds });
                     }}
                     icon={<ArrowsAltOutlined style={{ color: "#3e79f7" }} />}
@@ -148,12 +153,12 @@ export default function Index(props) {
   
     // setIntroVideoCueStates({ ...introVideoCueStates });
     form.setFieldsValue({
-        writing_id : record.writing_id,
-        host_url : record.host_url,
-        host_source_type : record.host_source_type,
-        ordering : record.ordering,
+        from_language_id : record.from_language_id,
+        from_language_translation : record.from_language_translation,
+        to_language_id : record.to_language_id,
+        to_language_translation : record.to_language_translation,
         is_active : record.is_active,
-        title : record.title,
+        ordering : record.ordering,
     });
   };
 
@@ -161,7 +166,7 @@ export default function Index(props) {
   const getAllWritingVideo = (id) => {
     listeningCueStates.loader = true;
     setListeningCueStates({ listeningCueStates });
-    getAllListeningCueByListeningAPI(id,listeningCueStates.token)
+    getAllArticleCueByArticleAPI(id,listeningCueStates.token)
       .then((res) => {
         listeningCueStates.loader = false;
         setListeningCueStates({ listeningCueStates });
@@ -186,17 +191,17 @@ export default function Index(props) {
   const deleteWritingVideoData = (id) => {
     listeningCueStates.loader = true;
     setListeningCueStates({listeningCueStates})
-    deleteListeningCueVideoAPI(id, listeningCueStates.token)
+    deleteArticleCueAPI(id, listeningCueStates.token)
     .then((res) => {
       listeningCueStates.loader = false;
       setListeningCueStates({ listeningCueStates });
       if (res && res.data && res.data.status && res.data.status === true) {
         //success
         // listeningCueStates.data = res.data.data;
-        // getAllWritingVideo(props.courseIds.listeningId);
+        // getAllWritingVideo(props.courseIds.articleId);
         setListeningCueStates({ ...listeningCueStates });
         console.log("success delete writing", res.data.data);
-        getAllWritingVideo(props.courseIds.listeningId);
+        getAllWritingVideo(props.courseIds.articleId);
       } else {
         //unsuccessful
         message.error("Алдаа гарлаа");
@@ -222,7 +227,7 @@ export default function Index(props) {
   const insertListeningCueData = (data) => {
     listeningCueStates.loader = true;
     setListeningCueStates({listeningCueStates})
-    insertListeningCueAPI(data, listeningCueStates.token)
+    insertArticleCueAPI(data, listeningCueStates.token)
       .then((res) => {
         listeningCueStates.loader = false;
         setListeningCueStates({listeningCueStates})
@@ -246,7 +251,7 @@ export default function Index(props) {
   const updateListeningCueData = (data) => {
     listeningCueStates.loader = true;
     setListeningCueStates({listeningCueStates})
-    updateListeningCueAPI(data, listeningCueStates.token)
+    updateArticleCueAPI(data, listeningCueStates.token)
       .then((res) => {
         listeningCueStates.loader = false;
         setListeningCueStates({listeningCueStates})
@@ -272,17 +277,36 @@ export default function Index(props) {
   const onFinishListening = (values) => {
       console.log("on finish writing")
       if(listeningCueStates.action == "ADD_LISTENING_CUE") {
-        var insertObj = {listening_id : props.courseIds.listeningId, host_url : values.host_url, host_source_type : parseInt(values.host_source_type),  ordering : parseInt(values.ordering), is_active : parseInt(values.is_active), title : values.title};
+        var insertObj = {
+          article_id : parseInt(props.courseIds.articleId), 
+          from_language_id : parseInt(values.from_language_id),
+          from_language_translation : values.from_language_translation,
+          to_language_id : parseInt(values.to_language_id),
+          to_language_translation : values.to_language_translation,
+          is_active : parseInt(values.is_active),
+          ordering : parseInt(values.ordering),
+        };
         insertListeningCueData(insertObj)
-        getAllWritingVideo(props.courseIds.listeningId);
+        getAllWritingVideo(props.courseIds.articleId);
         
       } else if (listeningCueStates.action == "EDIT") {
-        var updateObj = {id : listeningCueStates.id, listening_id : props.courseIds.listeningId, host_url : values.host_url, host_source_type : parseInt(values.host_source_type), ordering : parseInt(values.ordering), is_active : parseInt(values.is_active), title : values.title};
-        console.log("PISDAAAADASDADA : ", updateObj)
+        var updateObj = {
+          id : listeningCueStates.id,
+          article_id : parseInt(props.courseIds.articleId), 
+          from_language_id : parseInt(values.from_language_id),
+          from_language_translation : values.from_language_translation,
+          to_language_id : parseInt(values.to_language_id),
+          to_language_translation : values.to_language_translation,
+          is_active : parseInt(values.is_active),
+          ordering : parseInt(values.ordering),
+        };
+        
         updateListeningCueData(updateObj)
-        getAllWritingVideo(props.courseIds.listeningId);
+        getAllWritingVideo(props.courseIds.articleId);
       }
       listeningCueStates.isModalVisible = false;
+      form.resetFields();
+      getAllWritingVideo(props.courseIds.articleId);
       setListeningCueStates({ ...listeningCueStates });
   }
   const onFinishFailedWriting = () => {
@@ -291,7 +315,7 @@ export default function Index(props) {
 
   useEffect(() => {
     console.log("writing useffect");
-    getAllWritingVideo(props.courseIds.listeningId);
+    getAllWritingVideo(props.courseIds.articleId);
   }, []);
 
 return (
@@ -368,16 +392,32 @@ return (
                           <Row>
                               <Col span={8}>
                                   <Form.Item
-                                  name={"host_url"}
-                                  label="Host url"
+                                  name={"from_language_id"}
+                                  label="From language id"
                                   >
                                       <Input />
                                   </Form.Item>
                               </Col>
                               <Col span={8}>
                                   <Form.Item
-                                  name={"host_source_type"}
-                                  label="Host source type"
+                                  name={"from_language_translation"}
+                                  label="From language translation"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"to_language_id"}
+                                  label="To language id"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"to_language_translation"}
+                                  label="To language translation"
                                   >
                                       <Input />
                                   </Form.Item>
@@ -386,14 +426,6 @@ return (
                                   <Form.Item
                                   name={"is_active"}
                                   label="Is active"
-                                  >
-                                      <Input />
-                                  </Form.Item>
-                              </Col>
-                              <Col span={8}>
-                                  <Form.Item
-                                  name={"title"}
-                                  label="Title"
                                   >
                                       <Input />
                                   </Form.Item>
@@ -438,16 +470,32 @@ return (
                           <Row>
                               <Col span={8}>
                                   <Form.Item
-                                  name={"host_url"}
-                                  label="Host url"
+                                  name={"from_language_id"}
+                                  label="From language id"
                                   >
                                       <Input />
                                   </Form.Item>
                               </Col>
                               <Col span={8}>
                                   <Form.Item
-                                  name={"host_source_type"}
-                                  label="Host source type"
+                                  name={"from_language_translation"}
+                                  label="From language translation"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"to_language_id"}
+                                  label="To language id"
+                                  >
+                                      <Input />
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"to_language_translation"}
+                                  label="To language translation"
                                   >
                                       <Input />
                                   </Form.Item>
@@ -456,14 +504,6 @@ return (
                                   <Form.Item
                                   name={"is_active"}
                                   label="Is active"
-                                  >
-                                      <Input />
-                                  </Form.Item>
-                              </Col>
-                              <Col span={8}>
-                                  <Form.Item
-                                  name={"title"}
-                                  label="Title"
                                   >
                                       <Input />
                                   </Form.Item>

@@ -30,10 +30,10 @@ import {
   ArrowsAltOutlined,
 } from "@ant-design/icons";
 import {
-    getAllArticle,
-    insertArticleAPI,
-    updateArticleAPI,
-    deleteArticleAPI,
+    getAllArticleCueWordByArticleCueAPI,
+    insertArticleCueWordAPI,
+    updateArticleCueWordAPI,
+    deleteArticleCueWordAPI,
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
 
@@ -42,7 +42,7 @@ export default function Index(props) {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  const [readingStates, setReadingStates] = useState({
+  const [readingCueStates, setReadingCueStates] = useState({
     token: localStorage.getItem("token"),
     card_title: "Видео интро",
     loader: false,
@@ -62,24 +62,29 @@ export default function Index(props) {
         key :"id"
     },
     {
-        title : "Title",
-        dataIndex : "title",
-        key : "title",
+        title : "Cue id",
+        dataIndex : "cue_id",
+        key :"cue_id"
     },
     {
-        title : "Category",
-        dataIndex : ["category", "name"],
-        key : ["category", "name"],
+        title : "Main text",
+        dataIndex : "main_text",
+        key : "main_text",
     },
     {
-        title : "Is trending",
-        dataIndex :"is_trending",
-        key : "is_trending"
+        title : "Word value",
+        dataIndex : "word_value",
+        key : "word_value",
     },
     {
-        title : "Is active",
-        dataIndex : "is_active",
-        key : "is_active",
+        title : "Space next",
+        dataIndex : "space_next",
+        key : "space_next",
+    },
+    {
+        title : "Ordering",
+        dataIndex : "ordering",
+        key : "ordering",
     },
     {
         title : "Үйлдэл",
@@ -106,29 +111,17 @@ export default function Index(props) {
                     onClick={() => {
                     console.log("UPDATE/edit intro CUE video records==>", record);
                     console.log("introVideoCueStates updateIntroCueVideo");
-                    readingStates.action = "EDIT";
-                    // setReadingStates({ ...readingStates });
+                    readingCueStates.action = "EDIT";
+                    // setReadingCueStates({ ...readingCueStates });
                     // getAllReading(record);
-                    readingStates.updateData = record;
-                    readingStates.id = record.id;
-                    readingStates.isModalVisible = true;
+                    readingCueStates.updateData = record;
+                    readingCueStates.id = record.id;
+                    readingCueStates.isModalVisible = true;
                     getFormData(record);
-                    setReadingStates({ ...readingStates });
+                    setReadingCueStates({ ...readingCueStates });
                     }}
                     icon={<EditOutlined style={{ color: "#3e79f7" }} />}
                 />
-                </Tooltip>
-                <Tooltip placement="topRight" title="Cue руу үсрэх">
-                    <Button
-                    onClick={() => {
-                        console.log("Cue button intro video records ID==>", record.id);
-                        console.log(props.courseIds)
-                        navigate("/article-cue");
-                        props.courseIds.articleId = record.id;
-                        props.setCourseIds({ ...props.courseIds });
-                    }}
-                    icon={<ArrowsAltOutlined style={{ color: "#3e79f7" }} />}
-                    />
                 </Tooltip>
             </Space>
         )
@@ -140,25 +133,25 @@ export default function Index(props) {
   
     // setIntroVideoCueStates({ ...introVideoCueStates });
     form.setFieldsValue({
-      title : record.title,
-      category_id : record.category_id,
-      is_trending : record.is_trending,
-      is_active : record.is_active,
+      ordering : record.ordering,
+      word_value : record.word_value,
+      space_next : record.space_next,
+      main_text : record.main_text,
     });
   };
 
   //GET All writing list
-  const getAllReading = () => {
-    readingStates.loader = true;
-    setReadingStates({ readingStates });
-    getAllArticle(readingStates.token)
+  const getAllReading = (id) => {
+    readingCueStates.loader = true;
+    setReadingCueStates({ readingCueStates });
+    getAllArticleCueWordByArticleCueAPI(id, readingCueStates.token)
       .then((res) => {
-        readingStates.loader = false;
-        setReadingStates({ readingStates });
+        readingCueStates.loader = false;
+        setReadingCueStates({ readingCueStates });
         if (res && res.data && res.data.status && res.data.status === true) {
           //success
-          readingStates.data = res.data.data;
-          setReadingStates({ ...readingStates });
+          readingCueStates.data = res.data.data;
+          setReadingCueStates({ ...readingCueStates });
           console.log("success all writing", res.data.data);
         } else {
           //unsuccessful
@@ -174,18 +167,18 @@ export default function Index(props) {
   };
 
   const insertListeningData = (values) => {
-      readingStates.loader = true;
-      setReadingStates({readingStates});
+      readingCueStates.loader = true;
+      setReadingCueStates({readingCueStates});
       console.log("SHINE PISDA : ", values);
-      insertArticleAPI(values, readingStates.token)
+      insertArticleCueWordAPI(values, readingCueStates.token)
         .then((res) => {
-            readingStates.loader = false;
-            setReadingStates({readingStates});
+            readingCueStates.loader = false;
+            setReadingCueStates({readingCueStates});
             if (res && res.data && res.data.status && res.data.status === true) {
                 //success
-                readingStates.insertData = res.data.data;
-                setReadingStates({ ...readingStates });
-                getAllReading()
+                readingCueStates.insertData = res.data.data;
+                setReadingCueStates({ ...readingCueStates });
+                getAllReading(props.courseIds.articleCueId)
                 console.log("success insert writing", res.data.data);
                 message.success("Амжилттай writing хадгаллаа 😍😊✅")
               } else {
@@ -202,17 +195,17 @@ export default function Index(props) {
   }
 
   const updateListeningData = (values) => {
-      readingStates.loader = true;
-      setReadingStates({readingStates})
-      updateArticleAPI(values, readingStates.token)
+      readingCueStates.loader = true;
+      setReadingCueStates({readingCueStates})
+      updateArticleCueWordAPI(values, readingCueStates.token)
         .then((res) => {
-            readingStates.loader = false;
-            setReadingStates({readingStates});
+            readingCueStates.loader = false;
+            setReadingCueStates({readingCueStates});
             if (res && res.data && res.data.status && res.data.status === true) {
                 //success
-                readingStates.updateData = res.data.data;
-                setReadingStates({ ...readingStates });
-                getAllReading()
+                readingCueStates.updateData = res.data.data;
+                setReadingCueStates({ ...readingCueStates });
+                getAllReading(props.courseIds.articleCueId)
                 console.log("success insert writing", res.data.data);
                 message.success("Амжилттай writing хадгаллаа 😍😊✅")
               } else {
@@ -229,17 +222,17 @@ export default function Index(props) {
   
 
   const deleteListeningData = (values) => {
-      readingStates.loader = true; 
-      setReadingStates({readingStates})
-      deleteArticleAPI(values.id, readingStates.token)
+      readingCueStates.loader = true; 
+      setReadingCueStates({readingCueStates})
+      deleteArticleCueWordAPI(values.id, readingCueStates.token)
         .then((res) => {
-            readingStates.loader = false;
-            setReadingStates({readingStates})
+            readingCueStates.loader = false;
+            setReadingCueStates({readingCueStates})
             if (res && res.data && res.data.status && res.data.status === true) {
                 //success
-                readingStates.updateData = res.data.data;
-                setReadingStates({ ...readingStates });
-                getAllReading()
+                readingCueStates.updateData = res.data.data;
+                setReadingCueStates({ ...readingCueStates });
+                getAllReading(props.courseIds.articleCueId)
                 console.log("success insert writing", res.data.data);
                 message.success("Амжилттай writing устгав 😍😊✅")
               } else {
@@ -255,16 +248,30 @@ export default function Index(props) {
   const onFinishWriting = (values) => {
       console.log("on finish writing : ", values);
 
-      readingStates.isModalVisible = false;
-      if (readingStates.action == "ADD_READING") {
-          var inObj = {title : values.title, category_id : parseInt(values.category_id), is_trending : parseInt(values.is_trending), is_active : parseInt(values.is_active)};
-          insertListeningData(inObj);
-        //   getAllReading();
-      } else if (readingStates.action == "EDIT") {
-          var updObj = {id : readingStates.id,  title : values.title, category_id : parseInt(values.category_id),  is_trending : parseInt(values.is_trending), is_active : parseInt(values.is_active)};
+      readingCueStates.isModalVisible = false;
+      if (readingCueStates.action == "ADD_READING") {
+        //   values.is_active = parseInt(values.is_active);
+          var insObj = {
+              cue_id : props.courseIds.articleCueId,
+              main_text : values.main_text,
+              word_value : values.word_value,
+              space_next : parseInt(values.space_next),
+              ordering : parseInt(values.ordering),
+          };
+          insertListeningData(insObj);
+        //   getAllReading(props.courseIds.articleCueId);
+      } else if (readingCueStates.action == "EDIT") {
+          var updObj = {
+            id : readingCueStates.id,
+            cue_id : props.courseIds.articleCueId,
+            main_text : values.main_text,
+            word_value : values.word_value,
+            space_next : parseInt(values.space_next),
+            ordering : parseInt(values.ordering)
+          };
           updateListeningData(updObj);
           form.resetFields();
-          getAllReading();
+          getAllReading(props.courseIds.articleCueId);
       }
   }
   const onFinishFailedWriting = () => {
@@ -272,22 +279,22 @@ export default function Index(props) {
   }
 
   const insertWriting = () => {
-    readingStates.isModalVisible = true;
-    readingStates.action = "ADD_READING";
-    setReadingStates({ ...readingStates });
+    readingCueStates.isModalVisible = true;
+    readingCueStates.action = "ADD_READING";
+    setReadingCueStates({ ...readingCueStates });
   };
 
 
   useEffect(() => {
     console.log("listening useffect");
-    getAllReading();
+    getAllReading(props.courseIds.articleCueId);
   }, []);
 
 return (
     <Card title={"Listening"} style={{ margin: 15, width: "100%" }}>
       <Spin
         tip=""
-        spinning={readingStates.loader}
+        spinning={readingCueStates.loader}
         indicator={antIcon}
         style={{
           position: "absolute",
@@ -305,24 +312,24 @@ return (
               marginBottom: 16,
             }}
           >
-            Article нэмэх
+            Reading нэмэх
           </Button>
         </div>
-        <Table columns={columns} dataSource={readingStates.data} />
+        <Table columns={columns} dataSource={readingCueStates.data} />
         <Modal
           title="Writing edit"
           width={"90%"}
-          visible={readingStates.isModalVisible}
+          visible={readingCueStates.isModalVisible}
           footer={null}
           onCancel={() => {
             form.resetFields();
-            readingStates.isModalVisible = false;
-            readingStates.action = null;
-            setReadingStates({ ...readingStates });
+            readingCueStates.isModalVisible = false;
+            readingCueStates.action = null;
+            setReadingCueStates({ ...readingCueStates });
           }}
         >
          {(() => {   
-             if(readingStates.action == "EDIT") {
+             if(readingCueStates.action == "EDIT") {
                  return (
                     <Form
                     form={form}
@@ -337,11 +344,10 @@ return (
                         <Row>
                             <Col span={24}>
                                 <Row>
-                                   
                                     <Col span={12}>
                                         <Form.Item
-                                        name={"title"}
-                                        label="Title"
+                                        name={"main_text"}
+                                        label="Main text"
                                         rules={[
                                             { required: true, message: "Заавал бөглөнө үү!" },
                                         ]}
@@ -349,25 +355,21 @@ return (
                                         >
                                             <Input />
                                         </Form.Item>
-                                    
                                     </Col>
                                     <Col span={12}>
                                         <Form.Item
-                                        name={"category_id"}
-                                        label="Category id"
-                                        rules={[
-                                            { required: true, message: "Заавал бөглөнө үү!" },
-                                        ]}
+                                        name={"word_value"}
+                                        label="Word value"
+                                        
                                         
                                         >
                                             <Input />
                                         </Form.Item>
-                                    
                                     </Col>
                                     <Col span={12}>
                                         <Form.Item
-                                        name={"is_trending"}
-                                        label="Is trending"
+                                        name={"space_next"}
+                                        label="Space next"
                                         rules={[
                                             { required: true, message: "Заавал бөглөнө үү!" },
                                         ]}
@@ -375,12 +377,11 @@ return (
                                         >
                                             <Input />
                                         </Form.Item>
-                                    
                                     </Col>
                                     <Col span={12}>
                                         <Form.Item
-                                        name={"is_active"}
-                                        label="Is active"
+                                        name={"ordering"}
+                                        label="Ordering"
                                         rules={[
                                             { required: true, message: "Заавал бөглөнө үү!" },
                                         ]}
@@ -388,7 +389,6 @@ return (
                                         >
                                             <Input />
                                         </Form.Item>
-                                    
                                     </Col>
                                 </Row>
                             </Col>
@@ -404,7 +404,7 @@ return (
                         </Form.Item>
                     </Form>
                 )
-             } else if(readingStates.action == "ADD_READING") {
+             } else if(readingCueStates.action == "ADD_READING") {
                 return (
                    <Form
                    form={form}
@@ -419,54 +419,47 @@ return (
                        <Row>
                            <Col span={24}>
                                <Row>
-                                   
-                                   <Col span={12}>
+                                    <Col span={12}>
                                        <Form.Item
-                                       name={"title"}
-                                       label="Title"
+                                       name={"main_text"}
+                                       label="Main text"
                                        rules={[
                                            { required: true, message: "Заавал бөглөнө үү!" },
                                        ]}
                                        >
                                            <Input />
                                        </Form.Item>
-                                   
                                    </Col>
                                    <Col span={12}>
                                        <Form.Item
-                                       name={"category_id"}
-                                       label="Category id"
-                                       rules={[
-                                           { required: true, message: "Заавал бөглөнө үү!" },
-                                       ]}
+                                       name={"word_value"}
+                                       label="Word value"
+                                      
                                        >
                                            <Input />
                                        </Form.Item>
-                                   
                                    </Col>
                                    <Col span={12}>
                                        <Form.Item
-                                       name={"is_trending"}
-                                       label="Is trending"
+                                       name={"space_next"}
+                                       label="Space next"
                                        rules={[
                                            { required: true, message: "Заавал бөглөнө үү!" },
                                        ]}
                                        >
                                            <Input />
                                        </Form.Item>
-                                   
                                    </Col>
                                    <Col span={12}>
                                        <Form.Item
-                                       name={"is_active"}
-                                       label="Is active"
+                                       name={"ordering"}
+                                       label="Ordering"
                                        rules={[
                                            { required: true, message: "Заавал бөглөнө үү!" },
                                        ]}
                                        >
                                            <Input />
                                        </Form.Item>
-                                   
                                    </Col>
                                </Row>
                            </Col>
