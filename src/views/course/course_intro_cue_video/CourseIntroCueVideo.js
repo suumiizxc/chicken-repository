@@ -187,6 +187,7 @@ export default function Index(props) {
                 setIntroVideoCueStates({ ...introVideoCueStates });
                 getFormData(record);
                 introVideoCueStates.updateData.id = record.id;
+                introVideoCueStates.orderingId = record.ordering;
                 introVideoCueStates.isModalVisible = true;
                 setIntroVideoCueStates({ ...introVideoCueStates });
               }}
@@ -470,6 +471,7 @@ export default function Index(props) {
 
     if (introVideoCueStates.action === "EDIT") {
       console.log("edit intro video running=>");
+      values["ordering"] = introVideoCueStates.updateData.ordering;
       updateIntroCueVideo(values);
     } else {
       console.log("insert intro video running");
