@@ -550,6 +550,23 @@ export function deleteWritingVideoCueMissWordAPI(id, token) {
   });
 }
 
+export function deleteWritingVideoCueMissWordByCueIDAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/course-writing-video-cue-missword/delete-by-cue-id/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
 export function updateWritingVideoCueMissWordAPI(data, token) {
   return new Promise((resolve, reject) => {
     axios({

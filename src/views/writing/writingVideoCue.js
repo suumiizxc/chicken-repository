@@ -35,8 +35,12 @@ import {
     deleteWritingVideoCueAPI,
     updateWritingVideoCueAPI,
     getAllWritingVideoCueMissWordByCIDAPI,
+
+    insertWritingVideoCueMissWordAPI,
+    deleteWritingVideoCueMissWordByCueIDAPI,
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Index(props) {
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} />;
@@ -58,7 +62,11 @@ export default function Index(props) {
     updateData:{
         id : null
     },
+    insertedCueID : null,
+    insertWord : [],
   });
+
+  const symbols = [",", ".", ":", ";", "/", "!","-","_", `'`, `"`];
 
   const columns_word = [
     {
@@ -170,6 +178,8 @@ export default function Index(props) {
                     onConfirm={() => {
                     console.log("delete record", record);
                     deleteWritingVideoCueData(record.id);
+                    
+                    deleteWritingVideoCueWordByCueIDData(record.id);
                     }}
                     okText="Тийм"
                     cancelText="Үгүй"
@@ -285,6 +295,34 @@ export default function Index(props) {
       })
   }
   
+  const deleteWritingVideoCueWordByCueIDData = (id) => {
+    writingVideoStates.loader = true;
+    setWritingVideoStates({writingVideoStates})
+    deleteWritingVideoCueMissWordByCueIDAPI(id, writingVideoStates.token)
+    .then((res) => {
+      writingVideoStates.loader = false;
+      setWritingVideoStates({ writingVideoStates });
+      if (res && res.data && res.data.status && res.data.status === true) {
+        //success
+        // writingVideoStates.data = res.data.data;
+        getAllWritingVideoCue(props.courseIds.writingVideoId);
+        setWritingVideoStates({ ...writingVideoStates });
+        // console.log("success delete writing", res.data.data);
+        message.success("Амжилттай устгалаа : word");
+        
+      } else {
+        //unsuccessful
+        message.error("Алдаа гарлаа");
+      }
+    })
+    .catch((e) => {
+      //unsuccessful
+      props.setLoader(false);
+      message.error("Алдаа гарлаа ");
+      console.log(e);
+    });
+  }
+
   const deleteWritingVideoCueData = (id) => {
     writingVideoStates.loader = true;
     setWritingVideoStates({writingVideoStates})
@@ -295,11 +333,13 @@ export default function Index(props) {
       if (res && res.data && res.data.status && res.data.status === true) {
         //success
         // writingVideoStates.data = res.data.data;
-        // getAllWritingVideoCue(props.courseIds.writingId);
-        // setWritingVideoStates({ ...writingVideoStates });
+        getAllWritingVideoCue(props.courseIds.writingVideoId);
+        setWritingVideoStates({ ...writingVideoStates });
         // console.log("success delete writing", res.data.data);
-        message.success("Амжилттай устгалаа")
-        getAllWritingVideoCue(writingVideoStates.writingVideoId);
+        message.success("Амжилттай устгалаа : cue");
+        
+        // deleteWritingVideoCueWordByCueIDData(id, writingVideoStates.token);
+        
       } else {
         //unsuccessful
         message.error("Алдаа гарлаа");
@@ -345,6 +385,7 @@ export default function Index(props) {
         if (res && res.data && res.data.status && res.data.status === true) {
           //success
           writingVideoStates.insertData = res.data.data;
+          writingVideoStates.insertedCueID = res.data.data.id;
           getAllWritingVideoCue(props.courseIds.writingVideoId);
           setWritingVideoStates({ ...writingVideoStates });
           console.log("success all writing", res.data.data);
@@ -363,6 +404,7 @@ export default function Index(props) {
   const updateWritingVideoCueData = (data) => {
     writingVideoStates.loader = true;
     setWritingVideoStates({writingVideoStates})
+    deleteWritingVideoCueWordByCueIDData(data.id);
     updateWritingVideoCueAPI(data, writingVideoStates.token)
       .then((res) => {
         writingVideoStates.loader = false;
@@ -404,6 +446,7 @@ export default function Index(props) {
             end_time : values.end_time,
         };
         insertWritingVideoCueData(insertObj)
+        // splitStringSendWord(writingVideoStates.insertedCueID, insertObj.from_language_translation);
         getAllWritingVideoCue(props.courseIds.writingVideoId);
         
       } else if (writingVideoStates.action == "EDIT") {
@@ -423,14 +466,75 @@ export default function Index(props) {
         };
         console.log("UPDATE OBJ : ", updateObj)
         updateWritingVideoCueData(updateObj)
+        splitStringSendWord(writingVideoStates.id, updateObj.from_language_translation);
         getAllWritingVideoCue(props.courseIds.writingVideoId);
       }
+      
+
       writingVideoStates.isModalVisible = false;
       setWritingVideoStates({ ...writingVideoStates });
   }
   const onFinishFailedWriting = () => {
       console.log("on finish failed writing")
   }
+
+  const sendCueWord = async(data) => {
+    const wlen = writingVideoStates.insertWord.length;
+    for(var i = 0; i < wlen; i++) {
+      try{
+        let response = await insertWritingVideoCueMissWordAPI(data[i], writingVideoStates.token)
+        message.success(`Амжилттай үг нэмлээ : ${i + 1} / ${wlen}`)
+      } catch(err) {
+        message.success(`Алдаа гарлаа : ${i + 1} / ${wlen}`)
+      }
+    }
+  }
+
+  const splitStringSendWord = (id, val) => {
+    
+    var cr1 = val
+      .replaceAll(" ","~")
+      .replaceAll(".","~.~")
+      .replaceAll(",","~,~")
+      .replaceAll(":","~:~")
+      .replaceAll(";","~;~")
+      .replaceAll("-","~-~")
+      .replaceAll("/","~/~")
+      .replaceAll("?","~?~")
+      .replaceAll(`'`,`~'~`)
+      .replaceAll(`"`,`~"~`)
+      .replaceAll(`!`,`~!~`)
+      .replaceAll("~","~")
+      .split("~");
+    console.log("cr1",cr1)
+    var cr2 =[] 
+    var initial_order = 1;
+    cr1.forEach((val) => {
+      var sp = val.split("~")
+      sp.forEach((val1) => {
+        if(val1 !== ""){
+          cr2.push(
+            {
+              cue_id : id, 
+              main_text : val1, 
+              word_value : symbols.indexOf(val1) === -1 ? val1.toLowerCase() : "", 
+              space_next : 0, 
+              ordering : initial_order,
+              is_visible : 0,
+              has_hint : 0,
+              hint_text : "",
+            }
+          );
+          initial_order++;
+        }
+      })
+    })
+    console.log("TEST {} : ",cr2);
+    writingVideoStates.insertWord = cr2;
+    sendCueWord(cr2);
+    setWritingVideoStates({ ...writingVideoStates });
+  }
+
 
   useEffect(() => {
     console.log("writing useffect");
