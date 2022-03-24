@@ -15,7 +15,9 @@ import {
   Checkbox,
   Divider,
   Tooltip,
-  Descriptions
+  Descriptions,
+  Dropdown,
+  Menu,
 } from "antd";
 import {
   DeleteOutlined,
@@ -28,6 +30,7 @@ import {
   PlusOutlined,
   RollbackOutlined,
   ArrowsAltOutlined,
+  DownOutlined,
 } from "@ant-design/icons";
 import {
     getAllWritingVideoByWIDAPI,
@@ -56,6 +59,29 @@ export default function Index(props) {
         id : null
     },
   });
+
+  const funActive = (values) => {
+    console.log("funActive : ", values)
+    if(values.key === "0") {
+      writingVideoStates.updateData.is_active = 0
+    } else {
+      writingVideoStates.updateData.is_active = 1
+    }
+    console.log("state : ", writingVideoStates)
+    setWritingVideoStates({ ...writingVideoStates });
+  }
+  const menu = (
+    <Menu onClick={funActive}>
+      <Menu.Item key="1">
+          Идэвхтэй
+      </Menu.Item>
+      <Menu.Item key="0">
+          Идэвхгүй
+      </Menu.Item>
+    </Menu>
+  );
+  
+
   const columns = [
     {
       title : "Id",
@@ -80,7 +106,7 @@ export default function Index(props) {
     {
         title : "IsActive",
         dataIndex : "is_active",
-        key : "is_active",
+        render:(text) => <a>{text !== 0 ? "Идэвхтэй" : "Идэвхгүй"}</a>,
     },
     {
         title : "Үйлдэл",
@@ -255,17 +281,18 @@ export default function Index(props) {
       })
   }
 
+  
 
   const onFinishVideoWriting = (values) => {
       console.log("on finish writing")
       if(writingVideoStates.action == "ADD_WRITING_VIDEO") {
-        var insertObj = {writing_id : props.courseIds.writingId, host_url : values.host_url, ordering : parseInt(values.ordering), is_active : parseInt(values.is_active)};
+        var insertObj = {writing_id : props.courseIds.writingId, host_url : values.host_url, ordering : parseInt(values.ordering), is_active : parseInt(writingVideoStates.updateData.is_active)};
         insertWritingVideoData(insertObj)
         getAllWritingVideo(props.courseIds.writingId);
         
       } else if (writingVideoStates.action == "EDIT") {
-        var updateObj = {id : writingVideoStates.id, writing_id : props.courseIds.writingId, host_url : values.host_url, ordering : parseInt(values.ordering), is_active : parseInt(values.is_active)};
-        console.log("PISDAAAADASDADA : ", updateObj)
+        var updateObj = {id : writingVideoStates.id, writing_id : props.courseIds.writingId, host_url : values.host_url, ordering : parseInt(values.ordering), is_active : parseInt(writingVideoStates.updateData.is_active)};
+        console.log("funActiveAAADASDADA : ", updateObj)
         updateWritingVideoData(updateObj)
         getAllWritingVideo(props.courseIds.writingId);
       }
@@ -350,6 +377,7 @@ return (
               onFinishFailed={onFinishFailedWriting}
               autoComplete="off"
             >
+              
                   <Row>
                       <Col span={24}>
                           <Row>
@@ -369,13 +397,18 @@ return (
                                       <Input />
                                   </Form.Item>
                               </Col>
-                              <Col span={8}>
+                              {/* <Col span={8}>
                                   <Form.Item
                                   name={"is_active"}
                                   label="Is active"
                                   >
                                       <Input />
                                   </Form.Item>
+                              </Col> */}
+                              <Col span={8}>
+                                <Dropdown overlay={menu} placement="bottomLeft" onConfirm={e => e.preventDefault()}>
+                                  <Button>{writingVideoStates.updateData.is_active !== 0 ? "Идэвхтэй" : "Идэвхгүй"}</Button>
+                                </Dropdown>
                               </Col>
                           </Row>
                       </Col>
@@ -424,12 +457,9 @@ return (
                                   </Form.Item>
                               </Col>
                               <Col span={8}>
-                                  <Form.Item
-                                  name={"is_active"}
-                                  label="Is active"
-                                  >
-                                      <Input />
-                                  </Form.Item>
+                                <Dropdown overlay={menu} placement="bottomLeft" onConfirm={e => e.preventDefault()}>
+                                  <Button>{writingVideoStates.updateData.is_active !== 0 ? "Идэвхтэй" : "Идэвхгүй"}</Button>
+                                </Dropdown>
                               </Col>
                           </Row>
                       </Col>
