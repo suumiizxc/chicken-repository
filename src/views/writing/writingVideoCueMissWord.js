@@ -15,7 +15,9 @@ import {
   Checkbox,
   Divider,
   Tooltip,
-  Descriptions
+  Descriptions,
+  Menu,
+  Dropdown,
 } from "antd";
 import {
   DeleteOutlined,
@@ -62,7 +64,71 @@ export default function Index(props) {
     updateData:{
         id : null
     },
+    inSpaceNext : 0,
+    inIsVisible : 0,
+    inHasHint : 0,
   });
+
+  const toSpaceNext = (values) => {
+    if(values.key === "1"){
+      writingVideoStates.updateData.space_next = 1; 
+    } else {
+      writingVideoStates.updateData.space_next = 0;
+    }
+    setWritingVideoStates({ ...writingVideoStates });
+  }
+
+  const menuSpaceNext = (
+    <Menu onClick={toSpaceNext}>
+      <Menu.Item key="1">
+          Тийм
+      </Menu.Item>
+      <Menu.Item key="0">
+          Үгүй
+      </Menu.Item>
+    </Menu>
+  );
+
+  const toIsVisible = (values) => {
+    if(values.key === "1") {
+      writingVideoStates.updateData.is_visible = 1;
+    } else {
+      writingVideoStates.updateData.is_visible = 0;
+    }
+    setWritingVideoStates({...writingVideoStates})
+  }
+
+  const menuIsVisible = (
+    <Menu onClick={toIsVisible}>
+      <Menu.Item key="1">
+        Тийм
+      </Menu.Item>
+      <Menu.Item key="0">
+        Үгүй
+      </Menu.Item>
+    </Menu>
+  )
+
+  const toHasHint = (values) => {
+    if(values.key === "1") {
+      writingVideoStates.updateData.has_hint = 1;
+    } else {
+      writingVideoStates.updateData.has_hint = 0;
+    }
+    setWritingVideoStates({...writingVideoStates})
+  }
+
+  const menuHasHint = (
+    <Menu onClick={toHasHint}>
+      <Menu.Item key="1">
+        Тийм
+      </Menu.Item>
+      <Menu.Item key="0">
+        Үгүй
+      </Menu.Item>
+    </Menu>
+  )
+
   const columns = [
     {
       title : "Id",
@@ -92,17 +158,17 @@ export default function Index(props) {
     {
         title : "Space next",
         dataIndex : "space_next",
-        key : "space_next",  
+        render:(text) => <a>{text !== 0 ? "Тийм" : "Үгүй"}</a>,
     },
     {
         title : "Is visible",
         dataIndex : "is_visible",
-        key : "is_visible",  
+        render:(text) => <a>{text !== 0 ? "Тийм" : "Үгүй"}</a>
     },
     {
         title : "Has hint",
         dataIndex : "has_hint",
-        key : "has_hint",  
+        render:(text) => <a>{text !== 0 ? "Тийм" : "Үгүй"}</a>
     },
     {
         title : "Hint text",
@@ -326,9 +392,9 @@ export default function Index(props) {
             ordering : parseInt(values.ordering),
             main_text : values.main_text,
             word_value : values.word_value,
-            space_next : parseInt(values.space_next),
-            is_visible : parseInt(values.is_visible),
-            has_hint : parseInt(values.has_hint),
+            space_next : parseInt(writingVideoStates.updateData.space_next),
+            is_visible : parseInt(writingVideoStates.updateData.is_visible),
+            has_hint : parseInt(writingVideoStates.updateData.has_hint),
             hint_text : values.hint_text,
         };
         console.log("UPDATE OBJ : ", updateObj)
@@ -462,29 +528,50 @@ return (
                                       <Input />
                                   </Form.Item>
                               </Col>
-                              <Col span={8}>
+                              {/* <Col span={8}>
                                   <Form.Item
                                   name={"space_next"}
                                   label="Space next"
                                   >
                                       <Input />
                                   </Form.Item>
-                              </Col>
+                              </Col> */}
                               <Col span={8}>
+                                <Form.Item label="Space next">
+                                <Dropdown overlay={menuSpaceNext} placement="bottomLeft" onConfirm={e => e.preventDefault()}>
+                                  <Button>{writingVideoStates.updateData.space_next === 1 ? "Тийм" : "Үгүй"}</Button>
+                                </Dropdown>
+                                </Form.Item>
+                              </Col>
+                              {/* <Col span={8}>
                                   <Form.Item
                                   name={"is_visible"}
                                   label="Is visible"
                                   >
                                       <Input />
                                   </Form.Item>
-                              </Col>
+                              </Col> */}
                               <Col span={8}>
+                                <Form.Item label="Is visible">
+                                <Dropdown overlay={menuIsVisible} placement="bottomLeft" onConfirm={e => e.preventDefault()}>
+                                  <Button>{writingVideoStates.updateData.is_visible === 1 ? "Тийм" : "Үгүй"}</Button>
+                                </Dropdown>
+                                </Form.Item>
+                              </Col>
+                              {/* <Col span={8}>
                                   <Form.Item
                                   name={"has_hint"}
                                   label="Has hint"
                                   >
                                       <Input />
                                   </Form.Item>
+                              </Col> */}
+                              <Col span={8}>
+                                <Form.Item label="Has hint">
+                                <Dropdown overlay={menuHasHint} placement="bottomLeft" onConfirm={e => e.preventDefault()}>
+                                  <Button>{writingVideoStates.updateData.has_hint === 1 ? "Тийм" : "Үгүй"}</Button>
+                                </Dropdown>
+                                </Form.Item>
                               </Col>
                               <Col span={8}>
                                   <Form.Item
@@ -550,28 +637,25 @@ return (
                                   </Form.Item>
                               </Col>
                               <Col span={8}>
-                                  <Form.Item
-                                  name={"space_next"}
-                                  label="Space next"
-                                  >
-                                      <Input />
-                                  </Form.Item>
+                                <Form.Item label="Space next">
+                                <Dropdown overlay={menuSpaceNext} placement="bottomLeft" onConfirm={e => e.preventDefault()}>
+                                  <Button>{writingVideoStates.inSpaceNext === 1 ? "Тийм" : "Үгүй"}</Button>
+                                </Dropdown>
+                                </Form.Item>
                               </Col>
                               <Col span={8}>
-                                  <Form.Item
-                                  name={"is_visible"}
-                                  label="Is visible"
-                                  >
-                                      <Input />
-                                  </Form.Item>
+                                <Form.Item label="Is visible">
+                                <Dropdown overlay={menuSpaceNext} placement="bottomLeft" onConfirm={e => e.preventDefault()}>
+                                  <Button>{writingVideoStates.inIsVisible === 1 ? "Тийм" : "Үгүй"}</Button>
+                                </Dropdown>
+                                </Form.Item>
                               </Col>
                               <Col span={8}>
-                                  <Form.Item
-                                  name={"has_hint"}
-                                  label="Has hint"
-                                  >
-                                      <Input />
-                                  </Form.Item>
+                                <Form.Item label="Has hint">
+                                <Dropdown overlay={menuSpaceNext} placement="bottomLeft" onConfirm={e => e.preventDefault()}>
+                                  <Button>{writingVideoStates.inHasHint === 1 ? "Тийм" : "Үгүй"}</Button>
+                                </Dropdown>
+                                </Form.Item>
                               </Col>
                               <Col span={8}>
                                   <Form.Item

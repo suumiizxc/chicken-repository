@@ -15,7 +15,9 @@ import {
   Checkbox,
   Divider,
   Tooltip,
-  Descriptions
+  Descriptions,
+  Dropdown,
+  Menu,
 } from "antd";
 import {
   DeleteOutlined,
@@ -39,6 +41,10 @@ import {
     insertWritingVideoCueMissWordAPI,
     deleteWritingVideoCueMissWordByCueIDAPI,
 } from "../../services/Content_service";
+import {
+  getLanguageWord,
+ 
+} from "../../services/Word_service";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -64,9 +70,105 @@ export default function Index(props) {
     },
     insertedCueID : null,
     insertWord : [],
+    langueges : [],
+    fromLanguageID : 2,
+    toLanguageID : 1,
   });
 
+
+
   const symbols = [",", ".", ":", ";", "/", "!","-","_", `'`, `"`];
+
+  const fromLanguageChange = (values) => {
+    console.log("funActive : ", values)
+    if(values.key === "2") {
+      writingVideoStates.updateData.from_language_id = 2
+    } else {
+      writingVideoStates.updateData.from_language_id = 1
+    }
+    console.log("state : ", writingVideoStates)
+    setWritingVideoStates({ ...writingVideoStates });
+  }
+
+  const menuFromLanguage = (
+    <Menu onClick={fromLanguageChange}>
+      <Menu.Item key="2">
+          Англи
+      </Menu.Item>
+      <Menu.Item key="1">
+          Монгол
+      </Menu.Item>
+    </Menu>
+  );
+
+  const fromLanguageInsertChange = (values) => {
+    console.log("funActive : ", values)
+    if(values.key === "2") {
+      writingVideoStates.fromLanguageID = 2
+    } else {
+      writingVideoStates.fromLanguageID = 1
+    }
+    console.log("state : ", writingVideoStates)
+    setWritingVideoStates({ ...writingVideoStates });
+  }
+
+  const menuFromLanguageInsert = (
+    <Menu onClick={fromLanguageInsertChange}>
+      <Menu.Item key="2">
+          Англи
+      </Menu.Item>
+      <Menu.Item key="1">
+          Монгол
+      </Menu.Item>
+    </Menu>
+  );
+
+  const toLanguageChange = (values) => {
+    console.log("funActive : ", values)
+    if(values.key === "2") {
+      writingVideoStates.updateData.to_language_id = 2
+    } else {
+      writingVideoStates.updateData.to_language_id = 1
+    }
+    console.log("state : ", writingVideoStates)
+    setWritingVideoStates({ ...writingVideoStates });
+  }
+
+  const menuToLanguage = (
+    <Menu onClick={toLanguageChange}>
+      <Menu.Item key="2">
+          Англи
+      </Menu.Item>
+      <Menu.Item key="1">
+          Монгол
+      </Menu.Item>
+    </Menu>
+  );
+
+  const toLanguageinsertChange = (values) => {
+    console.log("funActive : ", values)
+    if(values.key === "2") {
+      writingVideoStates.toLanguageID = 2
+    } else {
+      writingVideoStates.toLanguageID = 1
+    }
+    console.log("state : ", writingVideoStates)
+    setWritingVideoStates({ ...writingVideoStates });
+  }
+
+
+  const menuToLanguageInsert = (
+    <Menu onClick={toLanguageinsertChange}>
+      <Menu.Item key="2">
+          Англи
+      </Menu.Item>
+      <Menu.Item key="1">
+          Монгол
+      </Menu.Item>
+    </Menu>
+  );
+
+  
 
   const columns_word = [
     {
@@ -131,7 +233,7 @@ export default function Index(props) {
     {
         title : "From language id",
         dataIndex : "from_language_id",
-        key : "from_language_id",
+        render:(text) => <a>{writingVideoStates.langueges.length === 0 ? text : writingVideoStates.langueges.find(el => el.id === text)["name"]}</a>
     },
     {
         title : "From language translation",
@@ -146,7 +248,7 @@ export default function Index(props) {
     {
         title : "To language id",
         dataIndex : "to_language_id",
-        key : "to_language_id",
+        render:(text) => <a>{writingVideoStates.langueges.length === 0 ? text : writingVideoStates.langueges.find(el => el.id === text)["name"]}</a>
     },
     {
         title : "To language translation",
@@ -280,6 +382,30 @@ export default function Index(props) {
       });
   };
 
+  const getAllLangueges = () => {
+    writingVideoStates.loader = true;
+    setWritingVideoStates({ writingVideoStates });
+    getLanguageWord(writingVideoStates.token)
+      .then((res) => {
+        writingVideoStates.loader = false;
+        setWritingVideoStates({ writingVideoStates });
+        if (res && res.data && res.data.status && res.data.status === true) {
+          //success
+          writingVideoStates.langueges = res.data.data;
+          setWritingVideoStates({ ...writingVideoStates });
+          console.log("success all langueges", res.data.data);
+        } else {
+          //unsuccessful
+          message.error("Алдаа гарлаа");
+        }
+      })
+      .catch((e) => {
+        //unsuccessful
+        props.setLoader(false);
+        message.error("Алдаа гарлаа ");
+        console.log(e);
+      });
+  };
 
   const getCueWordsByCueIdData = (cue_id, token) => {
     getAllWritingVideoCueMissWordByCIDAPI(cue_id, token)
@@ -435,10 +561,10 @@ export default function Index(props) {
         var insertObj = {
             ordering : parseInt(values.ordering),
             video_id : parseInt(props.courseIds.writingVideoId), 
-            from_language_id : parseInt(values.from_language_id),
+            from_language_id : parseInt(writingVideoStates.fromLanguageID),
             from_language_translation : values.from_language_translation,
             from_language_is_default : parseInt(values.from_language_is_default),
-            to_language_id : parseInt(values.to_language_id),
+            to_language_id : parseInt(writingVideoStates.toLanguageID),
             to_language_translation : values.to_language_translation,
             to_language_is_default : parseInt(values.to_language_is_default),
             miss_word_required : parseInt(values.miss_word_required),
@@ -454,10 +580,10 @@ export default function Index(props) {
             id : writingVideoStates.id, 
             ordering : parseInt(values.ordering),
             video_id : parseInt(writingVideoStates.updateData.video_id), 
-            from_language_id : parseInt(values.from_language_id),
+            from_language_id : parseInt(writingVideoStates.updateData.from_language_id),
             from_language_translation : values.from_language_translation,
             from_language_is_default : parseInt(values.from_language_is_default),
-            to_language_id : parseInt(values.to_language_id),
+            to_language_id : parseInt(writingVideoStates.updateData.to_language_id),
             to_language_translation : values.to_language_translation,
             to_language_is_default : parseInt(values.to_language_is_default),
             miss_word_required : parseInt(values.miss_word_required),
@@ -539,6 +665,7 @@ export default function Index(props) {
   useEffect(() => {
     console.log("writing useffect");
     getAllWritingVideoCue(props.courseIds.writingVideoId);
+    getAllLangueges()
     writingVideoStates.writingVideoId = props.courseIds.writingVideoId;
 
   }, []);
@@ -648,13 +775,20 @@ return (
                                       <Input />
                                   </Form.Item>
                               </Col> */}
-                              <Col span={8}>
+                              {/* <Col span={8}>
                                   <Form.Item
                                   name={"from_language_id"}
                                   label="From language id"
                                   >
                                       <Input />
                                   </Form.Item>
+                              </Col> */}
+                              <Col span={8}>
+                                <Form.Item label="From language id">
+                                <Dropdown overlay={menuFromLanguage} placement="bottomLeft" onConfirm={e => e.preventDefault()}>
+                                  <Button>{writingVideoStates.updateData.from_language_id !== 1 ? "Англи" : "Монгол"}</Button>
+                                </Dropdown>
+                                </Form.Item>
                               </Col>
                               <Col span={8}>
                                   <Form.Item
@@ -672,13 +806,20 @@ return (
                                       <Input />
                                   </Form.Item>
                               </Col>
-                              <Col span={8}>
+                              {/* <Col span={8}>
                                   <Form.Item
                                   name={"to_language_id"}
                                   label="To language id"
                                   >
                                       <Input />
                                   </Form.Item>
+                              </Col> */}
+                              <Col span={8}>
+                                <Form.Item label="To language id">
+                                  <Dropdown overlay={menuToLanguage} placement="bottomLeft" onConfirm={e => e.preventDefault()}>
+                                  <Button>{writingVideoStates.updateData.to_language_id !== 1 ? "Англи" : "Монгол"}</Button>
+                                  </Dropdown>
+                                </Form.Item>
                               </Col>
                               <Col span={8}>
                                   <Form.Item
@@ -762,21 +903,21 @@ return (
                                       <Input />
                                   </Form.Item>
                               </Col>
+                              
                               {/* <Col span={8}>
-                                  <Form.Item
-                                  name={"video_id"}
-                                  label="Video id"
-                                  >
-                                      <Input />
-                                  </Form.Item>
-                              </Col> */}
-                              <Col span={8}>
                                   <Form.Item
                                   name={"from_language_id"}
                                   label="From language id"
                                   >
                                       <Input />
                                   </Form.Item>
+                              </Col> */}
+                              <Col span={8}>
+                                <Form.Item label="From language id">
+                                  <Dropdown overlay={menuFromLanguageInsert} placement="bottomLeft" onConfirm={e => e.preventDefault()}>
+                                  <Button>{writingVideoStates.fromLanguageID !== 1 ? "Англи" : "Монгол"}</Button>
+                                  </Dropdown>
+                                </Form.Item>
                               </Col>
                               <Col span={8}>
                                   <Form.Item
@@ -794,13 +935,20 @@ return (
                                       <Input />
                                   </Form.Item>
                               </Col>
-                              <Col span={8}>
+                              {/* <Col span={8}>
                                   <Form.Item
                                   name={"to_language_id"}
                                   label="To language id"
                                   >
                                       <Input />
                                   </Form.Item>
+                              </Col> */}
+                              <Col span={8}>
+                                <Form.Item label="To language id">
+                                  <Dropdown overlay={menuToLanguageInsert} placement="bottomLeft" onConfirm={e => e.preventDefault()}>
+                                  <Button>{writingVideoStates.toLanguageID !== 1 ? "Англи" : "Монгол"}</Button>
+                                  </Dropdown>
+                                </Form.Item>
                               </Col>
                               <Col span={8}>
                                   <Form.Item
