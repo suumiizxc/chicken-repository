@@ -1777,6 +1777,23 @@ export function insertArticleCueWordAPI(data, token) {
   });
 }
 
+export function deleteArticleCueWordByCueIDAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/course-article-cue-word/delete-by-cue-id/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
 export function updateArticleCueWordAPI(data, token) {
   return new Promise((resolve, reject) => {
     axios({

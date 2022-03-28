@@ -34,7 +34,14 @@ import {
     insertArticleCueAPI,
     deleteArticleCueAPI,
     updateArticleCueAPI,
+
+    insertArticleCueWordAPI,
+    deleteArticleCueWordByCueIDAPI,
 } from "../../services/Content_service";
+import {
+  getLanguageWord,
+ 
+} from "../../services/Word_service";
 import { useNavigate } from "react-router-dom";
 
 export default function Index(props) {
@@ -55,7 +62,10 @@ export default function Index(props) {
     updateData:{
         id : null
     },
+    insertWord : [],
   });
+  const symbols = [",", ".", ":", ";", "/", "!","-","_", `'`, `"`];
+
   const columns = [
     {
       title : "Id",
@@ -70,7 +80,7 @@ export default function Index(props) {
     {
       title : "From language id",
       dataIndex : "from_language_id",
-      key :"from_language_id"
+      render:(text) => <a>{text === 1 ? "MONGOL" : "ENGLISH"}</a>
     },
     {
       title : "From language translation",
@@ -80,7 +90,7 @@ export default function Index(props) {
     {
       title : "To language id",
       dataIndex : "to_language_id",
-      key : "to_language_id",
+      render:(text) => <a>{text === 1 ? "MONGOL" : "ENGLISH"}</a>
     },
     {
       title : "To language translation",
@@ -90,7 +100,7 @@ export default function Index(props) {
     {
       title : "Is active",
       dataIndex : "is_active",
-      key : "is_active"
+      render:(text) => <a>{text !== 0 ? "Идэвхтэй" : "Идэвхгүй"}</a>,
     },
     {
       title : "Ordering",
@@ -111,6 +121,7 @@ export default function Index(props) {
                     onConfirm={() => {
                     console.log("delete record", record);
                     deleteWritingVideoData(record.id);
+                    deleteArticleCueWordData(record.id);
                     }}
                     okText="Тийм"
                     cancelText="Үгүй"
@@ -162,6 +173,31 @@ export default function Index(props) {
     });
   };
 
+  const getAllLangueges = () => {
+    listeningCueStates.loader = true;
+    setListeningCueStates({ listeningCueStates });
+    getLanguageWord(listeningCueStates.token)
+      .then((res) => {
+        listeningCueStates.loader = false;
+        setListeningCueStates({ listeningCueStates });
+        if (res && res.data && res.data.status && res.data.status === true) {
+          //success
+          listeningCueStates.langueges = res.data.data;
+          setListeningCueStates({ ...listeningCueStates });
+          console.log("success all langueges", res.data.data);
+        } else {
+          //unsuccessful
+          message.error("Алдаа гарлаа");
+        }
+      })
+      .catch((e) => {
+        //unsuccessful
+        props.setLoader(false);
+        message.error("Алдаа гарлаа ");
+        console.log(e);
+      });
+  };
+  
   //GET All writing list
   const getAllWritingVideo = (id) => {
     listeningCueStates.loader = true;
@@ -192,6 +228,33 @@ export default function Index(props) {
     listeningCueStates.loader = true;
     setListeningCueStates({listeningCueStates})
     deleteArticleCueAPI(id, listeningCueStates.token)
+    .then((res) => {
+      listeningCueStates.loader = false;
+      setListeningCueStates({ listeningCueStates });
+      if (res && res.data && res.data.status && res.data.status === true) {
+        //success
+        // listeningCueStates.data = res.data.data;
+        // getAllWritingVideo(props.courseIds.articleId);
+        setListeningCueStates({ ...listeningCueStates });
+        console.log("success delete writing", res.data.data);
+        getAllWritingVideo(props.courseIds.articleId);
+      } else {
+        //unsuccessful
+        message.error("Алдаа гарлаа");
+      }
+    })
+    .catch((e) => {
+      //unsuccessful
+      props.setLoader(false);
+      message.error("Алдаа гарлаа ");
+      console.log(e);
+    });
+  }
+
+  const deleteArticleCueWordData = (id) => {
+    listeningCueStates.loader = true;
+    setListeningCueStates({listeningCueStates})
+    deleteArticleCueWordByCueIDAPI(id, listeningCueStates.token)
     .then((res) => {
       listeningCueStates.loader = false;
       setListeningCueStates({ listeningCueStates });
@@ -251,6 +314,7 @@ export default function Index(props) {
   const updateListeningCueData = (data) => {
     listeningCueStates.loader = true;
     setListeningCueStates({listeningCueStates})
+    deleteArticleCueWordData(data.id)
     updateArticleCueAPI(data, listeningCueStates.token)
       .then((res) => {
         listeningCueStates.loader = false;
@@ -302,6 +366,7 @@ export default function Index(props) {
         };
         
         updateListeningCueData(updateObj)
+        splitStringSendWord(listeningCueStates.id, updateObj.from_language_translation);
         getAllWritingVideo(props.courseIds.articleId);
       }
       listeningCueStates.isModalVisible = false;
@@ -313,9 +378,67 @@ export default function Index(props) {
       console.log("on finish failed writing")
   }
 
+  const sendCueWord = async(data) => {
+    const wlen = listeningCueStates.insertWord.length;
+    for(var i = 0; i < wlen; i++) {
+      try{
+        let response = await insertArticleCueWordAPI(data[i], listeningCueStates.token)
+        message.success(`Амжилттай үг нэмлээ : ${i + 1} / ${wlen}`)
+      } catch(err) {
+        message.success(`Алдаа гарлаа : ${i + 1} / ${wlen}`)
+      }
+    }
+  }
+
+  const splitStringSendWord = (id, val) => {
+    
+    var cr1 = val
+      .replaceAll(" ","~")
+      .replaceAll(".","~.~")
+      .replaceAll(",","~,~")
+      .replaceAll(":","~:~")
+      .replaceAll(";","~;~")
+      .replaceAll("-","~-~")
+      .replaceAll("/","~/~")
+      .replaceAll("?","~?~")
+      .replaceAll(`'`,`~'~`)
+      .replaceAll(`"`,`~"~`)
+      .replaceAll(`!`,`~!~`)
+      .replaceAll("~","~")
+      .split("~");
+    console.log("cr1",cr1)
+    var cr2 =[] 
+    var initial_order = 1;
+    cr1.forEach((val) => {
+      var sp = val.split("~")
+      sp.forEach((val1) => {
+        if(val1 !== ""){
+          cr2.push(
+            {
+              cue_id : id, 
+              main_text : val1, 
+              word_value : symbols.indexOf(val1) === -1 ? val1.toLowerCase() : "", 
+              space_next : 0, 
+              ordering : initial_order,
+              is_visible : 0,
+              has_hint : 0,
+              hint_text : "",
+            }
+          );
+          initial_order++;
+        }
+      })
+    })
+    console.log("TEST {} : ",cr2);
+    listeningCueStates.insertWord = cr2;
+    sendCueWord(cr2);
+    setListeningCueStates({ ...listeningCueStates });
+  }
+
   useEffect(() => {
     console.log("writing useffect");
     getAllWritingVideo(props.courseIds.articleId);
+    getAllLangueges()
   }, []);
 
 return (
@@ -334,7 +457,7 @@ return (
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <Button
             onClick={() => {
-              navigate("/content/listening");
+              navigate("/article");
             }}
             icon={<RollbackOutlined />}
             // type="alert"
