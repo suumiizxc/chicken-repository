@@ -35,6 +35,8 @@ import {
     updateReadingCueAPI,
     deleteReadingCueAPI,
     getAllReadingCueWordByCueAPI,
+
+    insertReadingCueWordAPI,
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
 
@@ -55,7 +57,10 @@ export default function Index(props) {
     updateData:{
         id : null
     },
+    insertWord : [],
   });
+
+  const symbols = [",", ".", ":", ";", "/", "!","-","_", `'`, `"`]; 
 
   const columns_word = [
     {
@@ -390,6 +395,7 @@ export default function Index(props) {
           };
           updateListeningData(updObj);
           form.resetFields();
+          splitStringSendWord(readingCueStates.id, updObj.from_language_translation);
           getAllReading(props.courseIds.readingId);
       }
   }
@@ -402,6 +408,63 @@ export default function Index(props) {
     readingCueStates.action = "ADD_READING";
     setReadingCueStates({ ...readingCueStates });
   };
+
+  const sendCueWord = async(data) => {
+    const wlen = readingCueStates.insertWord.length;
+    for(var i = 0; i < wlen; i++) {
+      try{
+        let response = await insertReadingCueWordAPI(data[i], readingCueStates.token)
+        message.success(`Амжилттай үг нэмлээ : ${i + 1} / ${wlen}`)
+      } catch(err) {
+        message.success(`Алдаа гарлаа : ${i + 1} / ${wlen}`)
+      }
+    }
+  }
+
+  const splitStringSendWord = (id, val) => {
+    
+    var cr1 = val
+      .replaceAll(" ","~")
+      .replaceAll(".","~.~")
+      .replaceAll(",","~,~")
+      .replaceAll(":","~:~")
+      .replaceAll(";","~;~")
+      .replaceAll("-","~-~")
+      .replaceAll("/","~/~")
+      .replaceAll("?","~?~")
+      .replaceAll(`'`,`~'~`)
+      .replaceAll(`"`,`~"~`)
+      .replaceAll(`!`,`~!~`)
+      .replaceAll("~","~")
+      .split("~");
+    console.log("cr1",cr1)
+    var cr2 =[] 
+    var initial_order = 1;
+    cr1.forEach((val) => {
+      var sp = val.split("~")
+      sp.forEach((val1) => {
+        if(val1 !== ""){
+          cr2.push(
+            {
+              cue_id : id, 
+              main_text : val1, 
+              word_value : symbols.indexOf(val1) === -1 ? val1.toLowerCase() : "", 
+              space_next : 0, 
+              ordering : initial_order,
+              is_visible : 0,
+              has_hint : 0,
+              hint_text : "",
+            }
+          );
+          initial_order++;
+        }
+      })
+    })
+    console.log("TEST {} : ",cr2);
+    readingCueStates.insertWord = cr2;
+    sendCueWord(cr2);
+    setReadingCueStates({ ...readingCueStates });
+  }
 
 
   useEffect(() => {
