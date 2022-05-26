@@ -411,7 +411,7 @@ export default function Index(props) {
   }, []);
 
 return (
-    <Card title={"Listening"} style={{ margin: 15, width: "100%" }}>
+    <Card title={"Conversation"} style={{ margin: 15, width: "100%" }}>
       <Spin
         tip=""
         spinning={conversationCueStates.loader}
@@ -432,12 +432,12 @@ return (
               marginBottom: 16,
             }}
           >
-            Reading нэмэх
+            Cue нэмэх
           </Button>
         </div>
         <Table columns={columns} dataSource={conversationCueStates.data} />
         <Modal
-          title="Writing edit"
+          title="Cue edit"
           width={"90%"}
           visible={conversationCueStates.isModalVisible}
           footer={null}

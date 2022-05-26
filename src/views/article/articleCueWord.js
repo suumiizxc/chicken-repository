@@ -79,7 +79,7 @@ export default function Index(props) {
     {
         title : "Space next",
         dataIndex : "space_next",
-        key : "space_next",
+        render:(text) => <a>{text !== 0 ? "Ардаа зайгүй" : "Ардаа зайтай"}</a>,
     },
     {
         title : "Ordering",
@@ -291,7 +291,7 @@ export default function Index(props) {
   }, []);
 
 return (
-    <Card title={"Listening"} style={{ margin: 15, width: "100%" }}>
+    <Card title={"Article"} style={{ margin: 15, width: "100%" }}>
       <Spin
         tip=""
         spinning={readingCueStates.loader}
@@ -312,12 +312,12 @@ return (
               marginBottom: 16,
             }}
           >
-            Reading нэмэх
+            Үг нэмэх
           </Button>
         </div>
         <Table columns={columns} dataSource={readingCueStates.data} />
         <Modal
-          title="Writing edit"
+          title="Word edit"
           width={"90%"}
           visible={readingCueStates.isModalVisible}
           footer={null}

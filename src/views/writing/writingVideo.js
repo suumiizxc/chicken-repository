@@ -73,10 +73,10 @@ export default function Index(props) {
   const menu = (
     <Menu onClick={funActive}>
       <Menu.Item key="1">
-          Идэвхтэй
+          Идэвхгүй
       </Menu.Item>
       <Menu.Item key="0">
-          Идэвхгүй
+          Идэвхтэй
       </Menu.Item>
     </Menu>
   );
@@ -106,7 +106,7 @@ export default function Index(props) {
     {
         title : "IsActive",
         dataIndex : "is_active",
-        render:(text) => <a>{text !== 0 ? "Идэвхтэй" : "Идэвхгүй"}</a>,
+        render:(text) => <a>{text !== 1 ? "Идэвхтэй" : "Идэвхгүй"}</a>,
     },
     {
         title : "Үйлдэл",
@@ -407,7 +407,7 @@ return (
                               </Col> */}
                               <Col span={8}>
                                 <Dropdown overlay={menu} placement="bottomLeft" onConfirm={e => e.preventDefault()}>
-                                  <Button>{writingVideoStates.updateData.is_active !== 0 ? "Идэвхтэй" : "Идэвхгүй"}</Button>
+                                  <Button>{writingVideoStates.updateData.is_active !== 1 ? "Идэвхтэй" : "Идэвхгүй"}</Button>
                                 </Dropdown>
                               </Col>
                           </Row>

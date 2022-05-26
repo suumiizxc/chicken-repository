@@ -329,7 +329,7 @@ export default function Index(props) {
   }, []);
 
 return (
-    <Card title={"Listening"} style={{ margin: 15, width: "100%" }}>
+    <Card title={"PPV"} style={{ margin: 15, width: "100%" }}>
       <Spin
         tip=""
         spinning={ppvContentMovieStates.loader}
@@ -350,12 +350,12 @@ return (
               marginBottom: 16,
             }}
           >
-            Reading нэмэх
+            PPV нэмэх
           </Button>
         </div>
         <Table columns={columns} dataSource={ppvContentMovieStates.data} />
         <Modal
-          title="Writing edit"
+          title="PPV edit"
           width={"90%"}
           visible={ppvContentMovieStates.isModalVisible}
           footer={null}

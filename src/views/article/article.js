@@ -15,7 +15,11 @@ import {
   Checkbox,
   Divider,
   Tooltip,
-  Descriptions
+  Descriptions,
+  Select,
+  Dropdown,
+  Tag,
+  Menu,
 } from "antd";
 import {
   DeleteOutlined,
@@ -34,8 +38,13 @@ import {
     insertArticleAPI,
     updateArticleAPI,
     deleteArticleAPI,
+
+    getAllArticleCategories,
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
+import FormItem from "antd/lib/form/FormItem";
+
+const { Option } = Select;
 
 export default function Index(props) {
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} />;
@@ -54,7 +63,42 @@ export default function Index(props) {
     updateData:{
         id : null
     },
+    categoryData : null,
+    selectedCategoryID : null,
   });
+
+  const funActive = (values) => {
+    console.log("funActive : ", values)
+    if(values.key === "0") {
+      readingStates.updateData.is_active = 0
+    } else {
+      readingStates.updateData.is_active = 1
+    }
+    console.log("state : ", readingStates)
+    setReadingStates({ ...readingStates });
+  }
+
+  const menu = (
+    <Menu onClick={funActive}>
+      <Menu.Item key="1">
+          Идэвхгүй
+      </Menu.Item>
+      <Menu.Item key="0">
+          Идэвхтэй
+      </Menu.Item>
+    </Menu>
+  );
+  
+
+  
+  function handleChange(value) {
+
+    console.log(`selected : ${value} `);
+    readingStates.selectedCategoryID = parseInt(value);
+    setReadingStates({ ...readingStates });
+
+  }
+
   const columns = [
     {
         title : "Id",
@@ -74,12 +118,13 @@ export default function Index(props) {
     {
         title : "Is trending",
         dataIndex :"is_trending",
-        key : "is_trending"
+        render:(text) => <Tag color={text !== 0 ? "blue" : "red"} >{text !== 0 ? "Тийм" : "Үгүй"}</Tag>,
     },
     {
         title : "Is active",
         dataIndex : "is_active",
-        key : "is_active",
+        // render:(text) => <a color={text !== 0 ? "geekblue" : "green"}>{text !== 0 ? "Идэвхгүй" : "Идэвхтэй"}</a>,
+        render: (text) => <Tag color={text !== 0 ? "red" : "blue"}>{text !== 0 ? "Идэвхгүй" : "Идэвхтэй"}</Tag>
     },
     {
         title : "Үйлдэл",
@@ -159,6 +204,31 @@ export default function Index(props) {
           //success
           readingStates.data = res.data.data;
           setReadingStates({ ...readingStates });
+          console.log("success all", res.data.data);
+        } else {
+          //unsuccessful
+          message.error("Алдаа гарлаа");
+        }
+      })
+      .catch((e) => {
+        //unsuccessful
+        props.setLoader(false);
+        message.error("Алдаа гарлаа ");
+        console.log(e);
+      });
+  };
+
+  const getAllCategories = () => {
+    readingStates.loader = true;
+    setReadingStates({ readingStates });
+    getAllArticleCategories(readingStates.token)
+      .then((res) => {
+        readingStates.loader = false;
+        setReadingStates({ readingStates });
+        if (res && res.data && res.data.status && res.data.status === true) {
+          //success
+          readingStates.categoryData = res.data.data;
+          setReadingStates({ ...readingStates });
           console.log("success all writing", res.data.data);
         } else {
           //unsuccessful
@@ -199,6 +269,7 @@ export default function Index(props) {
             message.error("Алдаа гарлаа ");
             console.log(e);
           });
+
   }
 
   const updateListeningData = (values) => {
@@ -252,16 +323,16 @@ export default function Index(props) {
         })
   }
 
-  const onFinishWriting = (values) => {
+  const   onFinishWriting = (values) => {
       console.log("on finish writing : ", values);
 
       readingStates.isModalVisible = false;
       if (readingStates.action == "ADD_READING") {
-          var inObj = {title : values.title, category_id : parseInt(values.category_id), is_trending : parseInt(values.is_trending), is_active : parseInt(values.is_active)};
+          var inObj = {title : values.title, category_id : readingStates.selectedCategoryID, is_trending : parseInt(values.is_trending), is_active : parseInt(readingStates.updateData.is_active)};
           insertListeningData(inObj);
         //   getAllReading();
       } else if (readingStates.action == "EDIT") {
-          var updObj = {id : readingStates.id,  title : values.title, category_id : parseInt(values.category_id),  is_trending : parseInt(values.is_trending), is_active : parseInt(values.is_active)};
+          var updObj = {id : readingStates.id,  title : values.title, category_id : readingStates.selectedCategoryID,  is_trending : parseInt(values.is_trending), is_active : parseInt(readingStates.updateData.is_active)};
           updateListeningData(updObj);
           form.resetFields();
           getAllReading();
@@ -281,10 +352,12 @@ export default function Index(props) {
   useEffect(() => {
     console.log("listening useffect");
     getAllReading();
+    getAllCategories();
   }, []);
 
+
 return (
-    <Card title={"Listening"} style={{ margin: 15, width: "100%" }}>
+    <Card title={"Article"} style={{ margin: 15, width: "100%" }}>
       <Spin
         tip=""
         spinning={readingStates.loader}
@@ -310,7 +383,7 @@ return (
         </div>
         <Table columns={columns} dataSource={readingStates.data} />
         <Modal
-          title="Writing edit"
+          title="Article"
           width={"90%"}
           visible={readingStates.isModalVisible}
           footer={null}
@@ -352,7 +425,7 @@ return (
                                     
                                     </Col>
                                     <Col span={12}>
-                                        <Form.Item
+                                        {/* <Form.Item
                                         name={"category_id"}
                                         label="Category id"
                                         rules={[
@@ -361,6 +434,18 @@ return (
                                         
                                         >
                                             <Input />
+                                        </Form.Item> */}
+                                        <Form.Item
+                                        label="Category">
+                                        <Select style={{ width: 300 }} onSelect={(value) => handleChange(value)}>
+                                          {/* <Option value="jack">Jack</Option> */}
+                                          {
+                                            readingStates.categoryData.map((obj) => {
+                                              return <Option value={obj.id}>{obj.name}</Option>
+                                            })
+                                          }
+                                          
+                                        </Select>
                                         </Form.Item>
                                     
                                     </Col>
@@ -378,7 +463,7 @@ return (
                                     
                                     </Col>
                                     <Col span={12}>
-                                        <Form.Item
+                                        {/* <Form.Item
                                         name={"is_active"}
                                         label="Is active"
                                         rules={[
@@ -387,8 +472,12 @@ return (
                                         
                                         >
                                             <Input />
-                                        </Form.Item>
-                                    
+                                        </Form.Item> */}
+                                      <Form.Item label="Is active">
+                                      <Dropdown overlay={menu} placement="bottomLeft" onConfirm={e => e.preventDefault()}>
+                                        <Button>{readingStates.updateData.is_active !== 1 ? "Идэвхтэй" : "Идэвхгүй"}</Button>
+                                      </Dropdown>
+                                      </Form.Item>
                                     </Col>
                                 </Row>
                             </Col>
@@ -433,7 +522,7 @@ return (
                                    
                                    </Col>
                                    <Col span={12}>
-                                       <Form.Item
+                                       {/* <Form.Item
                                        name={"category_id"}
                                        label="Category id"
                                        rules={[
@@ -441,8 +530,20 @@ return (
                                        ]}
                                        >
                                            <Input />
-                                       </Form.Item>
-                                   
+                                            
+                                       </Form.Item> */}
+                                      <Form.Item
+                                       label="Category">
+                                      <Select style={{ width: 300 }} onSelect={(value) => handleChange(value)}>
+                                        {/* <Option value="jack">Jack</Option> */}
+                                        {
+                                          readingStates.categoryData.map((obj) => {
+                                            return <Option value={obj.id}>{obj.name}</Option>
+                                          })
+                                        }
+                                        
+                                      </Select>
+                                      </Form.Item>
                                    </Col>
                                    <Col span={12}>
                                        <Form.Item
@@ -457,7 +558,7 @@ return (
                                    
                                    </Col>
                                    <Col span={12}>
-                                       <Form.Item
+                                       {/* <Form.Item
                                        name={"is_active"}
                                        label="Is active"
                                        rules={[
@@ -465,8 +566,12 @@ return (
                                        ]}
                                        >
                                            <Input />
-                                       </Form.Item>
-                                   
+                                       </Form.Item> */}
+                                   <Form.Item label="Is active">
+                                      <Dropdown overlay={menu} placement="bottomLeft" onConfirm={e => e.preventDefault()}>
+                                        <Button>{readingStates.updateData.is_active !== 1 ? "Идэвхтэй" : "Идэвхгүй"}</Button>
+                                      </Dropdown>
+                                      </Form.Item>
                                    </Col>
                                </Row>
                            </Col>

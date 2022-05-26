@@ -37,6 +37,7 @@ import {
     getAllReadingCueWordByCueAPI,
 
     insertReadingCueWordAPI,
+    deleteReadingCueWordByCueIDAPI,
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
 
@@ -165,6 +166,7 @@ export default function Index(props) {
                     onConfirm={() => {
                     console.log("delete record", record);
                     deleteListeningData(record);
+                    deleteListeningByCueIDData(record);
                     }}
                     okText="Тийм"
                     cancelText="Үгүй"
@@ -182,6 +184,8 @@ export default function Index(props) {
                     readingCueStates.updateData = record;
                     readingCueStates.id = record.id;
                     readingCueStates.isModalVisible = true;
+                    
+                    deleteListeningByCueIDData(record);
                     getFormData(record);
                     setReadingCueStates({ ...readingCueStates });
                     }}
@@ -359,6 +363,29 @@ export default function Index(props) {
         })
   }
 
+  const deleteListeningByCueIDData = (values) => {
+    readingCueStates.loader = true; 
+    setReadingCueStates({readingCueStates})
+    deleteReadingCueWordByCueIDAPI(values.id, readingCueStates.token)
+      .then((res) => {
+          readingCueStates.loader = false;
+          setReadingCueStates({readingCueStates})
+          if (res && res.data && res.data.status && res.data.status === true) {
+              //success
+              setReadingCueStates({ ...readingCueStates });
+              getAllReading(props.courseIds.readingId)
+              console.log("success insert writing", res.data.data);
+              message.success("Амжилттай writing устгав 😍😊✅")
+            } else {
+              //unsuccessful
+              message.error("Алдаа гарлаа");
+          }
+      })
+      .catch((e) => {
+
+      })
+}
+
   const onFinishWriting = (values) => {
       console.log("on finish writing : ", values);
 
@@ -473,7 +500,7 @@ export default function Index(props) {
   }, []);
 
 return (
-    <Card title={"Listening"} style={{ margin: 15, width: "100%" }}>
+    <Card title={"Reading"} style={{ margin: 15, width: "100%" }}>
       <Spin
         tip=""
         spinning={readingCueStates.loader}
@@ -494,12 +521,12 @@ return (
               marginBottom: 16,
             }}
           >
-            Reading нэмэх
+            Cue нэмэх
           </Button>
         </div>
         <Table columns={columns} dataSource={readingCueStates.data} />
         <Modal
-          title="Writing edit"
+          title="Cue edit"
           width={"90%"}
           visible={readingCueStates.isModalVisible}
           footer={null}

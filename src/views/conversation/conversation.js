@@ -279,7 +279,7 @@ export default function Index(props) {
   }, []);
 
 return (
-    <Card title={"Listening"} style={{ margin: 15, width: "100%" }}>
+    <Card title={"Conversation"} style={{ margin: 15, width: "100%" }}>
       <Spin
         tip=""
         spinning={conversationStates.loader}
@@ -305,7 +305,7 @@ return (
         </div>
         <Table columns={columns} dataSource={conversationStates.data} />
         <Modal
-          title="Writing edit"
+          title="Conversation edit"
           width={"90%"}
           visible={conversationStates.isModalVisible}
           footer={null}

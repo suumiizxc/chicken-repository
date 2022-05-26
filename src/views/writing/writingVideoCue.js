@@ -263,7 +263,7 @@ export default function Index(props) {
     {
         title : "Miss word required",
         dataIndex : "miss_word_required",
-        key : "miss_word_required",
+        render:(text) => <a>{text !== 0 ? "Тийм" : "Үгүй"}</a>,
     },
     
     {
@@ -715,7 +715,7 @@ return (
         </div>
         <Table columns={columns} dataSource={writingVideoStates.data} />
         <Modal
-          title="Writing видео нэмэх"
+          title="Writing видео cue нэмэх"
           width={"90%"}
           visible={writingVideoStates.isModalVisible}
           footer={null}

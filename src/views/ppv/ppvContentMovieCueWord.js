@@ -79,7 +79,7 @@ export default function Index(props) {
     {
         title : "Space next",
         dataIndex : "space_next",
-        key :"space_next"
+        render:(text) => <a>{text !== 0 ? "Ардаа зайгүй" : "Ардаа зайтай"}</a>,
     },
     {
         title : "Ordering",
@@ -145,14 +145,10 @@ export default function Index(props) {
   
     // setIntroVideoCueStates({ ...introVideoCueStates });
     form.setFieldsValue({
-      movie_id : record.movie_id, 
-      ordering : record.ordering, 
-      start_time : record.start_time, 
-      end_time : record.end_time, 
-      from_language_id : record.from_language_id,
-      from_language_translation : record.from_language_translation,
-      to_language_id : record.to_language_id,
-      to_language_translation : record.to_language_translation,
+      main_text : record.main_text, 
+      word_value : record.word_value,
+      space_next : record.space_next,
+      ordering : record.ordering,
       
     });
   };
@@ -311,7 +307,7 @@ export default function Index(props) {
   }, []);
 
 return (
-    <Card title={"Listening"} style={{ margin: 15, width: "100%" }}>
+    <Card title={"PPV"} style={{ margin: 15, width: "100%" }}>
       <Spin
         tip=""
         spinning={ppvContentMovieCueWordStates.loader}
@@ -332,12 +328,12 @@ return (
               marginBottom: 16,
             }}
           >
-            Reading нэмэх
+            Word нэмэх
           </Button>
         </div>
         <Table columns={columns} dataSource={ppvContentMovieCueWordStates.data} />
         <Modal
-          title="Writing edit"
+          title="Word edit"
           width={"90%"}
           visible={ppvContentMovieCueWordStates.isModalVisible}
           footer={null}

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import imageToBase64 from "image-to-base64";
+import axios from "axios";
 import {
   Table,
   Space,
@@ -15,7 +17,9 @@ import {
   Checkbox,
   Divider,
   Tooltip,
-  Descriptions
+  Descriptions,
+  Upload, 
+  Image,
 } from "antd";
 import {
   DeleteOutlined,
@@ -28,12 +32,16 @@ import {
   PlusOutlined,
   RollbackOutlined,
   ArrowsAltOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import {
     getAllPPVContentAPI,
     insertPPVContentAPI,
     updatePPVContentAPI,
     deletePPVContentAPI,
+
+    uploadSingleImageAPI,
+
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
 
@@ -54,7 +62,33 @@ export default function Index(props) {
     updateData:{
         id : null
     },
+    upload_image_b64 : null,
+    view_img_url : null,
   });
+
+
+  
+  const handleFileRead = async (event) => {
+    const file = event.target.files[0]
+    const base64 = await convertBase64(file)
+    console.log(base64);
+    ppvContentStates.upload_image_b64 = base64.replace("data:","").replace("image/","").replace("png;", "").replace("jpg;", "").replace("jpeg;", "").replace("base64,","");
+    setPPVContentStates({ ...ppvContentStates });
+
+  }
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file)
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      }
+      fileReader.onerror = (error) => {
+        reject(error);
+      }
+    })
+  }
+
   const columns = [
     {
       title : "Id",
@@ -132,7 +166,10 @@ export default function Index(props) {
                     ppvContentStates.updateData = record;
                     ppvContentStates.id = record.id;
                     ppvContentStates.isModalVisible = true;
+                    ppvContentStates.view_img_url = record.profile_img;
                     getFormData(record);
+                    console.log("pisdaa : ", record.profile_img)
+                    
                     setPPVContentStates({ ...ppvContentStates });
                     }}
                     icon={<EditOutlined style={{ color: "#3e79f7" }} />}
@@ -158,7 +195,9 @@ export default function Index(props) {
 
   const getFormData = (record) => {
   
-    // setIntroVideoCueStates({ ...introVideoCueStates });
+
+    
+    
     form.setFieldsValue({
       id : record.id,
       category_id : record.category_id,
@@ -197,6 +236,34 @@ export default function Index(props) {
         console.log(e);
       });
   };
+
+  const insertPPVContentUploadImage = (data) => {
+    ppvContentStates.loader = true;
+    setPPVContentStates({ ppvContentStates });
+    uploadSingleImageAPI(data)
+      .then((res) => {
+        ppvContentStates.loader = false;
+        setPPVContentStates({ ppvContentStates });
+        console.log("res : ", res)
+        ppvContentStates.updateData.profile_img = res.data.response; 
+       
+        ppvContentStates.view_img_url = res.data.response;
+        form.resetFields();
+        getFormData(ppvContentStates.updateData);
+        setPPVContentStates({ ...ppvContentStates });
+        
+        console.log("success all writing", ppvContentStates);
+        
+       
+      })
+      .catch((e) => {
+        //unsuccessful
+        props.setLoader(false);
+        message.error("Алдаа гарлаа ");
+        console.log(e);
+      });
+  };
+
 
   const insertListeningData = (values) => {
       ppvContentStates.loader = true;
@@ -302,6 +369,15 @@ export default function Index(props) {
     setPPVContentStates({ ...ppvContentStates });
   };
 
+  const uploadImage = () => {
+    // ppvContentStates.isModalVisible = false;
+    // ppvContentStates.action = "ADD_LISTENING";
+    // setPPVContentStates({ ...ppvContentStates });
+    var upObj = {"upload" : ppvContentStates.upload_image_b64}
+    insertPPVContentUploadImage(upObj)
+    console.log("pisdaa : ", ppvContentStates)
+  };
+
 
   useEffect(() => {
     console.log("listening useffect");
@@ -309,7 +385,7 @@ export default function Index(props) {
   }, []);
 
 return (
-    <Card title={"Listening"} style={{ margin: 15, width: "100%" }}>
+    <Card title={"PPV"} style={{ margin: 15, width: "100%" }}>
       <Spin
         tip=""
         spinning={ppvContentStates.loader}
@@ -332,10 +408,11 @@ return (
           >
             PPV content нэмэх
           </Button>
+          
         </div>
         <Table columns={columns} dataSource={ppvContentStates.data} />
         <Modal
-          title="Writing edit"
+          title="PPV edit"
           width={"90%"}
           visible={ppvContentStates.isModalVisible}
           footer={null}
@@ -402,6 +479,8 @@ return (
                                       <Input />
                                   </Form.Item>
                               </Col>
+                              
+                              
                               <Col span={8}>
                                   <Form.Item
                                   name={"is_active"}
@@ -426,7 +505,42 @@ return (
                                       <Input />
                                   </Form.Item>
                               </Col>
+                              
                           </Row>
+                            <Row>
+                                <Col span={8}>
+                                    <img id="myImg" height={300}  src={ppvContentStates.view_img_url}/>
+                                </Col>
+                            </Row>
+                           <Row>
+                               <Col span={24}>
+                                    <Col span={8}>
+                                        <Input
+                                                id="originalFileName"
+                                                type="file"
+                                                inputProps={{ accept: 'image/*, .xlsx, .xls, .csv, .pdf, .pptx, .pptm, .ppt' }}
+                                                required
+                                                label="Document"
+                                                name="originalFileName"
+                                                onChange={handleFileRead}
+                                                size="small"
+                                                variant="standard"
+                                            />
+                                        </Col>
+                                        <Col span={8}>
+                                            <Button
+                                                onClick={uploadImage}
+                                                icon={<PlusCircleOutlined />}
+                                                type="primary"
+                                                style={{
+                                                marginBottom: 16,
+                                                }}
+                                            >
+                                                Upload image :P 
+                                            </Button>
+                                    </Col>
+                              </Col>
+                           </Row>
                            </Col>
                        </Row>
                         <Form.Item wrapperCol={{ offset: 17, span: 7 }}>

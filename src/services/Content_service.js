@@ -1062,6 +1062,23 @@ export function deleteReadingCueWordAPI(id,token) {
   });
 }
 
+export function deleteReadingCueWordByCueIDAPI(id,token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/course-reading-cue-word/delete-by-cue-id/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
 export function getAllPPVContentAPI(token) {
   return new Promise((resolve, reject) => {
     axios({
@@ -1232,6 +1249,23 @@ export function insertContentMovieCueAPI(data, token) {
   });
 }
 
+export function resetContentMovieCueAPI(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/ppv-content-movie-cue/reset-by-movie/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
 export function updateContentMovieCueAPI(data, token) {
   return new Promise((resolve, reject) => {
     axios({
@@ -1333,6 +1367,24 @@ export function deleteContentMovieCueWordAPI(id, token) {
       .catch((err) => reject(err));
   });
 }
+
+export function deleteContentMovieCueWordAPIByCueID(id, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/ppv-content-movie-cue-word/delete-by-cue-id/" + id,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
 
 export function getAllConversationAPI(token) {
   return new Promise((resolve, reject) => {
@@ -1607,6 +1659,23 @@ export function deleteMixedVideoCueWordAPI(id,token) {
   });
 }
 
+export function getAllArticleCategories(token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/course-article-category/all",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
 export function getAllArticle(token) {
   return new Promise((resolve, reject) => {
     axios({
@@ -1822,6 +1891,22 @@ export function deleteArticleCueWordAPI(id, token) {
         Authorization: token,
       },
       data: "",
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function uploadSingleImageAPI(data) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: "https://adminback.medlegten.com/api/upload-b64-image" ,
+      headers: {
+        Accept: 'application/json',
+        "Content-Type": "application/json",
+      },
+      data: data,
     })
       .then((res) => resolve(res))
       .catch((err) => reject(err));

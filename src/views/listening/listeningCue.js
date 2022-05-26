@@ -80,7 +80,7 @@ export default function Index(props) {
     {
       title : "Is active",
       dataIndex : "is_active",
-      key :"is_active"
+      render:(text) => <a>{text !== 0 ? "Идэвхгүй" : "Идэвхтэй"}</a>,
     },
     {
       title : "Title",
@@ -295,7 +295,7 @@ export default function Index(props) {
   }, []);
 
 return (
-    <Card title={"Writing"} style={{ margin: 15, width: "100%" }}>
+    <Card title={"Listening"} style={{ margin: 15, width: "100%" }}>
       <Spin
         tip=""
         spinning={listeningCueStates.loader}
@@ -334,12 +334,12 @@ return (
               color: "#FFFFFF",
             }}
           >
-            Writing видео нэмэх
+            Listening нэмэх
           </Button>
         </div>
         <Table columns={columns} dataSource={listeningCueStates.data} />
         <Modal
-          title="Writing видео нэмэх"
+          title="Listening edit"
           width={"90%"}
           visible={listeningCueStates.isModalVisible}
           footer={null}
@@ -433,7 +433,7 @@ return (
               autoComplete="off"
             >
                   <Row>
-                  <Divider>Word add</Divider>
+                  <Divider>Listening edit</Divider>
                       <Col span={24}>
                           <Row>
                               <Col span={8}>

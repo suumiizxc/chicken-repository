@@ -75,7 +75,7 @@ export default function Index(props) {
     {
       title : "Is active",
       dataIndex : "is_active",
-      key :"is_active"
+      render:(text) => <a>{text !== 0 ? "Идэвхгүй" : "Идэвхтэй"}</a>,
     },
     {
       title : "ordering",
@@ -284,7 +284,7 @@ export default function Index(props) {
   }, []);
 
 return (
-    <Card title={"Writing"} style={{ margin: 15, width: "100%" }}>
+    <Card title={"Listening"} style={{ margin: 15, width: "100%" }}>
       <Spin
         tip=""
         spinning={listeningQuestionStates.loader}
@@ -328,7 +328,7 @@ return (
         </div>
         <Table columns={columns} dataSource={listeningQuestionStates.data} />
         <Modal
-          title="Writing видео нэмэх"
+          title="Listening question нэмэх"
           width={"90%"}
           visible={listeningQuestionStates.isModalVisible}
           footer={null}

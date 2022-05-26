@@ -158,12 +158,12 @@ export default function Index(props) {
     {
         title : "Space next",
         dataIndex : "space_next",
-        render:(text) => <a>{text !== 0 ? "Тийм" : "Үгүй"}</a>,
+        render:(text) => <a>{text !== 0 ? "Ардаа зайгүй" : "Ардаа зайтай"}</a>,
     },
     {
         title : "Is visible",
         dataIndex : "is_visible",
-        render:(text) => <a>{text !== 0 ? "Тийм" : "Үгүй"}</a>
+        render:(text) => <a>{text !== 1 ? "Тийм" : "Үгүй"}</a>
     },
     {
         title : "Has hint",
@@ -455,12 +455,12 @@ return (
               color: "#FFFFFF",
             }}
           >
-            Writing видео cue нэмэх
+            Writing word нэмэх
           </Button>
         </div>
         <Table columns={columns} dataSource={writingVideoStates.data} />
         <Modal
-          title="Writing видео нэмэх"
+          title="Writing word edit"
           width={"90%"}
           visible={writingVideoStates.isModalVisible}
           footer={null}
