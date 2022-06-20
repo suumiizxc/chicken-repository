@@ -88,7 +88,7 @@ export default function Index(props) {
       fixed : "right",
       width : 100,
       render: (text, record) => (
-        <Checkbox defaultChecked={parseInt(record.is_selected_for_quiz) === 1 ? true : false}
+        <Checkbox checked={parseInt(record.is_selected_for_quiz)}
         onChange={(e)=>{
           console.log(e.target.checked)
           console.log("record : ", record.id)
