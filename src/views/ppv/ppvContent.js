@@ -32,7 +32,10 @@ import {
   PlusOutlined,
   RollbackOutlined,
   ArrowsAltOutlined,
+  BellOutlined,
   UploadOutlined,
+  ZoomInOutlined,
+  ZoomOutOutlined,
 } from "@ant-design/icons";
 import {
     getAllPPVContentAPI,
@@ -41,6 +44,9 @@ import {
     deletePPVContentAPI,
 
     uploadSingleImageAPI,
+
+    getPPVQuizConfigByContentAPI,
+    insertPPVQuizConfigAPI
 
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
@@ -64,6 +70,7 @@ export default function Index(props) {
     },
     upload_image_b64 : null,
     view_img_url : null,
+    quiz_config: null,
   });
 
 
@@ -88,6 +95,39 @@ export default function Index(props) {
       }
     })
   }
+
+  const columns_config = [
+    {
+      title : "Id",
+      dataIndex : "id",
+      key : "id"
+    },
+    {
+      title : "Content id",
+      dataIndex : "content_id",
+      key : "content_id",
+    },
+    {
+      title : "Num context",
+      dataIndex : "num_context",
+      key : "num_context"
+    },
+    {
+      title : "Num loc",
+      dataIndex : "num_loc",
+      key : "num_loc",
+    },
+    {
+      title : "Is active",
+      dataIndex : "is_active",
+      key : "is_active",
+    },
+    {
+      title : "Duration",
+      dataIndex : "duration",
+      key : "duration",      
+    }
+  ]
 
   const columns = [
     {
@@ -175,6 +215,28 @@ export default function Index(props) {
                     icon={<EditOutlined style={{ color: "#3e79f7" }} />}
                 />
                 </Tooltip>
+                <Tooltip placement="topRight" title="Quiz config">
+                <Button
+                    onClick={() => {
+                    console.log("UPDATE/edit intro CUE video records==>", record);
+                    console.log("introVideoCueStates updateIntroCueVideo");
+                    // getPPVQuizConfigByContent(record.id);
+                    
+
+                    ppvContentStates.action = "quiz_config";
+                    
+                    ppvContentStates.updateData = record;
+                    ppvContentStates.id = record.id;
+                    ppvContentStates.isModalVisible = true;
+                    ppvContentStates.view_img_url = record.profile_img;
+                    getFormData(record);
+                    console.log("pisdaa : ", record.profile_img)
+                    
+                    setPPVContentStates({ ...ppvContentStates });
+                    }}
+                    icon={<BellOutlined style={{ color: "#3e79f7" }} />}
+                />
+                </Tooltip>
                 <Tooltip placement="topRight" title="Cue руу үсрэх">
                     <Button
                     onClick={() => {
@@ -187,6 +249,7 @@ export default function Index(props) {
                     icon={<ArrowsAltOutlined style={{ color: "#3e79f7" }} />}
                     />
                 </Tooltip>
+
             </Space>
         )
     }
@@ -194,10 +257,6 @@ export default function Index(props) {
   ]
 
   const getFormData = (record) => {
-  
-
-    
-    
     form.setFieldsValue({
       id : record.id,
       category_id : record.category_id,
@@ -250,6 +309,60 @@ export default function Index(props) {
         ppvContentStates.view_img_url = res.data.response;
         form.resetFields();
         getFormData(ppvContentStates.updateData);
+        setPPVContentStates({ ...ppvContentStates });
+        
+        console.log("success all writing", ppvContentStates);
+        
+       
+      })
+      .catch((e) => {
+        //unsuccessful
+        props.setLoader(false);
+        message.error("Алдаа гарлаа ");
+        console.log(e);
+      });
+  };
+
+
+  const insertPPVQuizConfig = (data) => {
+    ppvContentStates.loader = true;
+    setPPVContentStates({ ppvContentStates });
+    insertPPVQuizConfigAPI(data, ppvContentStates.token)
+      .then((res) => {
+        ppvContentStates.loader = false;
+        setPPVContentStates({ ppvContentStates });
+        console.log("res : ", res)
+        // ppvContentStates.updateData.profile_img = res.data.response; 
+       
+        // ppvContentStates.view_img_url = res.data.response;
+        form.resetFields();
+        getFormData(ppvContentStates.updateData);
+        setPPVContentStates({ ...ppvContentStates });
+        
+        console.log("success all writing", ppvContentStates);
+        
+       
+      })
+      .catch((e) => {
+        //unsuccessful
+        props.setLoader(false);
+        message.error("Алдаа гарлаа ");
+        console.log(e);
+      });
+  };
+
+
+  const getPPVQuizConfigByContent = (id) => {
+    ppvContentStates.loader = true;
+    setPPVContentStates({ ppvContentStates });
+    getPPVQuizConfigByContentAPI(id, ppvContentStates.token)
+      .then((res) => {
+        ppvContentStates.loader = false;
+        setPPVContentStates({ ppvContentStates });
+        console.log("res quiz config get : ", res);
+
+        ppvContentStates.quiz_config = res.data.data;
+        ppvContentStates.action = "quiz_config_see";
         setPPVContentStates({ ...ppvContentStates });
         
         console.log("success all writing", ppvContentStates);
@@ -357,7 +470,19 @@ export default function Index(props) {
           updateListeningData(updObj);
           getFormData({name:""})
           getAllPPVContent();
-      }
+      } else if (ppvContentStates.action == "quiz_config") {
+        var quiz_insert = {
+          content_id : ppvContentStates.id,
+          num_context : parseInt(values.num_context),
+          num_voc : parseInt(values.num_voc),
+          is_active :parseInt(values.is_active_quiz),
+          duration : parseInt(values.duration),
+        };
+        console.log("Quiz insert : ", quiz_insert)
+        insertPPVQuizConfig(quiz_insert);
+        getFormData({name:""})
+        getAllPPVContent();
+    } 
   }
   const onFinishFailedWriting = () => {
       console.log("on finish failed writing")
@@ -647,7 +772,73 @@ return (
                         </Form.Item>
                    </Form>
                )
-            } 
+            } else if(ppvContentStates.action == "quiz_config") {
+              return (
+                 <Form
+                 form={form}
+                 name="addWord"
+                 labelCol={{ span: 8 }}
+                 wrapperCol={{ span: 16 }}
+                 initialValues={{ remember: true }}
+                 onFinish={onFinishWriting}
+                 onFinishFailed={onFinishFailedWriting}
+                 autoComplete="off"
+               >
+                     <Row>
+                         <Col span={24}>
+                         <Row>
+                            <Col span={8}>
+                                <Form.Item
+                                name={"num_context"}
+                                label="Num context"
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item
+                                name={"num_voc"}
+                                label="Num voc"
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item
+                                name={"is_active_quiz"}
+                                label="Is active"
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item
+                                name={"duration"}
+                                label="Duration"
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                            
+                        </Row>
+                         </Col>
+                     </Row>
+                     <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
+                      <Button
+                          type="primary"
+                          htmlType="submit"
+                          style={{ width: "100%" }}
+                      >
+                          Хадгалах
+                      </Button>
+                      </Form.Item>
+                 </Form>
+             )
+          } else if(ppvContentStates.action == "quiz_config_see") {
+            return (
+               <Table columns={columns_config} dataSource={ppvContentStates.quiz_config}/>
+           )
+        } 
           
             })()}
         </Modal>

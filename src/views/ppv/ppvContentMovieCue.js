@@ -15,7 +15,8 @@ import {
   Checkbox,
   Divider,
   Tooltip,
-  Descriptions
+  Descriptions,
+  
 } from "antd";
 import {
   DeleteOutlined,
@@ -40,6 +41,8 @@ import {
 
     insertContentMovieCueWordAPI,
     deleteContentMovieCueWordAPIByCueID,
+    getPPVQuizVocListByMovieIDAPI,
+    updatePPVQuizVocByMovieIDAPI,
     
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
@@ -62,10 +65,40 @@ export default function Index(props) {
         id : null
     },
     insertWord : [],
+    vocList : null,
   });
 
   
   const symbols = [",", ".", ":", ";", "/", "!","-","_", `'`, `"`];
+
+  const columns_vocabulary = [
+    {
+      title : "Movie name",
+      dataIndex : "movie_name",
+      key : "movie_name",
+    },
+    {
+      title : "Word value",
+      dataIndex : "word_value",
+      key : "word_value",
+    },
+    {
+      title : "Үйлдэл",
+      key : "action",
+      fixed : "right",
+      width : 100,
+      render: (text, record) => (
+        <Checkbox defaultChecked={parseInt(record.is_selected_for_quiz) === 1 ? true : false}
+        onChange={(e)=>{
+          console.log(e.target.checked)
+          console.log("record : ", record.id)
+          updatePPVVOCData(parseInt(record.id), e.target.checked === true ? 1 : 0)
+        }}
+        />
+      )
+    }
+
+  ]
 
   const columns_word = [
     {
@@ -99,6 +132,8 @@ export default function Index(props) {
       key :"ordering"
     }
   ]
+
+
   const columns = [
     {
         title : "Id",
@@ -262,6 +297,31 @@ export default function Index(props) {
       });
   };
 
+  const getVocByMovie = (id) => {
+    ppvContentMovieCueStates.loader = true;
+    setPPVContentMovieCueStates({ ppvContentMovieCueStates });
+    getPPVQuizVocListByMovieIDAPI(id, ppvContentMovieCueStates.token)
+      .then((res) => {
+        ppvContentMovieCueStates.loader = false;
+        setPPVContentMovieCueStates({ ppvContentMovieCueStates });
+        if (res && res.data && res.data.status && res.data.status === true) {
+          //success
+          ppvContentMovieCueStates.vocList = res.data.data;
+          setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
+          console.log("success all voc list", res.data.data);
+        } else {
+          //unsuccessful
+          message.error("Алдаа гарлаа");
+        }
+      })
+      .catch((e) => {
+        //unsuccessful
+        props.setLoader(false);
+        message.error("Алдаа гарлаа ");
+        console.log(e);
+      });
+  };
+
   const getCueWordsByCueIdData = (cue_id, token) => {
     getAllContentMovieCueWordByCueAPI(cue_id, token)
       .then((res) => {
@@ -328,6 +388,33 @@ export default function Index(props) {
             console.log(e)
         })
   }
+
+  const updatePPVVOCData = (id, selected) => {
+    ppvContentMovieCueStates.loader = true;
+    setPPVContentMovieCueStates({ppvContentMovieCueStates})
+    updatePPVQuizVocByMovieIDAPI(id, selected, ppvContentMovieCueStates.token)
+      .then((res) => {
+          ppvContentMovieCueStates.loader = false;
+          setPPVContentMovieCueStates({ppvContentMovieCueStates});
+          if (res && res.data && res.data.status && res.data.status === true) {
+              //success
+              // ppvContentMovieCueStates.updateData = res.data.data;
+              setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
+              getAllReading(props.courseIds.ppvContentMovieId);
+              getVocByMovie(props.courseIds.ppvContentMovieId);
+              console.log("success insert writing", res.data.data);
+              message.success("Амжилттай writing хадгаллаа 😍😊✅")
+            } else {
+              //unsuccessful
+              message.error("Алдаа гарлаа");
+          }
+      })
+      .catch((e) => {
+          props.setLoader(false);
+          message.error("Алдаа гарлаа 😭😓🪲")
+          console.log(e)
+      })
+}
   
 
   const deleteListeningData = (values) => {
@@ -520,7 +607,8 @@ export default function Index(props) {
 
   useEffect(() => {
     console.log("listening useffect");
-    getAllReading(props.courseIds.ppvContentMovieId);;
+    getAllReading(props.courseIds.ppvContentMovieId);
+    getVocByMovie(props.courseIds.ppvContentMovieId);
   }, []);
 
 return (
@@ -560,7 +648,10 @@ return (
             Reset
           </Button>
         </div>
+        <h2>PPV content movie cue</h2>
         <Table columns={columns} dataSource={ppvContentMovieCueStates.data} />
+        <h2>PPV Quiz vocabulary</h2>
+        <Table columns={columns_vocabulary} dataSource={ppvContentMovieCueStates.vocList} />
         <Modal
           title="Cue edit"
           width={"90%"}
