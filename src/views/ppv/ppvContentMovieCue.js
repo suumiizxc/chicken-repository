@@ -43,9 +43,13 @@ import {
     deleteContentMovieCueWordAPIByCueID,
     getPPVQuizVocListByMovieIDAPI,
     updatePPVQuizVocByMovieIDAPI,
+
+    updatePPVContentMovieCueMonAPI,
     
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
+
+const {TextArea} = Input;
 
 export default function Index(props) {
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} />;
@@ -363,6 +367,34 @@ export default function Index(props) {
           });
   }
 
+  const updatePPVCueMonData = (values) => {
+    ppvContentMovieCueStates.loader = true;
+    setPPVContentMovieCueStates({ppvContentMovieCueStates});
+    console.log("SHINE PISDA : ", values);
+    updatePPVContentMovieCueMonAPI(values, ppvContentMovieCueStates.token)
+      .then((res) => {
+          ppvContentMovieCueStates.loader = false;
+          setPPVContentMovieCueStates({ppvContentMovieCueStates});
+          if (res && res.data && res.data.status && res.data.status === true) {
+              //success
+              ppvContentMovieCueStates.insertData = res.data.data;
+              setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
+              getAllReading(props.courseIds.ppvContentMovieId);
+              console.log("success insert writing", res.data.data);
+              message.success("Амжилттай writing хадгаллаа 😍😊✅")
+            } else {
+              //unsuccessful
+              message.error("Алдаа гарлаа 😭😓🪲")
+          }
+      })
+      .catch((e) => {
+          //unsuccessful
+          props.setLoader(false);
+          message.error("Алдаа гарлаа ");
+          console.log(e);
+        });
+}
+
   const updateListeningData = (values) => {
       ppvContentMovieCueStates.loader = true;
       setPPVContentMovieCueStates({ppvContentMovieCueStates})
@@ -533,8 +565,124 @@ export default function Index(props) {
           
           getAllReading(props.courseIds.ppvContentMovieId);
           form.resetFields();
+      } else if (ppvContentMovieCueStates.action == "ADD_BULK_INSERT") {
+        const bulkCueRaw = values.cue_text.replaceAll(" --> ", "\n").split("\n")
+        var bulkCue = []
+        var bulkCueObj = []
+        bulkCueRaw.forEach((val, ind) => {
+          if(val !== "") {
+            bulkCue.push(val)
+          }
+        })
+        for(var i = 0; i < Math.floor(bulkCue.length / 4); i++) {
+          console.log("iii : ", i)
+          const inObj = {
+            ordering : parseInt(bulkCue[i * 4]), 
+            start_time : bulkCue[i * 4 + 1],
+            end_time : bulkCue[i * 4 + 2],
+            text : bulkCue[i * 4 + 3]
+          }
+          var insObj = {
+            movie_id : parseInt(props.courseIds.ppvContentMovieId),
+            ordering : parseInt(bulkCue[i * 4]), 
+            start_time : bulkCue[i * 4 + 1],
+            end_time : bulkCue[i * 4 + 2],
+            from_language_id : 2,
+            from_language_translation : bulkCue[i * 4 + 3],
+            to_language_id : 1,
+            to_language_translation : "",
+
+          };
+          insertListeningData(insObj);
+          
+        }
+        console.log("psidaaaa : ", bulkCueObj);
+        
+      } else if (ppvContentMovieCueStates.action == "ADD_BULK_INSERT_MON") {
+        const bulkCueRaw = values.cue_text.replaceAll(" --> ", "\n").split("\n")
+        var bulkCue = []
+        var bulkCueObj = []
+        bulkCueRaw.forEach((val, ind) => {
+          if(val !== "") {
+            bulkCue.push(val)
+          }
+        })
+        for(var i = 0; i < Math.floor(bulkCue.length / 4); i++) {
+          
+         
+          var insObj = {
+            movie_id : parseInt(props.courseIds.ppvContentMovieId),
+            start_time : bulkCue[i * 4 + 1],
+            end_time : bulkCue[i * 4 + 2],
+            to_language_translation : bulkCue[i * 4 + 3],
+
+          };
+          console.log("iii : ", insObj)
+          updatePPVCueMonData(insObj);
+          
+        }
+        
+      } else if (ppvContentMovieCueStates.action == "ADD_BULK_INSERT2") {
+        const bulkCueRaw = values.cue_text.replaceAll("Dialogue: 0,", "$$$").replaceAll(",Default,,0,0,0,,", "$").split("\n")
+        console.log("bulkcueRaw : ", bulkCueRaw)
+        // var bulkCue = []
+        // var bulkCueObj = []
+        // bulkCueRaw.forEach((val, ind) => {
+        //   if(val !== "") {
+        //     bulkCue.push(val)
+        //   }
+        // })
+        for(var i = 0; i <bulkCueRaw.length; i++) {
+          var eachRow = bulkCueRaw[i].split("$")
+          
+          var startEnd = eachRow[2].split(",")
+          var insObj = {
+            movie_id : parseInt(props.courseIds.ppvContentMovieId),
+            ordering : parseInt(i + 1), 
+            start_time : startEnd[0],
+            end_time : startEnd[1],
+            from_language_id : 2,
+            from_language_translation : eachRow[3],
+            to_language_id : 1,
+            to_language_translation : "",
+
+          };
+          console.log("test : ", insObj)
+          insertListeningData(insObj);
+          
+        }
+        console.log("psidaaaa : ", bulkCueObj);
+        
+      } else if (ppvContentMovieCueStates.action == "ADD_BULK_INSERT2_MON") {
+        const bulkCueRaw = values.cue_text.replaceAll("Dialogue: 0,", "$$$").replaceAll(",Default,,0,0,0,,", "$").split("\n")
+        console.log("bulkcueRaw : ", bulkCueRaw)
+        // var bulkCue = []
+        // var bulkCueObj = []
+        // bulkCueRaw.forEach((val, ind) => {
+        //   if(val !== "") {
+        //     bulkCue.push(val)
+        //   }
+        // })
+        for(var i = 0; i <bulkCueRaw.length; i++) {
+          var eachRow = bulkCueRaw[i].split("$")
+          
+          var startEnd = eachRow[2].split(",")
+          var insObj = {
+            movie_id : parseInt(props.courseIds.ppvContentMovieId),
+            start_time : startEnd[0],
+            end_time : startEnd[1],
+            to_language_translation : eachRow[3],
+
+          };
+          console.log("test : ", insObj)
+          updatePPVCueMonData(insObj);
+          
+        }
+        
       }
   }
+
+  
 
   const sendCueWord = async(data) => {
     const wlen = ppvContentMovieCueStates.insertWord.length;
@@ -604,6 +752,29 @@ export default function Index(props) {
     setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
   };
 
+  const insertBulk = () => {
+    ppvContentMovieCueStates.isModalVisible = true;
+    ppvContentMovieCueStates.action = "ADD_BULK_INSERT";
+    setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
+  };
+
+  const insertBulkMn = () => {
+    ppvContentMovieCueStates.isModalVisible = true;
+    ppvContentMovieCueStates.action = "ADD_BULK_INSERT_MON";
+    setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
+  };
+
+  const insertBulk2 = () => {
+    ppvContentMovieCueStates.isModalVisible = true;
+    ppvContentMovieCueStates.action = "ADD_BULK_INSERT2";
+    setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
+  };
+  const insertBulk2Mn = () => {
+    ppvContentMovieCueStates.isModalVisible = true;
+    ppvContentMovieCueStates.action = "ADD_BULK_INSERT2_MON";
+    setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
+  };
+
 
   useEffect(() => {
     console.log("listening useffect");
@@ -634,6 +805,54 @@ return (
             }}
           >
             Cue нэмэх
+          </Button>
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            onClick={insertBulk}
+            icon={<PlusCircleOutlined />}
+            type="primary"
+            style={{
+              marginBottom: 16,
+            }}
+          >
+            Bulk insert1 /En/
+          </Button>
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            onClick={insertBulkMn}
+            icon={<PlusCircleOutlined />}
+            type="primary"
+            style={{
+              marginBottom: 16,
+            }}
+          >
+            Bulk insert1 /Mn/
+          </Button>
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            onClick={insertBulk2}
+            icon={<PlusCircleOutlined />}
+            type="primary"
+            style={{
+              marginBottom: 16,
+            }}
+          >
+            Bulk insert2 /En/
+          </Button>
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            onClick={insertBulk2Mn}
+            icon={<PlusCircleOutlined />}
+            type="primary"
+            style={{
+              marginBottom: 16,
+            }}
+          >
+            Bulk insert2 /Mn/
           </Button>
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -901,7 +1120,185 @@ return (
                         </Form.Item>
                    </Form>
                )
-            } 
+            } else if(ppvContentMovieCueStates.action == "ADD_BULK_INSERT") {
+              return (
+                 <Form
+                 form={form}
+                 name="addWord"
+                 labelCol={{ span: 8 }}
+                 wrapperCol={{ span: 16 }}
+                 initialValues={{ remember: true }}
+                 onFinish={onFinishWriting}
+                 onFinishFailed={onFinishFailedWriting}
+                 autoComplete="off"
+               >
+                     <Row>
+                         <Col span={24}>
+                             <Row>
+                                 
+                                 <Col span={12}>
+                                     <Form.Item
+                                     name={"cue_text"}
+                                     label="Cue text"
+                                     rules={[
+                                         { required: true, message: "Заавал бөглөнө үү!" },
+                                     ]}
+                                     >
+                                         <TextArea />
+                                     </Form.Item>
+                                 
+                                 </Col>
+                                 
+                                 
+                             </Row>
+                         </Col>
+                     </Row>
+                     <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
+                      <Button
+                          type="primary"
+                          htmlType="submit"
+                          style={{ width: "100%" }}
+                      >
+                          Хадгалах
+                      </Button>
+                      </Form.Item>
+                 </Form>
+             )
+          } else if(ppvContentMovieCueStates.action == "ADD_BULK_INSERT_MON") {
+            return (
+               <Form
+               form={form}
+               name="addWord"
+               labelCol={{ span: 8 }}
+               wrapperCol={{ span: 16 }}
+               initialValues={{ remember: true }}
+               onFinish={onFinishWriting}
+               onFinishFailed={onFinishFailedWriting}
+               autoComplete="off"
+             >
+                   <Row>
+                       <Col span={24}>
+                           <Row>
+                               
+                               <Col span={12}>
+                                   <Form.Item
+                                   name={"cue_text"}
+                                   label="Cue text"
+                                   rules={[
+                                       { required: true, message: "Заавал бөглөнө үү!" },
+                                   ]}
+                                   >
+                                       <TextArea />
+                                   </Form.Item>
+                               
+                               </Col>
+                               
+                               
+                           </Row>
+                       </Col>
+                   </Row>
+                   <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        style={{ width: "100%" }}
+                    >
+                        Хадгалах
+                    </Button>
+                    </Form.Item>
+               </Form>
+           )
+        }
+          else if(ppvContentMovieCueStates.action == "ADD_BULK_INSERT2") {
+            return (
+               <Form
+               form={form}
+               name="addWord"
+               labelCol={{ span: 8 }}
+               wrapperCol={{ span: 16 }}
+               initialValues={{ remember: true }}
+               onFinish={onFinishWriting}
+               onFinishFailed={onFinishFailedWriting}
+               autoComplete="off"
+             >
+                   <Row>
+                       <Col span={24}>
+                           <Row>
+                               
+                               <Col span={12}>
+                                   <Form.Item
+                                   name={"cue_text"}
+                                   label="Cue text"
+                                   rules={[
+                                       { required: true, message: "Заавал бөглөнө үү!" },
+                                   ]}
+                                   >
+                                       <TextArea />
+                                   </Form.Item>
+                               
+                               </Col>
+                               
+                               
+                           </Row>
+                       </Col>
+                   </Row>
+                   <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        style={{ width: "100%" }}
+                    >
+                        Хадгалах
+                    </Button>
+                    </Form.Item>
+               </Form>
+           )
+        } else if(ppvContentMovieCueStates.action == "ADD_BULK_INSERT2_MON") {
+          return (
+             <Form
+             form={form}
+             name="addWord"
+             labelCol={{ span: 8 }}
+             wrapperCol={{ span: 16 }}
+             initialValues={{ remember: true }}
+             onFinish={onFinishWriting}
+             onFinishFailed={onFinishFailedWriting}
+             autoComplete="off"
+           >
+                 <Row>
+                     <Col span={24}>
+                         <Row>
+                             
+                             <Col span={12}>
+                                 <Form.Item
+                                 name={"cue_text"}
+                                 label="Cue text"
+                                 rules={[
+                                     { required: true, message: "Заавал бөглөнө үү!" },
+                                 ]}
+                                 >
+                                     <TextArea />
+                                 </Form.Item>
+                             
+                             </Col>
+                             
+                             
+                         </Row>
+                     </Col>
+                 </Row>
+                 <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
+                  <Button
+                      type="primary"
+                      htmlType="submit"
+                      style={{ width: "100%" }}
+                  >
+                      Хадгалах
+                  </Button>
+                  </Form.Item>
+             </Form>
+         )
+      } 
+        
           
             })()}
         </Modal>

@@ -2116,3 +2116,20 @@ export function updatePPVQuizVocByMovieIDAPI(id, selected, token) {
       .catch((err) => reject(err));
   });
 }
+
+export function updatePPVContentMovieCueMonAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: url + "/api/ppv-content-movie-cue/update-mon",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
