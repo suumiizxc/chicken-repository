@@ -43,12 +43,32 @@ import Article from "./views/article/article"
 import ArticleCue from "./views/article/articleCue"
 import ArticleCueWord from "./views/article/articleCueWord"
 
+import Users from "./views/user/users";
 
 import "./App.css";
 import "./css/index.css";
 import "./css/layout.css";
 import "./css/light-theme.css";
+import { RegisterNewUser } from "./services/User_service";
+
+// function RegisterTest(){
+//   console.log(RegisterNewUser(
+//     {
+//       "first_name":"test1",
+// 	    "last_name":"test1",
+// 	    "password":"test1",
+// 	    "email":"unenhuub0@gmail.com",
+// 	    "role_id":10,
+// 	    "organization_id":12,
+// 	    "is_active":1
+//     },
+//     localStorage.getItem("token")
+//   ))
+// }
+
 function App() {
+
+  // RegisterTest()
   const [loader, setLoader] = useState(false);
   // const [token, setToken] = useState(null);
 
@@ -118,7 +138,7 @@ function App() {
                   />
                 )
               }
-            >
+            > 
               <Route index element={<ViewIndex />}></Route>
               <Route
                 path="/login"
@@ -558,9 +578,21 @@ function App() {
                   />
                 }
               />
+              {/* -------------------------------------------- User -------------------------------------------- */}
+              <Route
+                path="/users"
+                element={
+                  <Users
+                    userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                  />
+                }
+              >
+              {/* ---------------------------------------------------------------------------------------- */}
               </Route>
-            
-
+            </Route>
             <Route path="*" element={<PageNotFound />}></Route>
           </Routes>
         </BrowserRouter>

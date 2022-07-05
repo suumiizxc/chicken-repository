@@ -29,6 +29,7 @@ export const LoginForm = (props) => {
           props.setUserData(res.data.data);
           localStorage.setItem("token", res.data.data.token);
           localStorage.setItem("user_id", res.data.data.id);
+          localStorage.setItem("role_id", res.data.data.role_id)
           message.success("Амжилттай нэттэрлээ");
 
           // ------------------------------------------------------------

@@ -6,8 +6,10 @@ import {
   MailOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import MenuItem from "antd/lib/menu/MenuItem";
 
 const { SubMenu } = Menu;
 
@@ -36,6 +38,9 @@ export default function Side_nav() {
     }
     else if (e.key === "2.7") {
       navigate("/article")
+    }
+    else if(e.key === "5"){
+      navigate("/users")
     }
   };
   const toggleCollapsed = () => {
@@ -107,6 +112,9 @@ export default function Side_nav() {
             <Menu.Item key="4.1.2">{"Coming soon"}</Menu.Item>
           </Menu.ItemGroup>
         </SubMenu>
+        <MenuItem key="5" icon={<UserOutlined/>} title="Хэрэглэгчид">
+          {"Хэрэглэгчид"}
+        </MenuItem>
       </Menu>
     </div>
   );

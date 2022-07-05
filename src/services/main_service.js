@@ -17,3 +17,20 @@ export function authLogin(data) {
       .catch((err) => reject(err));
   });
 }
+
+export function RegisterNewUser(data, token){
+    return new Promise((resolve, reject) =>{
+        axios({
+            method: "post",
+            url: url + "/api/tb-sys-user/auth/register",
+            headers:{
+                "Content-Type": "application/json",
+                //"Access-Control-Allow-Origin":"*"
+                "Authorization": token
+            },
+            data: data,
+        })
+        .then((res) => resolve(res))
+        .catch((err) => reject(err));
+    });
+}
