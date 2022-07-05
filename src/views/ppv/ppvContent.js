@@ -130,11 +130,11 @@ export default function Index(props) {
   ]
 
   const columns = [
-    {
-      title : "Id",
-      dataIndex : "id",
-      key :"id"
-    },
+    // {
+    //   title : "Id",
+    //   dataIndex : "id",
+    //   key :"id"
+    // },
     {
         title : "Category id",
         dataIndex :"category_id",
@@ -182,7 +182,7 @@ export default function Index(props) {
         width : 100,
         render: (text, record) => (
             <Space size="middle">
-                <Popconfirm
+                {/* <Popconfirm
                     placement="topLeft"
                     htmlType="submit"
                     title={"Мэдээллийг устгахад итгэлтэй байна уу? 🤔🤔🤔"}
@@ -194,7 +194,7 @@ export default function Index(props) {
                     cancelText="Үгүй"
                 >
                     <Button icon={<DeleteOutlined style={{ color: "#FF6B72" }} />} />
-                </Popconfirm>
+                </Popconfirm> */}
                 <Tooltip placement="topRight" title="Засах">
                 <Button
                     onClick={() => {
