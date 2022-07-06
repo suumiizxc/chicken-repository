@@ -135,15 +135,25 @@ export default function Index(props) {
     //   dataIndex : "id",
     //   key :"id"
     // },
+    // {
+    //     title : "Category id",
+    //     dataIndex :"category_id",
+    //     key : "category_id",
+    // },
     {
-        title : "Category id",
-        dataIndex :"category_id",
-        key : "category_id",
+      title : "Category name",
+      dataIndex :"category_name",
+      key : "category_name",
     },
+    // {
+    //     title : "Level id",
+    //     dataIndex : "level_id",
+    //     key : "level_id",
+    // },
     {
-        title : "Level id",
-        dataIndex : "level_id",
-        key : "level_id",
+      title : "Level name",
+      dataIndex : "level_name",
+      key : "level_name",
     },
     {
       title : "Нэр",
@@ -164,6 +174,9 @@ export default function Index(props) {
         title : "Is active",
         dataIndex : "is_active",
         key : "is_active",
+        render: (text) => {
+          return text == 0 ? "Идэвхтэй":"Идэвхгүй"
+        }
     },
     {
         title : "Intro",
@@ -174,6 +187,9 @@ export default function Index(props) {
         title : "Is serial",
         dataIndex : "is_serial",
         key : "is_serial",
+        render: (text) => {
+          return text == 0 ? "Цуврал":"Цуврал биш"
+        }
     },
     {
         title : "Үйлдэл",

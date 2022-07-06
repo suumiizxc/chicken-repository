@@ -871,7 +871,7 @@ const deletePPVQuestion = (values) => {
   }, []);
 
 return (
-    <Card title={"PPV"} style={{ margin: 15, width: "100%" }}>
+    <Card title={"PPV"} style={{ margin: 15, width: "100%", backgroundColor:"#f7f7f7" }}>
       <Spin
         tip=""
         spinning={ppvContentMovieStates.loader}
@@ -883,7 +883,13 @@ return (
           marginTop: "-5.5rem",
         }}
       >
-       <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Card style={{borderBlockColor:"gray"}}>
+        <h2>PPV quiz config</h2>
+        <Table columns={columns_quiz} dataSource={ppvContentMovieStates.quiz_config}/>
+        </Card>
+        <Card style={{borderBlockColor:"gray"}}>
+        <h2>PPV movie</h2>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginTop:"10px" }}>
           <Button
             onClick={insertWriting}
             icon={<PlusCircleOutlined />}
@@ -895,6 +901,10 @@ return (
             PPV нэмэх
           </Button>
         </div>
+        <Table columns={columns} dataSource={ppvContentMovieStates.data} />
+        </Card>
+        <Card style={{borderBlockColor:"gray"}}>
+        <h2>PPV quiz question</h2>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <Button
             onClick={insertPPVQuizQuestion}
@@ -907,12 +917,8 @@ return (
             PPV Quiz Question нэмэх
           </Button>
         </div>
-        <h2>PPV quiz config</h2>
-        <Table columns={columns_quiz} dataSource={ppvContentMovieStates.quiz_config}/>
-        <h2>PPV movie</h2>
-        <Table columns={columns} dataSource={ppvContentMovieStates.data} />
-        <h2>PPV quiz question</h2>
         <Table columns={columns_quiz_question} dataSource={ppvContentMovieStates.quiz_question}/>
+        </Card>
         <Modal
           title="PPV edit"
           width={"90%"}

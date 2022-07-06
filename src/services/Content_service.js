@@ -1079,17 +1079,18 @@ export function deleteReadingCueWordByCueIDAPI(id,token) {
   });
 }
 
+const localUrl = "http://localhost:8081"
+
 export function getAllPPVContentAPI(token) {
   return new Promise((resolve, reject) => {
     axios({
       method: "get",
-      url: url + "/api/ppv-content/all",
+      url: localUrl + "/api/ppv-content/all",
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        //"Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
         Authorization: token,
       },
-      data: "",
     })
       .then((res) => resolve(res))
       .catch((err) => reject(err));
@@ -2133,3 +2134,15 @@ export function updatePPVContentMovieCueMonAPI(data, token) {
       .catch((err) => reject(err));
   });
 }
+// const localurl = "http://localhost:8081/"
+// export function getPPVContentCategoryByID(id, token){
+//   return new Promise((resolve, reject) => {
+//     axios({
+//       method: "get",
+//       url: localurl + "/api/ppv-content-category/"+id,
+//       headers:{
+//         "Conten"
+//       }
+//     })
+//   })
+// }
