@@ -1079,15 +1079,15 @@ export function deleteReadingCueWordByCueIDAPI(id,token) {
   });
 }
 
-const localUrl = "http://localhost:8081"
+//const localUrl = "http://localhost:8081"
 
 export function getAllPPVContentAPI(token) {
   return new Promise((resolve, reject) => {
     axios({
       method: "get",
-      url: localUrl + "/api/ppv-content/all",
+      url: url + "/api/ppv-content/all",
       headers: {
-        //"Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
         Authorization: token,
       },
