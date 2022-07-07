@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Children, useEffect, useState } from "react";
 import imageToBase64 from "image-to-base64";
 import axios from "axios";
 import {
@@ -20,6 +20,7 @@ import {
   Descriptions,
   Upload, 
   Image,
+  Select,
 } from "antd";
 import {
   DeleteOutlined,
@@ -46,11 +47,13 @@ import {
     uploadSingleImageAPI,
 
     getPPVQuizConfigByContentAPI,
-    insertPPVQuizConfigAPI
+    insertPPVQuizConfigAPI,
+    getAllPPVCategory,
+    getAllPPVLevel
 
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
-
+const { Option } = Select;
 export default function Index(props) {
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} />;
   const [form] = Form.useForm();
@@ -68,13 +71,15 @@ export default function Index(props) {
     updateData:{
         id : null
     },
+    CategoryData: null,
+    LevelData: null,
+    IsActiveOption:[<Option value={0}>Идэвхтэй</Option>,<Option value={1}>Идэвхгүй</Option>],
+    IsSerialOption:[<Option value={1}>Цуврал</Option>,<Option value={0}>Цуврал биш</Option>],
     upload_image_b64 : null,
     view_img_url : null,
     quiz_config: null,
   });
 
-
-  
   const handleFileRead = async (event) => {
     const file = event.target.files[0]
     const base64 = await convertBase64(file)
@@ -94,6 +99,21 @@ export default function Index(props) {
         reject(error);
       }
     })
+  }
+
+  const render = (text, record)=>{
+    if(record.is_active == 1){
+      return {
+        props: {
+          style: { background: "#e8e7e6"},
+        },
+        children: <div>{text}</div>,
+      };
+    }else{
+      return {
+        children: <div>{text}</div>,
+      };
+    }
   }
 
   const columns_config = [
@@ -144,6 +164,7 @@ export default function Index(props) {
       title : "Category name",
       dataIndex :"category_name",
       key : "category_name",
+      render: (text, record) => render(text, record)
     },
     // {
     //     title : "Level id",
@@ -154,51 +175,89 @@ export default function Index(props) {
       title : "Level name",
       dataIndex : "level_name",
       key : "level_name",
+      render: (text, record) => render(text, record)
     },
     {
       title : "Нэр",
       dataIndex : "name",
-      key :"name"
+      key :"name",
+      render: (text, record) => render(text, record)
     },
     {
         title :"Vocabulary count",
         dataIndex : "vocabulary_count",
-        key : "vocabulary_count"
+        key : "vocabulary_count",
+        render: (text, record) => render(text, record)
     },
     {
         title : "Profile image",
         dataIndex : "profile_img",
         key : "profile_img",
+        render: (text, record) =>{
+          if(record.is_active == 1){
+            return {
+              props: {
+                style: { background: "#e8e7e6"},
+              },
+              children: <div>{text != 0 ? text:""}</div>,
+            };
+          }
+        },
     },
     {
         title : "Is active",
         dataIndex : "is_active",
         key : "is_active",
-        render: (text) => {
-          return text == 0 ? "Идэвхтэй":"Идэвхгүй"
+        render: (text, record) => {
+          if(record.is_active == 1){
+            return {
+              props: {
+                style: { background: "#e8e7e6"},
+              },
+              children: <div>{text == 0 ? "Идэвхтэй":"Идэвхгүй"}</div>,
+            };
+          }
+          return{
+            children: <div>{text == 0 ? "Идэвхтэй":"Идэвхгүй"}</div>,
+          }
         }
     },
     {
         title : "Intro",
         dataIndex : "intro",
         key : "intro",
+        render: (text, record) => render(text, record)
     },
     {
         title : "Is serial",
         dataIndex : "is_serial",
         key : "is_serial",
-        render: (text) => {
-          return text == 0 ? "Цуврал":"Цуврал биш"
-        }
+        render: (text, record) =>{
+            if(record.is_active == 1){
+              return {
+                props: {
+                  style: { background: "#e8e7e6"},
+                },
+                children: <div>{text == 1 ? "Цуврал":"Цуврал биш"}</div>,
+              };
+            }
+            return{
+              children: <div>{text == 1 ? "Цуврал":"Цуврал биш"}</div>,
+            }
+          },
     },
     {
         title : "Үйлдэл",
         key : "action",
         fixed : "right",
         width : 100,
-        render: (text, record) => (
-            <Space size="middle">
-                {/* <Popconfirm
+        render: (text, record) => {
+              return {
+                props: {
+                  style: { background: record.is_active == 1 ? "#e8e7e6":""},
+                },
+                children: <Space size="middle">
+                <Popconfirm
                     placement="topLeft"
                     htmlType="submit"
                     title={"Мэдээллийг устгахад итгэлтэй байна уу? 🤔🤔🤔"}
@@ -210,7 +269,7 @@ export default function Index(props) {
                     cancelText="Үгүй"
                 >
                     <Button icon={<DeleteOutlined style={{ color: "#FF6B72" }} />} />
-                </Popconfirm> */}
+                </Popconfirm>
                 <Tooltip placement="topRight" title="Засах">
                 <Button
                     onClick={() => {
@@ -266,10 +325,10 @@ export default function Index(props) {
                     />
                 </Tooltip>
 
-            </Space>
-        )
-    }
-    
+            </Space>,
+              };
+            }
+        }
   ]
 
   const getFormData = (record) => {
@@ -478,7 +537,7 @@ export default function Index(props) {
 
       ppvContentStates.isModalVisible = false;
       if (ppvContentStates.action == "ADD_LISTENING") {
-          var inObj = {category_id : parseInt(values.category_id), intro : values.intro, is_active : parseInt(values.is_active), is_serial : parseInt(values.is_serial), level_id : parseInt(values.level_id), name : values.name, profile_img : values.profile_img, vocabulary_count : parseInt(values.vocabulary_count)};
+          var inObj = {category_id : parseInt(values.category_id), intro : values.intro, is_active : parseInt(values.is_active), is_serial : values.is_serial, level_id : parseInt(values.level_id), name : values.name, profile_img : values.profile_img, vocabulary_count : parseInt(values.vocabulary_count)};
           insertListeningData(inObj);
           getAllPPVContent();
       } else if (ppvContentStates.action == "EDIT") {
@@ -519,9 +578,34 @@ export default function Index(props) {
     console.log("pisdaa : ", ppvContentStates)
   };
 
+  const getCategoryOptions = ()=>{
+    const children = []
+    getAllPPVCategory(ppvContentStates.token).then((res) =>{
+      for(let i=0; i<res.data.data.length; i++){
+        children.push(<Option value={res.data.data[i].id}>{res.data.data[i].name}</Option>)
+        //children.push(<Option value={data.data.data[i].id}>{data.data.data[i].name}</Option>)
+      }
+      ppvContentStates.CategoryData = children;
+      setPPVContentStates({ppvContentStates}); 
+    }) 
+  }
+
+  const getLevelOptions = ()=>{
+    const children = []
+    getAllPPVLevel(ppvContentStates.token).then((res) =>{
+      for(let i=0; i<res.data.data.length; i++){
+        children.push(<Option value={res.data.data[i].id}>{res.data.data[i].name}</Option>)
+        //children.push(<Option value={data.data.data[i].id}>{data.data.data[i].name}</Option>)
+      }
+      ppvContentStates.LevelData = children;
+      setPPVContentStates({ppvContentStates}); 
+    }) 
+  }
 
   useEffect(() => {
     console.log("listening useffect");
+    getLevelOptions();
+    getCategoryOptions();
     getAllPPVContent();
   }, []);
 
@@ -551,7 +635,7 @@ return (
           </Button>
           
         </div>
-        <Table columns={columns} dataSource={ppvContentStates.data} />
+        <Table columns={columns} dataSource={ppvContentStates.data}/>
         <Modal
           title="PPV edit"
           width={"90%"}
@@ -583,17 +667,25 @@ return (
                               <Col span={8}>
                                   <Form.Item
                                   name={"category_id"}
-                                  label="Category id"
+                                  label="Category name"
                                   >
-                                      <Input />
+                                      <Select>
+                                        {
+                                          ppvContentStates.CategoryData
+                                        }
+                                      </Select>
                                   </Form.Item>
                               </Col>
                               <Col span={8}>
                                   <Form.Item
                                   name={"level_id"}
-                                  label="Level id"
+                                  label="Level name"
                                   >
-                                      <Input />
+                                      <Select>
+                                        {
+                                          ppvContentStates.LevelData
+                                        }
+                                      </Select>
                                   </Form.Item>
                               </Col>
                               <Col span={8}>
@@ -627,7 +719,11 @@ return (
                                   name={"is_active"}
                                   label="Is active"
                                   >
-                                      <Input />
+                                      <Select>
+                                        {
+                                          ppvContentStates.IsActiveOption
+                                        }
+                                      </Select>
                                   </Form.Item>
                               </Col>
                               <Col span={8}>
@@ -643,7 +739,11 @@ return (
                                   name={"is_serial"}
                                   label="Is serial"
                                   >
-                                      <Input />
+                                      <Select>
+                                        {
+                                          ppvContentStates.IsSerialOption
+                                        }
+                                      </Select>
                                   </Form.Item>
                               </Col>
                               
@@ -713,17 +813,25 @@ return (
                               <Col span={8}>
                                   <Form.Item
                                   name={"category_id"}
-                                  label="Category id"
+                                  label="Category name"
                                   >
-                                      <Input />
+                                      <Select>
+                                        {
+                                          ppvContentStates.CategoryData
+                                        }
+                                      </Select>
                                   </Form.Item>
                               </Col>
                               <Col span={8}>
                                   <Form.Item
                                   name={"level_id"}
-                                  label="Level id"
+                                  label="Level name"
                                   >
-                                      <Input />
+                                      <Select>
+                                        {
+                                          ppvContentStates.LevelData
+                                        }
+                                      </Select>
                                   </Form.Item>
                               </Col>
                               <Col span={8}>
@@ -755,7 +863,11 @@ return (
                                   name={"is_active"}
                                   label="Is active"
                                   >
-                                      <Input />
+                                      <Select>
+                                        {
+                                          ppvContentStates.IsActiveOption
+                                        }
+                                      </Select>
                                   </Form.Item>
                               </Col>
                               <Col span={8}>
@@ -771,7 +883,11 @@ return (
                                   name={"is_serial"}
                                   label="Is serial"
                                   >
-                                      <Input />
+                                      <Select>
+                                        {
+                                          ppvContentStates.IsSerialOption
+                                        }
+                                      </Select>
                                   </Form.Item>
                               </Col>
                           </Row>

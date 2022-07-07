@@ -1079,7 +1079,39 @@ export function deleteReadingCueWordByCueIDAPI(id,token) {
   });
 }
 
-//const localUrl = "http://localhost:8081"
+const localUrl = "http://localhost:8081"
+
+export function getAllPPVCategory(token){
+  return new Promise((resolve, reject) => {
+    axios({
+      method:"get",
+      url: url + "/api/ppv-category/all",
+      headers: {
+        //"Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      }
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  });
+}
+
+export function getAllPPVLevel(token){
+  return new Promise((resolve, reject) => {
+    axios({
+      method:"get",
+      url: url + "/api/ppv-level/all",
+      headers: {
+        //"Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      }
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  });
+}
 
 export function getAllPPVContentAPI(token) {
   return new Promise((resolve, reject) => {

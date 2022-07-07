@@ -39,7 +39,6 @@ export default function Users(props){
     const [editingRow, setEditingRow] = useState(null);
     const [form] = Form.useForm();
     const [form2] = Form.useForm();
-
     const render = (text, record, name) =>{
         if(editingRow === record.id){
             return(
