@@ -16,6 +16,7 @@ import {
   Divider,
   Tooltip,
   Descriptions,
+  Affix,
   
 } from "antd";
 import {
@@ -45,6 +46,7 @@ import {
     updatePPVQuizVocByMovieIDAPI,
 
     updatePPVContentMovieCueMonAPI,
+    getContenMovieByID,
     
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
@@ -70,6 +72,7 @@ export default function Index(props) {
     },
     insertWord : [],
     vocList : null,
+    movie_name: null,
   });
 
   
@@ -144,11 +147,11 @@ export default function Index(props) {
         dataIndex : "id",
         key :"id"
     },
-    {
-        title : "Movie id",
-        dataIndex : "movie_id",
-        key :"movie_id"
-    },
+    // {
+    //     title : "Movie id",
+    //     dataIndex : "movie_id",
+    //     key :"movie_id"
+    // },
     {
         title : "Ordering",
         dataIndex : "ordering",
@@ -775,11 +778,25 @@ export default function Index(props) {
     setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
   };
 
+  const getPPVContentMovieByID = (movie_id) =>{
+    ppvContentMovieCueStates.loader = false;
+    setPPVContentMovieCueStates({ppvContentMovieCueStates});
+    getContenMovieByID(movie_id, ppvContentMovieCueStates.token)
+      .then((res) => {
+        ppvContentMovieCueStates.loader = false;
+        setPPVContentMovieCueStates({...ppvContentMovieCueStates});
+        if(res.data.status){
+          ppvContentMovieCueStates.movie_name = res.data.data.name;
+          setPPVContentMovieCueStates({...ppvContentMovieCueStates})
+        }
+      })
+  }
 
   useEffect(() => {
     console.log("listening useffect");
     getAllReading(props.courseIds.ppvContentMovieId);
     getVocByMovie(props.courseIds.ppvContentMovieId);
+    getPPVContentMovieByID(props.courseIds.ppvContentMovieId)
   }, []);
 
 return (
@@ -867,10 +884,16 @@ return (
             Reset
           </Button>
         </div>
-        <h2>PPV content movie cue</h2>
-        <Table columns={columns} dataSource={ppvContentMovieCueStates.data} />
-        <h2>PPV Quiz vocabulary</h2>
-        <Table columns={columns_vocabulary} dataSource={ppvContentMovieCueStates.vocList} />
+        <h1>PPV content movie cue</h1>
+        <Affix>
+        <Divider orientation="center"><h1>{ppvContentMovieCueStates.movie_name}</h1></Divider>
+        </Affix>
+        <Table columns={columns} dataSource={ppvContentMovieCueStates.data} 
+        />
+        <h1>PPV Quiz vocabulary</h1>
+        {/* <Divider orientation="center"><h1>{ppvContentMovieCueStates.movie_name}</h1></Divider> */}
+        <Table columns={columns_vocabulary} dataSource={ppvContentMovieCueStates.vocList} 
+        />
         <Modal
           title="Cue edit"
           width={"90%"}

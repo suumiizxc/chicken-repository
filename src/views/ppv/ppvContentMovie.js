@@ -15,7 +15,8 @@ import {
   Checkbox,
   Divider,
   Tooltip,
-  Descriptions
+  Descriptions,
+  Affix
 } from "antd";
 import {
   DeleteOutlined,
@@ -48,6 +49,7 @@ import {
     insertPPVQuizQuestionAnswerAPI,
     deletePPVQuizQuestionAnswerAPI,
     
+    getPPVContentByID,
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
 
@@ -72,8 +74,24 @@ export default function Index(props) {
     quiz_question : null,
     quiz_question_answer : null,
     question_idv1 : null,
+
+    content_name: null,
   });
 
+  const render = (text, record)=>{
+    if(record.is_active == 1){
+      return {
+        props: {
+          style: { background: "#e8e7e6"},
+        },
+        children: <div>{text}</div>,
+      };
+    }else{
+        return {
+        children: <div>{text}</div>,
+    };
+    }
+  }
   const columns_quiz_question = [
     {
         title : "Id",
@@ -81,9 +99,10 @@ export default function Index(props) {
         key : "id",
     },
     {
-        title : "Content id",
+        title : "Content name",
         dataIndex : "content_id",
         key : "content_id",
+        render: (text, record) => render(ppvContentMovieStates.content_name, record)
     },
     {
         title : "Question",
@@ -94,6 +113,7 @@ export default function Index(props) {
         title : "Is active",
         dataIndex : "is_active",
         key : "is_active",
+        render:(text, record) => render(text == 1 ? "Идэвхгүй":"Идэвхтэй", record)
     },
     {
         title : "Үйлдэл",
@@ -181,26 +201,31 @@ export default function Index(props) {
         title : "Id",
         dataIndex : "id",
         key : "id",
+        render: (text, record) => render(text, record)
     },
     {
         title : "Question id",
         dataIndex : "question_id",
         key : "question_id",
+        render: (text, record) => render(text, record)
     },
     {
         title : "Answer",
         dataIndex : "answer",
         key : "answer",
+        render: (text, record) => render(text, record)
     },
     {
         title : "Is active",
         dataIndex : "is_active",
         key : "is_active",
+        render:(text, record) => render(text == 1 ? "Идэвхгүй":"Идэвхтэй", record)
     },
     {
         title : "Is correct",
         dataIndex : "is_correct",
         key : "is_correct",
+        render: (text, record) => render(text, record)
     },
     {
         title : "Үйлдэл",
@@ -235,31 +260,37 @@ export default function Index(props) {
         title : "Id",
         dataIndex : "id",
         key : "id",
+        render: (text, record) => render(text, record)
     }, 
     {
-        title : "Content id",
+        title : "Content name",
         dataIndex : "content_id",
         key : "content_id",
+        render: (text, record) => render(ppvContentMovieStates.content_name, record)
     },
     {
         title : "Num context",
         dataIndex : "num_context",
         key : "num_context",
+        render: (text, record) => render(text, record)
     },
     {
         title : "Num voc",
         dataIndex : "num_voc",
         key : "num_voc",
+        render: (text, record) => render(text, record)
     },
     {
         title : "Is active",
         dataIndex : "is_active",
         key : "is_active",
+        render:(text, record) => render(text == 1 ? "Идэвхгүй":"Идэвхтэй", record)
     },
     {
         title : "Duration",
         dataIndex : "duration",
         key : "duration",
+        render: (text, record) => render(text, record)
     },
     {
         title : "Үйлдэл",
@@ -308,55 +339,68 @@ export default function Index(props) {
     {
         title : "Id",
         dataIndex : "id",
-        key :"id"
+        key :"id",
+        render: (text, record) => render(text, record)
     },
     {
-        title : "Content id",
+        title : "Content name",
         dataIndex : "content_id",
-        key :"content_id"
+        key :"content_id",
+        render: (text, record) => render(ppvContentMovieStates.content_name, record)
     },
     {
         title : "Name",
         dataIndex : "name",
         key : "name",
+        render: (text, record) => render(text, record)
     },
     {
         title : "Intro",
         dataIndex : "intro",
-        key :"intro"
+        key :"intro",
+        render: (text, record) => render(text, record)
     },
     {
         title : "Run time",
         dataIndex : "run_time",
-        key :"run_time"
+        key :"run_time",
+        render: (text, record) => render(text, record)
     },
     {
         title : "Ordering",
         dataIndex : "ordering",
-        key :"ordering"
+        key :"ordering",
+        render: (text, record) => render(text, record)
     },
     {
         title : "Is active",
         dataIndex : "is_active",
-        key :"is_active"
+        key :"is_active",
+        render:(text, record) => render(text == 1 ? "Идэвхгүй":"Идэвхтэй", record)
     },
     {
         title : "Host url",
         dataIndex : "host_url",
-        key :"host_url"
+        key :"host_url",
+        render: (text, record) => render(text, record)
     },
     {
         title : "Host type",
         dataIndex : "host_type",
-        key :"host_type"
+        key :"host_type",
+        render: (text, record) => render(text, record)
     },
     {
         title : "Үйлдэл",
         key : "action",
         fixed : "right",
         width : 100,
-        render: (text, record) => (
-            <Space size="middle">
+        render: (text, record) => {
+            return{
+                props: {
+                    style: {background: record.is_active == 1 ? "#e8e7e6":""}
+                },
+                children:<Space size="middle">
                 <Popconfirm
                     placement="topLeft"
                     htmlType="submit"
@@ -400,7 +444,8 @@ export default function Index(props) {
                     />
                 </Tooltip>
             </Space>
-        )
+            }
+        }
     }
     
   ]
@@ -521,6 +566,20 @@ export default function Index(props) {
         console.log(e);
       });
   };
+
+    const getPPVContentByid = (content_id) => {
+        ppvContentMovieStates.loader = true;
+        setPPVContentMovieStates({ppvContentMovieStates})
+        getPPVContentByID(ppvContentMovieStates.token, content_id)
+            .then((res) => {
+                ppvContentMovieStates.loader = false;
+                setPPVContentMovieStates({...ppvContentMovieStates});
+                if(res.data.status){
+                    ppvContentMovieStates.content_name = res.data.data.name;
+                    setPPVContentMovieStates({...ppvContentMovieStates});
+                }
+            })
+    }
 
   const insertListeningData = (values) => {
       ppvContentMovieStates.loader = true;
@@ -868,10 +927,15 @@ const deletePPVQuestion = (values) => {
     getAllReading(props.courseIds.ppvContentId);
     getPPVQuizConfigs(props.courseIds.ppvContentId);
     getPPVQuizQuestions(props.courseIds.ppvContentId);
+    getPPVContentByid(props.courseIds.ppvContentId)
   }, []);
 
 return (
+    <>
     <Card title={"PPV"} style={{ margin: 15, width: "100%", backgroundColor:"#f7f7f7" }}>
+    {/* <Affix offsetTop={-100} style={{position:"absolute", left:"0%"}} >
+        <h2>{ppvContentMovieStates.content_name}</h2>
+    </Affix> */}
       <Spin
         tip=""
         spinning={ppvContentMovieStates.loader}
@@ -1335,5 +1399,6 @@ return (
         </Modal>
       </Spin>
     </Card>
+    </>
   );
 }

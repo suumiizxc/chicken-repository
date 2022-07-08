@@ -257,7 +257,7 @@ export default function Index(props) {
                   style: { background: record.is_active == 1 ? "#e8e7e6":""},
                 },
                 children: <Space size="middle">
-                <Popconfirm
+                {/* <Popconfirm
                     placement="topLeft"
                     htmlType="submit"
                     title={"Мэдээллийг устгахад итгэлтэй байна уу? 🤔🤔🤔"}
@@ -269,7 +269,7 @@ export default function Index(props) {
                     cancelText="Үгүй"
                 >
                     <Button icon={<DeleteOutlined style={{ color: "#FF6B72" }} />} />
-                </Popconfirm>
+                </Popconfirm> */}
                 <Tooltip placement="topRight" title="Засах">
                 <Button
                     onClick={() => {

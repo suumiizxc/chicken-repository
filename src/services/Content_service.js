@@ -1129,6 +1129,21 @@ export function getAllPPVContentAPI(token) {
   });
 }
 
+export function getPPVContentByID(token, content_id){
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/ppv-content/profile/"+content_id,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token
+      }
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  });
+}
+
 export function insertPPVContentAPI(data, token) {
   return new Promise((resolve, reject) => {
     axios({
@@ -1194,6 +1209,21 @@ export function getAllContentMovieByContentAPI(id, token) {
     })
       .then((res) => resolve(res))
       .catch((err) => reject(err));
+  });
+}
+
+export function getContenMovieByID(movie_id, token){
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/ppv-content-movie/profile/"+movie_id,
+      headers:{
+        "Content-Type":"application/json",
+        Authorization: token,
+      }
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
   });
 }
 
