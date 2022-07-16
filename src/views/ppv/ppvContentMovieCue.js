@@ -47,6 +47,8 @@ import {
 
     updatePPVContentMovieCueMonAPI,
     getContenMovieByID,
+
+    //getAllContentMovieCueWordByCueAPI,
     
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
@@ -73,6 +75,8 @@ export default function Index(props) {
     insertWord : [],
     vocList : null,
     movie_name: null,
+    movie_cue_id: null,
+    from_language_translation: null,
   });
 
   
@@ -219,8 +223,9 @@ export default function Index(props) {
                     ppvContentMovieCueStates.updateData = record;
                     ppvContentMovieCueStates.id = record.id;
                     ppvContentMovieCueStates.isModalVisible = true;
-                    deleteListeningDataByCueID(record);
+                    //deleteListeningDataByCueID(record);
                     getFormData(record);
+                    ppvContentMovieCueStates.from_language_translation = form.getFieldValue('from_language_translation')
                     setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
                     }}
                     icon={<EditOutlined style={{ color: "#3e79f7" }} />}
@@ -465,7 +470,7 @@ export default function Index(props) {
                 setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
                 getAllReading(props.courseIds.ppvContentMovieId);
                 console.log("success insert writing", res.data.data);
-                message.success("Амжилттай writing устгав 😍😊✅")
+                if (ppvContentMovieCueStates.action !== "EDIT")message.success("Амжилттай writing устгав 😍😊✅")
               } else {
                 //unsuccessful
                 message.error("Алдаа гарлаа");
@@ -519,10 +524,10 @@ export default function Index(props) {
               setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
               getAllReading(props.courseIds.ppvContentMovieId);
               console.log("success insert writing", res.data.data);
-              message.success("Амжилттай writing устгав 😍😊✅")
+              if (ppvContentMovieCueStates.action !== "EDIT")message.success("Амжилттай writing устгав 😍😊✅")
             } else {
               //unsuccessful
-              message.error("Алдаа гарлаа");
+              if (ppvContentMovieCueStates.action !== "EDIT")message.error("Алдаа гарлаа");
           }
       })
       .catch((e) => {
@@ -551,6 +556,7 @@ export default function Index(props) {
           
         //   getAllReading(props.courseIds.ppvContentMovieId);;
       } else if (ppvContentMovieCueStates.action == "EDIT") {
+          //var oldValue = form.getFieldValue('from_language_translation')
           var updObj = {
             id : ppvContentMovieCueStates.id,
             movie_id : parseInt(props.courseIds.ppvContentMovieId),
@@ -561,10 +567,13 @@ export default function Index(props) {
             from_language_translation : values.from_language_translation,
             to_language_id : parseInt(values.to_language_id),
             to_language_translation : values.to_language_translation,
-
           };
-          updateListeningData(updObj);
-          splitStringSendWord(ppvContentMovieCueStates.id, updObj.from_language_translation);
+          
+            updateListeningData(updObj);
+            //console.log(ppvContentMovieCueStates.from_language_translation)
+            //console.log(updObj.from_language_translation)
+            splitStringSendWord(ppvContentMovieCueStates.id, updObj.from_language_translation);
+          
           
           getAllReading(props.courseIds.ppvContentMovieId);
           form.resetFields();
@@ -689,14 +698,18 @@ export default function Index(props) {
 
   const sendCueWord = async(data) => {
     const wlen = ppvContentMovieCueStates.insertWord.length;
+    ppvContentMovieCueStates.loader = true;
+    setPPVContentMovieCueStates({...ppvContentMovieCueStates})
     for(var i = 0; i < wlen; i++) {
       try{
         let response = await insertContentMovieCueWordAPI(data[i], ppvContentMovieCueStates.token)
-        message.success(`Амжилттай үг нэмлээ : ${i + 1} / ${wlen}`)
+        //message.success(`Амжилттай үг нэмлээ : ${i + 1} / ${wlen}`)
       } catch(err) {
         message.success(`Алдаа гарлаа : ${i + 1} / ${wlen}`)
       }
     }
+    ppvContentMovieCueStates.loader = false;
+    setPPVContentMovieCueStates({...ppvContentMovieCueStates})
   }
 
   const splitStringSendWord = (id, val) => {
@@ -740,7 +753,7 @@ export default function Index(props) {
     })
     console.log("TEST {} : ",cr2);
     ppvContentMovieCueStates.insertWord = cr2;
-    sendCueWord(cr2);
+    //sendCueWord(cr2);
     setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
   }
 
@@ -791,12 +804,42 @@ export default function Index(props) {
         }
       })
   }
+  
+  const getAllReadingWord = (id) => {
+    console.log(id + "this is id")
+    ppvContentMovieCueStates.loader = true;
+    setPPVContentMovieCueStates({ ppvContentMovieCueStates });
+    getAllContentMovieCueWordByCueAPI(id, ppvContentMovieCueStates.token)
+      .then((res) => {
+        ppvContentMovieCueStates.loader = false;
+        setPPVContentMovieCueStates({ ppvContentMovieCueStates });
+        if (res && res.data && res.data.status && res.data.status === true) {
+          //success
+          ppvContentMovieCueStates.from_language_translation = res.data.data;
+          console.log("sda223232")
+          console.log(res)
+          console.log("sda223232")
+          setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
+          //console.log("success all writing", res.data.data);
+        } else {
+          //unsuccessful
+          message.error("Алдаа гарлаа");
+        }
+      })
+      .catch((e) => {
+        //unsuccessful
+        props.setLoader(false);
+        message.error("Алдаа гарлаа ");
+        console.log(e);
+      });
+  }
 
   useEffect(() => {
     console.log("listening useffect");
     getAllReading(props.courseIds.ppvContentMovieId);
     getVocByMovie(props.courseIds.ppvContentMovieId);
     getPPVContentMovieByID(props.courseIds.ppvContentMovieId)
+    //getAllReadingWord(props.)
   }, []);
 
 return (
@@ -1022,6 +1065,11 @@ return (
                             type="primary"
                             htmlType="submit"
                             style={{ width: "100%" }}
+                            onClick={()=>{
+                              // if (ppvContentMovieCueStates.from_language_translation !==form.getFieldValue('from_language_translation')){
+                              //   deleteListeningDataByCueID(ppvContentMovieCueStates.updateData)
+                              // }
+                            }}
                         >
                             Хадгалах
                         </Button>
