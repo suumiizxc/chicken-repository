@@ -753,7 +753,10 @@ export default function Index(props) {
     })
     console.log("TEST {} : ",cr2);
     ppvContentMovieCueStates.insertWord = cr2;
-    //sendCueWord(cr2);
+    if (ppvContentMovieCueStates.from_language_translation !==form.getFieldValue('from_language_translation'))
+    {
+      sendCueWord(cr2);
+    }
     setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
   }
 
@@ -1066,9 +1069,9 @@ return (
                             htmlType="submit"
                             style={{ width: "100%" }}
                             onClick={()=>{
-                              // if (ppvContentMovieCueStates.from_language_translation !==form.getFieldValue('from_language_translation')){
-                              //   deleteListeningDataByCueID(ppvContentMovieCueStates.updateData)
-                              // }
+                              if (ppvContentMovieCueStates.from_language_translation !==form.getFieldValue('from_language_translation')){
+                                deleteListeningDataByCueID(ppvContentMovieCueStates.updateData)
+                              }
                             }}
                         >
                             Хадгалах
