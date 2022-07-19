@@ -15,7 +15,8 @@ import {
   Checkbox,
   Divider,
   Tooltip,
-  Descriptions
+  Descriptions,
+  Tag,
 } from "antd";
 import {
   DeleteOutlined,
@@ -79,7 +80,7 @@ export default function Index(props) {
     {
         title : "Space next",
         dataIndex : "space_next",
-        render:(text) => <a>{text !== 0 ? "Ардаа зайгүй" : "Ардаа зайтай"}</a>,
+        render:(text) => <Tag color={text !== 0 ? "red" : "blue"}>{text !== 0 ? "Ардаа зайгүй" : "Ардаа зайтай"}</Tag>,
     },
     {
         title : "Ordering",

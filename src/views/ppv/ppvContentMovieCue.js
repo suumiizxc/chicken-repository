@@ -17,6 +17,7 @@ import {
   Tooltip,
   Descriptions,
   Affix,
+  Tag,
   
 } from "antd";
 import {
@@ -77,10 +78,12 @@ export default function Index(props) {
     movie_name: null,
     movie_cue_id: null,
     from_language_translation: null,
+    isBulk : true,
+    space_next: false,
   });
 
   
-  const symbols = [",", ".", ":", ";", "/", "!","-","_", `'`, `"`];
+  const symbols = [",", ".", ":", ";", "/", "!","-","_", `'`, `"`, `...`, `?`, `s`,`)`,`(`];
 
   const columns_vocabulary = [
     {
@@ -135,7 +138,8 @@ export default function Index(props) {
     {
       title : "Space next",
       dataIndex : "space_next",
-      key :"space_next"
+      key :"space_next",
+      render:(text) => <Tag color={text !== 0 ? "red" : "blue"}>{text !== 0 ? "Ардаа зайгүй" : "Ардаа зайтай"}</Tag>
     },
     {
       title : "Ordering",
@@ -359,6 +363,8 @@ export default function Index(props) {
                 //success
                 ppvContentMovieCueStates.insertData = res.data.data;
                 setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
+                deleteListeningDataByCueID(res.data.data)
+                splitStringSendWord(res.data.data.id, res.data.data.from_language_translation)
                 getAllReading(props.courseIds.ppvContentMovieId);
                 console.log("success insert writing", res.data.data);
                 message.success("Амжилттай writing хадгаллаа 😍😊✅")
@@ -415,7 +421,7 @@ export default function Index(props) {
                 ppvContentMovieCueStates.updateData = res.data.data;
                 setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
                 getAllReading(props.courseIds.ppvContentMovieId);
-                console.log("success insert writing", res.data.data);
+                console.log("success update writing", res.data.data);
                 message.success("Амжилттай writing хадгаллаа 😍😊✅")
               } else {
                 //unsuccessful
@@ -523,7 +529,7 @@ export default function Index(props) {
               ppvContentMovieCueStates.updateData = res.data.data;
               setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
               getAllReading(props.courseIds.ppvContentMovieId);
-              console.log("success insert writing", res.data.data);
+              console.log("success delete writing", res.data.data);
               if (ppvContentMovieCueStates.action !== "EDIT")message.success("Амжилттай writing устгав 😍😊✅")
             } else {
               //unsuccessful
@@ -606,7 +612,8 @@ export default function Index(props) {
 
           };
           insertListeningData(insObj);
-          
+          ppvContentMovieCueStates.isBulk = false;
+          setPPVContentMovieCueStates({ppvContentMovieCueStates})
         }
         console.log("psidaaaa : ", bulkCueObj);
         
@@ -661,8 +668,9 @@ export default function Index(props) {
           };
           console.log("test : ", insObj)
           insertListeningData(insObj);
-          
         }
+        ppvContentMovieCueStates.isBulk = false;
+        setPPVContentMovieCueStates({ppvContentMovieCueStates});
         console.log("psidaaaa : ", bulkCueObj);
         
       } else if (ppvContentMovieCueStates.action == "ADD_BULK_INSERT2_MON") {
@@ -713,19 +721,28 @@ export default function Index(props) {
   }
 
   const splitStringSendWord = (id, val) => {
-    
+    var symbols2 =`.,?"!'...)`;
+    var quotStart = false;
     var cr1 = val
       .replaceAll(" ","~")
+      .replaceAll(`‘`,`'`)
+      .replaceAll(`’`,`'`)
+      .replaceAll(`”`,`"`)
+      .replaceAll(`“`,`"`)
       .replaceAll(".","~.~")
       .replaceAll(",","~,~")
       .replaceAll(":","~:~")
       .replaceAll(";","~;~")
-      .replaceAll("-","~-~")
+      .replaceAll(" - ","~ -~ ")
       .replaceAll("/","~/~")
       .replaceAll("?","~?~")
       .replaceAll(`'`,`~'~`)
       .replaceAll(`"`,`~"~`)
       .replaceAll(`!`,`~!~`)
+      .replaceAll(`|`,`~|~`)
+      .replaceAll("~.~~.~~.~","~...~")
+      .replaceAll(`(`,`~(~`)
+      .replaceAll(`)`,`~)~`)
       .replaceAll("~","~")
       .split("~");
     console.log("cr1",cr1)
@@ -734,13 +751,22 @@ export default function Index(props) {
     cr1.forEach((val) => {
       var sp = val.split("~")
       sp.forEach((val1) => {
+        if(symbols2.includes(val1) && val1 !== ``){
+          //cr2.push(cr2.pop().space_next=1)
+          if(val1 === '"' && quotStart)
+            cr2[cr2.length-1].space_next = 1
+          if(val1 !== '"')
+            cr2[cr2.length-1].space_next = 1
+        }
         if(val1 !== ""){
+          if(val1 === '"')
+            quotStart = !quotStart
           cr2.push(
             {
               cue_id : id, 
               main_text : val1, 
               word_value : symbols.indexOf(val1) === -1 ? val1.toLowerCase() : "", 
-              space_next : 0, 
+              space_next : val1 === '"' && quotStart || val1 === "'" || val1 === '('? 1:0, 
               ordering : initial_order,
               is_visible : 0,
               has_hint : 0,
@@ -753,7 +779,7 @@ export default function Index(props) {
     })
     console.log("TEST {} : ",cr2);
     ppvContentMovieCueStates.insertWord = cr2;
-    if (ppvContentMovieCueStates.from_language_translation !==form.getFieldValue('from_language_translation'))
+    if (ppvContentMovieCueStates.from_language_translation !==form.getFieldValue('from_language_translation') || ppvContentMovieCueStates.isBulk)
     {
       sendCueWord(cr2);
     }
