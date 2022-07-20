@@ -83,7 +83,7 @@ export default function Index(props) {
   });
 
   
-  const symbols = [",", ".", ":", ";", "/", "!","-","_", `'`, `"`, `...`, `?`, `s`,`)`,`(`];
+  const symbols = [",", ".", ":", ";", "/", "!","-","_", `'`, `"`, `...`, `?`, `s`,`)`,`(`,`|`];
 
   const columns_vocabulary = [
     {
@@ -765,7 +765,7 @@ export default function Index(props) {
             {
               cue_id : id, 
               main_text : val1, 
-              word_value : symbols.indexOf(val1) === -1 ? val1.toLowerCase() : "", 
+              word_value : symbols.indexOf(val1) === -1 && parseInt(val1).toString() === "NaN"? val1.toLowerCase() : "", 
               space_next : val1 === '"' && quotStart || val1 === "'" || val1 === '('? 1:0, 
               ordering : initial_order,
               is_visible : 0,
