@@ -31,6 +31,8 @@ import {
   PlusOutlined,
   RollbackOutlined,
   ArrowsAltOutlined,
+  ReloadOutlined,
+  UnorderedListOutlined,
 } from "@ant-design/icons";
 import {
     getAllContentMovieCueByMovieAPI,
@@ -48,6 +50,8 @@ import {
 
     updatePPVContentMovieCueMonAPI,
     getContenMovieByID,
+    generatePPVVocabularyByMovieID,
+    getWordsNotInDTWordByMovieID,
 
     //getAllContentMovieCueWordByCueAPI,
     
@@ -80,6 +84,7 @@ export default function Index(props) {
     from_language_translation: null,
     isBulk : true,
     space_next: false,
+    words_not_in_dtword: null,
   });
 
   
@@ -148,6 +153,13 @@ export default function Index(props) {
     }
   ]
 
+  const columns_not_in_dtword = [
+    {
+      title: "Word value",
+      dataIndex: "word_value",
+      key: "word_value"
+    },
+  ]
 
   const columns = [
     {
@@ -725,6 +737,7 @@ export default function Index(props) {
     var quotStart = false;
     var cr1 = val
       .replaceAll(" ","~")
+      .reolaceAll("~~","~")
       .replaceAll(`‘`,`'`)
       .replaceAll(`’`,`'`)
       .replaceAll(`”`,`"`)
@@ -863,12 +876,56 @@ export default function Index(props) {
       });
   }
 
+  const generatePPVVocabularyByMovieid = (movie_id) =>{
+    ppvContentMovieCueStates.loader = true;
+    setPPVContentMovieCueStates({...ppvContentMovieCueStates});
+    generatePPVVocabularyByMovieID(ppvContentMovieCueStates.token, movie_id)
+    .then((res) =>{
+      if(res && res.data.status && res.data.message === "Generated"){
+        ppvContentMovieCueStates.loader = false;
+        setPPVContentMovieCueStates({ppvContentMovieCueStates});
+        getVocByMovie(movie_id);
+        message.success("Үгсийн сан амжилттай шинэчлэгдлээ");
+      }else{
+        message.error("Алдаа гарлаа");
+      }
+    })
+    .catch((e) => {
+      //unsuccessful
+      props.setLoader(false);
+      message.error("Алдаа гарлаа ");
+      console.log(e);
+    });
+  }
+
+  const getWordsNotInDTWordByMovieid = (movie_id) =>{
+    ppvContentMovieCueStates.loader = true;
+    setPPVContentMovieCueStates({...ppvContentMovieCueStates});
+    getWordsNotInDTWordByMovieID(ppvContentMovieCueStates.token, movie_id)
+    .then((res) =>{
+      if(res && res.data.status && res.data.message === "Success"){
+        ppvContentMovieCueStates.loader = false;
+        ppvContentMovieCueStates.words_not_in_dtword = res.data.data;
+        setPPVContentMovieCueStates({ppvContentMovieCueStates});
+        message.success("Амжилттай");
+      }else{
+        message.error("Алдаа гарлаа");
+      }
+    })
+    .catch((e) => {
+      //unsuccessful
+      props.setLoader(false);
+      message.error("Алдаа гарлаа ");
+      console.log(e);
+    });
+  }
+
   useEffect(() => {
     console.log("listening useffect");
     getAllReading(props.courseIds.ppvContentMovieId);
     getVocByMovie(props.courseIds.ppvContentMovieId);
-    getPPVContentMovieByID(props.courseIds.ppvContentMovieId)
-    //getAllReadingWord(props.)
+    getWordsNotInDTWordByMovieid(props.courseIds.ppvContentMovieId);
+    getPPVContentMovieByID(props.courseIds.ppvContentMovieId);
   }, []);
 
 return (
@@ -963,6 +1020,37 @@ return (
         <Table columns={columns} dataSource={ppvContentMovieCueStates.data} 
         />
         <h1>PPV Quiz vocabulary</h1>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            icon={<ReloadOutlined />}
+            type="primary"
+            style={{
+              marginBottom: 16,
+            }}
+            onClick={()=>{
+              generatePPVVocabularyByMovieid(props.courseIds.ppvContentMovieId);
+            }}
+          >
+            Үгсийн санг шинэчлэх{"(Vocabulary)"}
+          </Button>
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button
+            icon={<UnorderedListOutlined/>}
+            type="primary"
+            style={{
+              marginBottom: 16,
+            }}
+            onClick={()=>{
+              ppvContentMovieCueStates.action = "SEE_WORDS_NOT_IN_DTWORD"
+              setPPVContentMovieCueStates({...ppvContentMovieCueStates})
+              ppvContentMovieCueStates.isModalVisible = true
+              setPPVContentMovieCueStates({...ppvContentMovieCueStates})
+            }}
+          >
+            Үгсийн санд байхгүй үг
+          </Button>
+        </div>
         {/* <Divider orientation="center"><h1>{ppvContentMovieCueStates.movie_name}</h1></Divider> */}
         <Table columns={columns_vocabulary} dataSource={ppvContentMovieCueStates.vocList} 
         />
@@ -1109,6 +1197,10 @@ return (
                 return (
                   <Table columns={columns_word} dataSource={ppvContentMovieCueStates.cueWords} />
                 );
+            }else if(ppvContentMovieCueStates.action === "SEE_WORDS_NOT_IN_DTWORD"){
+              return(
+                <Table columns={columns_not_in_dtword} dataSource={ppvContentMovieCueStates.words_not_in_dtword}></Table>
+              );
             } else if(ppvContentMovieCueStates.action == "ADD_READING") {
                 return (
                    <Form

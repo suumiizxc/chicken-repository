@@ -1079,7 +1079,37 @@ export function deleteReadingCueWordByCueIDAPI(id,token) {
   });
 }
 
-const localUrl = "http://localhost:8081"
+const localUrl = "http://192.168.1.106:8081"
+
+export function generatePPVVocabularyByMovieID(token, movie_id){
+  return new Promise((resolve, reject) => {
+    axios({
+      method:"get",
+      url: url + "/api/ppv-quiz/vocabulary/generate-by-movie-id/"+movie_id,
+      headers:{
+        "Authorization":token,
+        "Content-Type": "application/json",
+      }
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  });
+}
+
+export function getWordsNotInDTWordByMovieID(token, movie_id){
+  return new Promise((resolve, reject) => {
+    axios({
+      method:"get",
+      url: url + "/api/ppv-quiz/vocabulary/get-words-not-in-dtword/"+movie_id,
+      headers:{
+        "Authorization":token,
+        "Content-Type": "application/json",
+      }
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  });
+}
 
 export function getAllPPVCategory(token){
   return new Promise((resolve, reject) => {
