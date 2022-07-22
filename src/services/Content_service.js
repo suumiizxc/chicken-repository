@@ -1997,6 +1997,7 @@ export function uploadSingleImageAPI(data) {
       url: "https://adminback.medlegten.com/api/upload-b64-image" ,
       headers: {
         Accept: 'application/json',
+        //"Access-Control-Allow-Origin":"*",
         "Content-Type": "application/json",
       },
       data: data,

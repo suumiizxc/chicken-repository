@@ -73,6 +73,8 @@ export default function Index(props) {
     },
     CategoryData: null,
     LevelData: null,
+    CategoryDataMap: null,
+    LevelDataMap: null,
     IsActiveOption:[<Option value={0}>Идэвхтэй</Option>,<Option value={1}>Идэвхгүй</Option>],
     IsSerialOption:[<Option value={1}>Цуврал</Option>,<Option value={0}>Цуврал биш</Option>],
     upload_image_b64 : null,
@@ -334,8 +336,8 @@ export default function Index(props) {
   const getFormData = (record) => {
     form.setFieldsValue({
       id : record.id,
-      category_id : record.category_id,
-      level_id : record.level_id, 
+      category_id : ppvContentStates.action == "EDIT" ? record.category_name:record.category_id,
+      level_id : ppvContentStates.action == "EDIT" ? record.level_name :record.level_id, 
       name : record.name,
       vocabulary_count : record.vocabulary_count,
       profile_img : record.profile_img,
@@ -541,7 +543,10 @@ export default function Index(props) {
           insertListeningData(inObj);
           getAllPPVContent();
       } else if (ppvContentStates.action == "EDIT") {
-          var updObj = {id : ppvContentStates.id, category_id : parseInt(values.category_id), intro : values.intro, is_active : parseInt(values.is_active), is_serial : parseInt(values.is_serial), level_id : parseInt(values.level_id), name : values.name, profile_img : values.profile_img, vocabulary_count : parseInt(values.vocabulary_count)};
+          console.log(values)
+          console.log(ppvContentStates.CategoryDataMap[values.category_id])
+          console.log(ppvContentStates.CategoryDataMap)
+          var updObj = {id : ppvContentStates.id, category_id : parseInt(ppvContentStates.CategoryDataMap[values.category_id]), intro : values.intro, is_active : parseInt(values.is_active), is_serial : parseInt(values.is_serial), level_id : parseInt(ppvContentStates.LevelDataMap[values.level_id]), name : values.name, profile_img : values.profile_img, vocabulary_count : parseInt(values.vocabulary_count)};
           updateListeningData(updObj);
           getFormData({name:""})
           getAllPPVContent();
@@ -575,16 +580,19 @@ export default function Index(props) {
     // setPPVContentStates({ ...ppvContentStates });
     var upObj = {"upload" : ppvContentStates.upload_image_b64}
     insertPPVContentUploadImage(upObj)
-    console.log("pisdaa : ", ppvContentStates)
   };
 
   const getCategoryOptions = ()=>{
     const children = []
+    const dataMap = {}
     getAllPPVCategory(ppvContentStates.token).then((res) =>{
       for(let i=0; i<res.data.data.length; i++){
         children.push(<Option value={res.data.data[i].id}>{res.data.data[i].name}</Option>)
         //children.push(<Option value={data.data.data[i].id}>{data.data.data[i].name}</Option>)
+        dataMap[res.data.data[i].name] = res.data.data[i].id
+        dataMap[res.data.data[i].id] = res.data.data[i].id
       }
+      ppvContentStates.CategoryDataMap = dataMap;
       ppvContentStates.CategoryData = children;
       setPPVContentStates({ppvContentStates}); 
     }) 
@@ -592,11 +600,14 @@ export default function Index(props) {
 
   const getLevelOptions = ()=>{
     const children = []
+    const dataMap = {}
     getAllPPVLevel(ppvContentStates.token).then((res) =>{
       for(let i=0; i<res.data.data.length; i++){
         children.push(<Option value={res.data.data[i].id}>{res.data.data[i].name}</Option>)
-        //children.push(<Option value={data.data.data[i].id}>{data.data.data[i].name}</Option>)
+        dataMap[res.data.data[i].name] = res.data.data[i].id
+        dataMap[res.data.data[i].id] = res.data.data[i].id
       }
+      ppvContentStates.LevelDataMap = dataMap;
       ppvContentStates.LevelData = children;
       setPPVContentStates({ppvContentStates}); 
     }) 
@@ -650,6 +661,7 @@ return (
         >
          {(() => {   
              if(ppvContentStates.action == "EDIT") {
+              console.log(ppvContentStates.CategoryData)
                  return (
                     <Form
                     form={form}
@@ -669,7 +681,9 @@ return (
                                   name={"category_id"}
                                   label="Category name"
                                   >
-                                      <Select>
+                                      <Select
+                                
+                                      >
                                         {
                                           ppvContentStates.CategoryData
                                         }
@@ -681,7 +695,9 @@ return (
                                   name={"level_id"}
                                   label="Level name"
                                   >
-                                      <Select>
+                                      <Select
+                                      
+                                      >
                                         {
                                           ppvContentStates.LevelData
                                         }
@@ -696,14 +712,14 @@ return (
                                       <Input />
                                   </Form.Item>
                               </Col>
-                              <Col span={8}>
+                              {/* <Col span={8}>
                                   <Form.Item
                                   name={"vocabulary_count"}
                                   label="Vocabulary count"
                                   >
                                       <Input />
                                   </Form.Item>
-                              </Col>
+                              </Col> */}
                               <Col span={8}>
                                   <Form.Item
                                   name={"profile_img"}
@@ -842,14 +858,14 @@ return (
                                       <Input />
                                   </Form.Item>
                               </Col>
-                              <Col span={8}>
+                              {/* <Col span={8}>
                                   <Form.Item
                                   name={"vocabulary_count"}
                                   label="Vocabulary count"
                                   >
                                       <Input />
                                   </Form.Item>
-                              </Col>
+                              </Col> */}
                               <Col span={8}>
                                   <Form.Item
                                   name={"profile_img"}

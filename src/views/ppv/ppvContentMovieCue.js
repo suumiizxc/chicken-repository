@@ -737,7 +737,7 @@ export default function Index(props) {
     var quotStart = false;
     var cr1 = val
       .replaceAll(" ","~")
-      .reolaceAll("~~","~")
+      .replaceAll("~~","~")
       .replaceAll(`‘`,`'`)
       .replaceAll(`’`,`'`)
       .replaceAll(`”`,`"`)
@@ -877,7 +877,7 @@ export default function Index(props) {
   }
 
   const generatePPVVocabularyByMovieid = (movie_id) =>{
-    ppvContentMovieCueStates.loader = true;
+    ppvContentMovieCueStates.loader = false;
     setPPVContentMovieCueStates({...ppvContentMovieCueStates});
     generatePPVVocabularyByMovieID(ppvContentMovieCueStates.token, movie_id)
     .then((res) =>{
@@ -892,7 +892,8 @@ export default function Index(props) {
     })
     .catch((e) => {
       //unsuccessful
-      props.setLoader(false);
+      ppvContentMovieCueStates.loader = false;
+      setPPVContentMovieCueStates({ppvContentMovieCueStates});
       message.error("Алдаа гарлаа ");
       console.log(e);
     });
