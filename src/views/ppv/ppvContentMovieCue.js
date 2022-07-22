@@ -601,6 +601,14 @@ export default function Index(props) {
         var bulkCueObj = []
         bulkCueRaw.forEach((val, ind) => {
           if(val !== "") {
+            if(val.includes(':') && val.includes('00') && val.includes(',')){
+              if(val.split(',')[1].length === 3){
+                val = val.slice(0,-1);
+                val = val.substring(1);
+              }
+              val = val.replaceAll(`,`,`.`)
+              console.log(val)
+            }
             bulkCue.push(val)
           }
         })
@@ -635,6 +643,14 @@ export default function Index(props) {
         var bulkCueObj = []
         bulkCueRaw.forEach((val, ind) => {
           if(val !== "") {
+            if(val.includes(':') && val.includes('00') && val.includes(',')){
+              if(val.split(',')[1].length === 3){
+                val = val.slice(0,-1);
+                val = val.substring(1);
+              }
+              val = val.replaceAll(`,`,`.`)
+              console.log(val)
+            }
             bulkCue.push(val)
           }
         })
@@ -907,15 +923,18 @@ export default function Index(props) {
       if(res && res.data.status && res.data.message === "Success"){
         ppvContentMovieCueStates.loader = false;
         ppvContentMovieCueStates.words_not_in_dtword = res.data.data;
-        setPPVContentMovieCueStates({ppvContentMovieCueStates});
+        setPPVContentMovieCueStates({...ppvContentMovieCueStates});
         message.success("Амжилттай");
       }else{
+        ppvContentMovieCueStates.loader = false;
+        setPPVContentMovieCueStates({...ppvContentMovieCueStates});
         message.error("Алдаа гарлаа");
       }
     })
     .catch((e) => {
       //unsuccessful
-      props.setLoader(false);
+      ppvContentMovieCueStates.loader = false;
+      setPPVContentMovieCueStates({...ppvContentMovieCueStates});
       message.error("Алдаа гарлаа ");
       console.log(e);
     });
