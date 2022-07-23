@@ -893,7 +893,7 @@ export default function Index(props) {
   }
 
   const generatePPVVocabularyByMovieid = (movie_id) =>{
-    ppvContentMovieCueStates.loader = false;
+    ppvContentMovieCueStates.loader = true;
     setPPVContentMovieCueStates({...ppvContentMovieCueStates});
     generatePPVVocabularyByMovieID(ppvContentMovieCueStates.token, movie_id)
     .then((res) =>{

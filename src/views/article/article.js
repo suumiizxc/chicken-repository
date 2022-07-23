@@ -38,8 +38,10 @@ import {
     insertArticleAPI,
     updateArticleAPI,
     deleteArticleAPI,
-
+    uploadArticleSingleImageAPI,
     getAllArticleCategories,
+    getArticleImage,
+    InsertArticleSlider,
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
 import FormItem from "antd/lib/form/FormItem";
@@ -55,6 +57,7 @@ export default function Index(props) {
     token: localStorage.getItem("token"),
     card_title: "Видео интро",
     loader: false,
+    id: null,
     isModalVisible: false,
     data: null,
     action: null,
@@ -65,7 +68,30 @@ export default function Index(props) {
     },
     categoryData : null,
     selectedCategoryID : null,
+    upload_image_b64: null,
+    article_image: null,
   });
+
+  const handleFileRead = async (event) => {
+    const file = event.target.files[0]
+    const base64 = await convertBase64(file)
+    console.log(base64);
+    readingStates.upload_image_b64 = base64.replace("data:","").replace("image/","").replace("png;", "").replace("jpg;", "").replace("jpeg;", "").replace("base64,","");
+    setReadingStates({...readingStates})
+
+  }
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file)
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      }
+      fileReader.onerror = (error) => {
+        reject(error);
+      }
+    })
+  }
 
   const funActive = (values) => {
     console.log("funActive : ", values)
@@ -158,6 +184,7 @@ export default function Index(props) {
                     readingStates.id = record.id;
                     readingStates.isModalVisible = true;
                     getFormData(record);
+                    getAllArticleImg(record.id)
                     setReadingStates({ ...readingStates });
                     }}
                     icon={<EditOutlined style={{ color: "#3e79f7" }} />}
@@ -217,6 +244,50 @@ export default function Index(props) {
         console.log(e);
       });
   };
+
+  const getAllArticleImg = (id) =>{
+    readingStates.loader = true;
+    setReadingStates({...readingStates});
+    getArticleImage(id,readingStates.token)
+      .then((res) => {
+        readingStates.loader = false;
+        setReadingStates({ ...readingStates })
+        if(res && res.data && res.data.status){
+          readingStates.article_image = res.data.data
+          setReadingStates({ ...readingStates })
+        }else{
+          message.error("Зураг олдсонгүй")
+          readingStates.loader = false;
+        setReadingStates({ ...readingStates })
+        }
+      }).catch((err)=>{
+        message.error("Зураг олдсонгүй")
+        readingStates.loader = false;
+        setReadingStates({ ...readingStates })
+      })
+  }
+
+  const insertArticleSlider = (data)=>{
+    readingStates.loader = true;
+    setReadingStates({...readingStates})
+    InsertArticleSlider(data, readingStates.token).then((res)=>{
+      readingStates.loader = false;
+      setReadingStates({...readingStates})
+      if(res && res.data && res.data.status){
+        readingStates.article_image = res.data.data.img_url
+        setReadingStates({...readingStates})
+        message.success("Амжилттай")
+      }else{
+        message.error("Алдаа гарлаа")
+        readingStates.loader = false;
+        setReadingStates({ ...readingStates })
+      }
+    }).catch((err)=>{
+      readingStates.loader = false;
+      setReadingStates({ ...readingStates })
+      message.error("Алдаа гарлаа")
+    })
+  }
 
   const getAllCategories = () => {
     readingStates.loader = true;
@@ -323,6 +394,38 @@ export default function Index(props) {
         })
   }
 
+  const insertArticleUploadImage = (data) => {
+    readingStates.loader = true;
+    setReadingStates({ readingStates });
+    uploadArticleSingleImageAPI(data)
+      .then((res) => {
+        readingStates.loader = false;
+        setReadingStates({ readingStates });
+        readingStates.article_image = res.data.response; 
+        //readingStates.view_img_url = res.data.response;
+        //form.resetFields();
+        //getFormData(readingStates.updateData);
+        setReadingStates({ ...readingStates });
+        
+        console.log("success all writing", readingStates);
+        insertArticleSlider({
+          "title":form.getFieldValue("title"),
+          "img_url":readingStates.article_image,
+          "ordering":1,
+          "is_active":0,
+          "article_id":readingStates.id
+        })
+        
+      })
+      .catch((e) => {
+        //unsuccessful
+        readingStates.article_image = null;
+        props.setLoader(false);
+        message.error("Алдаа гарлаа ");
+        console.log(e);
+      });
+  };
+
   const   onFinishWriting = (values) => {
       console.log("on finish writing : ", values);
 
@@ -346,6 +449,12 @@ export default function Index(props) {
     readingStates.isModalVisible = true;
     readingStates.action = "ADD_READING";
     setReadingStates({ ...readingStates });
+  };
+
+  const uploadImage = () => {
+    var upObj = {"upload" : readingStates.upload_image_b64}
+    insertArticleUploadImage(upObj)
+
   };
 
 
@@ -410,7 +519,6 @@ return (
                         <Row>
                             <Col span={24}>
                                 <Row>
-                                   
                                     <Col span={12}>
                                         <Form.Item
                                         name={"title"}
@@ -422,7 +530,6 @@ return (
                                         >
                                             <Input />
                                         </Form.Item>
-                                    
                                     </Col>
                                     <Col span={12}>
                                         {/* <Form.Item
@@ -479,9 +586,39 @@ return (
                                       </Dropdown>
                                       </Form.Item>
                                     </Col>
+                                    <Col span={24}>
+                                    <Col span={8} offset={4}>
+                                      <Input
+                                                id="originalFileName"
+                                                type="file"
+                                                inputProps={{ accept: 'image/*, .xlsx, .xls, .csv, .pdf, .pptx, .pptm, .ppt' }}
+                                                //required
+                                                label="Document"
+                                                name="originalFileName"
+                                                onChange={handleFileRead}
+                                                size="small"
+                                                variant="standard"
+                                            />
+                                    </Col>
+                                    <Col span={8} offset={4}>
+                                            <Button
+                                                onClick={uploadImage}
+                                                icon={<PlusCircleOutlined />}
+                                                type="primary"
+                                                style={{
+                                                marginBottom: 16,
+                                                }}
+                                            >
+                                                Upload image :P 
+                                            </Button>
+                                    </Col>
+                                  </Col>
                                 </Row>
                             </Col>
                         </Row>
+                        <Col span={8}>
+                                    <img id="myImg" height={300}  src={readingStates.article_image}/>
+                        </Col>
                         <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
                         <Button
                             type="primary"

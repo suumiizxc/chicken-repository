@@ -543,9 +543,6 @@ export default function Index(props) {
           insertListeningData(inObj);
           getAllPPVContent();
       } else if (ppvContentStates.action == "EDIT") {
-          console.log(values)
-          console.log(ppvContentStates.CategoryDataMap[values.category_id])
-          console.log(ppvContentStates.CategoryDataMap)
           var updObj = {id : ppvContentStates.id, category_id : parseInt(ppvContentStates.CategoryDataMap[values.category_id]), intro : values.intro, is_active : parseInt(values.is_active), is_serial : parseInt(values.is_serial), level_id : parseInt(ppvContentStates.LevelDataMap[values.level_id]), name : values.name, profile_img : values.profile_img, vocabulary_count : parseInt(values.vocabulary_count)};
           updateListeningData(updObj);
           getFormData({name:""})
@@ -776,7 +773,7 @@ return (
                                                 id="originalFileName"
                                                 type="file"
                                                 inputProps={{ accept: 'image/*, .xlsx, .xls, .csv, .pdf, .pptx, .pptm, .ppt' }}
-                                                required
+                                                //required
                                                 label="Document"
                                                 name="originalFileName"
                                                 onChange={handleFileRead}

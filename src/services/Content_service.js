@@ -2007,6 +2007,54 @@ export function uploadSingleImageAPI(data) {
   });
 }
 
+export function uploadArticleSingleImageAPI(data) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: "http://localhost:8081/api/article/upload-b64-image" ,
+      headers: {
+        Accept: 'application/json',
+        //"Access-Control-Allow-Origin":"*",
+        "Content-Type": "application/json",
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
+export function InsertArticleSlider(data, token){
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/course-article/insert-slider",
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  })
+}
+
+export function getArticleImage(article_id, token){
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/course-article/img/"+article_id,
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: token,
+      }
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  })
+}
+
 export function insertPPVQuizConfigAPI(data, token) {
   return new Promise((resolve, reject) => {
     axios({
