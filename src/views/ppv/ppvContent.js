@@ -85,8 +85,7 @@ export default function Index(props) {
   const handleFileRead = async (event) => {
     const file = event.target.files[0]
     const base64 = await convertBase64(file)
-    console.log(base64);
-    ppvContentStates.upload_image_b64 = base64.replace("data:","").replace("image/","").replace("png;", "").replace("jpg;", "").replace("jpeg;", "").replace("base64,","");
+    ppvContentStates.upload_image_b64 = base64.replace("data:","").replace("image/","").replace("png;", "").replace("jpg;", "").replace("jpeg;", "").replace("base64,","")+"...file_name..."+file.name;
     setPPVContentStates({ ...ppvContentStates });
 
   }
@@ -575,7 +574,10 @@ export default function Index(props) {
     // ppvContentStates.isModalVisible = false;
     // ppvContentStates.action = "ADD_LISTENING";
     // setPPVContentStates({ ...ppvContentStates });
-    var upObj = {"upload" : ppvContentStates.upload_image_b64}
+    var upObj = {
+      "upload" : ppvContentStates.upload_image_b64.split("...file_name...")[0],
+      "file_name": ppvContentStates.upload_image_b64.split("...file_name...")[1]
+    }
     insertPPVContentUploadImage(upObj)
   };
 

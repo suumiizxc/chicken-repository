@@ -75,10 +75,8 @@ export default function Index(props) {
   const handleFileRead = async (event) => {
     const file = event.target.files[0]
     const base64 = await convertBase64(file)
-    console.log(base64);
-    readingStates.upload_image_b64 = base64.replace("data:","").replace("image/","").replace("png;", "").replace("jpg;", "").replace("jpeg;", "").replace("base64,","");
+    readingStates.upload_image_b64 = base64.replace("data:","").replace("image/","").replace("png;", "").replace("jpg;", "").replace("jpeg;", "").replace("base64,","")+"...file_name..."+file.name;
     setReadingStates({...readingStates})
-
   }
   const convertBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -452,7 +450,10 @@ export default function Index(props) {
   };
 
   const uploadImage = () => {
-    var upObj = {"upload" : readingStates.upload_image_b64}
+    var upObj = {
+      "upload" : readingStates.upload_image_b64.split("...file_name...")[0],
+      "file_name": readingStates.upload_image_b64.split("...file_name...")[1],
+    }
     insertArticleUploadImage(upObj)
 
   };

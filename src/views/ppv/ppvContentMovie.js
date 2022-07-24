@@ -50,6 +50,7 @@ import {
     deletePPVQuizQuestionAnswerAPI,
     
     getPPVContentByID,
+    uploadPPVContentMovieVideo,
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
 
@@ -74,9 +75,29 @@ export default function Index(props) {
     quiz_question : null,
     quiz_question_answer : null,
     question_idv1 : null,
-
     content_name: null,
+    movie_video_url:null,
+    upload_video_b64: null,
   });
+
+  const handleFileRead = async (event) => {
+    const file = event.target.files[0]
+    const base64 = await convertBase64(file)
+    ppvContentMovieStates.upload_video_b64 = base64.replace("data:","").replace("video/","").replace("mp4;","").replace("base64,","")+"...file_name..."+file.name;
+    setPPVContentMovieStates({...ppvContentMovieStates})
+  }
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file)
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      }
+      fileReader.onerror = (error) => {
+        reject(error);
+      }
+    })
+  }
 
   const render = (text, record)=>{
     if(record.is_active == 1){
@@ -425,6 +446,8 @@ export default function Index(props) {
                     ppvContentMovieStates.updateData = record;
                     ppvContentMovieStates.id = record.id;
                     ppvContentMovieStates.isModalVisible = true;
+                    ppvContentMovieStates.movie_video_url = record.host_url;
+                    setPPVContentMovieStates({ ...ppvContentMovieStates });
                     getFormData(record);
                     setPPVContentMovieStates({ ...ppvContentMovieStates });
                     }}
@@ -832,6 +855,35 @@ const deletePPVQuestion = (values) => {
       })
 }
 
+    const insertPPVContentMovieVideo = (data) =>{
+        ppvContentMovieStates.loader = true;
+        ppvContentMovieStates.isModalVisible = false;
+        setPPVContentMovieStates({...ppvContentMovieStates});
+        uploadPPVContentMovieVideo(data).then((res) => {
+            if(res && res.data && res.status){
+                ppvContentMovieStates.isModalVisible = true;
+                ppvContentMovieStates.loader = false;
+                setPPVContentMovieStates({...ppvContentMovieStates});
+                ppvContentMovieStates.movie_video_url = res.data.response;
+                setPPVContentMovieStates({...ppvContentMovieStates});
+                form.setFieldsValue({
+                    host_url: ppvContentMovieStates.movie_video_url
+                });
+                message.success("Бичлэг хуулагдлааа");
+            }else{
+                ppvContentMovieStates.isModalVisible = true;
+                ppvContentMovieStates.loader = false;
+                setPPVContentMovieStates({...ppvContentMovieStates});
+                message.error("Бичлэг хуулах явцад алдаа гарлаа");
+            }
+        }).catch((err)=>{
+            ppvContentMovieStates.isModalVisible = true;
+            ppvContentMovieStates.loader = false;
+            setPPVContentMovieStates({...ppvContentMovieStates});
+            message.error("Бичлэг хуулах явцад алдаа гарлаа");
+        })
+    }
+
   const onFinishWriting = (values) => {
       console.log("on finish writing : ", values);
 
@@ -865,7 +917,7 @@ const deletePPVQuestion = (values) => {
           };
           updateListeningData(updObj);
           form.resetFields();
-          getAllReading(props.courseIds.ppvContentId);;
+          getAllReading(props.courseIds.ppvContentId);
       } else if (ppvContentMovieStates.action == "ADD_PPV_QUIZ_QUESTION") {
         var insertObj = {
           content_id : props.courseIds.ppvContentId,
@@ -921,6 +973,15 @@ const deletePPVQuestion = (values) => {
     ppvContentMovieStates.action = "ADD_PPV_QUIZ_QUESTION";
     setPPVContentMovieStates({ ...ppvContentMovieStates });
   };
+
+  const uploadVideo = () =>{
+
+    var upObj = {
+        "upload": ppvContentMovieStates.upload_video_b64.split("...file_name...")[0],
+        "file_name": ppvContentMovieStates.upload_video_b64.split("...file_name...")[1],
+    };
+    insertPPVContentMovieVideo(upObj)
+  }
 
   useEffect(() => {
     console.log("listening useffect");
@@ -1102,10 +1163,39 @@ return (
                                         </Form.Item>
                                     
                                     </Col>
-                                    
+                                    <Col span={24}>
+                                    <Col span={8} offset={4}>
+                                      <Input
+                                                id="originalFileName"
+                                                type="file"
+                                                inputProps={{ accept: 'image/*, .xlsx, .xls, .csv, .pdf, .pptx, .pptm, .ppt, .ts' }}
+                                                //required
+                                                label="Document"
+                                                name="originalFileName"
+                                                onChange={handleFileRead}
+                                                size="small"
+                                                variant="standard"
+                                            />
+                                    </Col>
+                                    <Col span={8} offset={4}>
+                                            <Button
+                                                onClick={uploadVideo}
+                                                icon={<PlusCircleOutlined />}
+                                                type="primary"
+                                                style={{
+                                                marginBottom: 16,
+                                                }}
+                                            >
+                                                Upload video
+                                            </Button>
+                                    </Col>
+                                  </Col>
                                 </Row>
                             </Col>
                         </Row>
+                        <Col span={8}>
+                            <video id="myVideo" height={300} src={ppvContentMovieStates.movie_video_url} controls></video>
+                        </Col>
                         <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
                         <Button
                             type="primary"

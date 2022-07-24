@@ -1994,7 +1994,7 @@ export function uploadSingleImageAPI(data) {
   return new Promise((resolve, reject) => {
     axios({
       method: "post",
-      url: "https://adminback.medlegten.com/api/upload-b64-image" ,
+      url: url+"api/upload-b64-image" ,
       headers: {
         Accept: 'application/json',
         //"Access-Control-Allow-Origin":"*",
@@ -2011,9 +2011,8 @@ export function uploadArticleSingleImageAPI(data) {
   return new Promise((resolve, reject) => {
     axios({
       method: "post",
-      url: "http://localhost:8081/api/article/upload-b64-image" ,
+      url: localUrl+"/api/article/upload-b64-image" ,
       headers: {
-        Accept: 'application/json',
         //"Access-Control-Allow-Origin":"*",
         "Content-Type": "application/json",
       },
@@ -2024,11 +2023,25 @@ export function uploadArticleSingleImageAPI(data) {
   });
 }
 
+export function uploadPPVContentMovieVideo(data){
+  return new Promise((resolve, reject) =>{
+    axios({
+      method:"post",
+      url:localUrl+"/api/upload-b64-video",
+      headers:{
+        "Content-Type":"application/json",
+      },
+      data: data,
+    }).then((res)=>resolve(res))
+    .catch((err) => reject(err));
+  });
+}
+
 export function InsertArticleSlider(data, token){
   return new Promise((resolve, reject) => {
     axios({
       method: "post",
-      url: url + "/api/course-article/insert-slider",
+      url: localUrl + "/api/course-article/insert-slider",
       headers:{
         "Content-Type": "application/json",
         Authorization: token,
@@ -2044,7 +2057,7 @@ export function getArticleImage(article_id, token){
   return new Promise((resolve, reject) => {
     axios({
       method: "get",
-      url: url + "/api/course-article/img/"+article_id,
+      url: localUrl + "/api/course-article/img/"+article_id,
       headers:{
         "Content-Type": "application/json",
         Authorization: token,
