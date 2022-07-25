@@ -43,6 +43,17 @@ export default function Index(props) {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
+  const fixWord = (word) =>{
+    var wordArr = word.split(" ")
+    word = ""
+    wordArr.forEach(something => {
+      if(something !== ""){
+        word += something+" "
+      }
+    });
+    return word.slice(0, -1).toLowerCase();
+  }
+
   const [ppvContentMovieCueWordStates, setPPVContentMovieCueWordStates] = useState({
     token: localStorage.getItem("token"),
     card_title: "Видео интро",
@@ -268,7 +279,7 @@ export default function Index(props) {
           var insObj = {
               cue_id : parseInt(props.courseIds.ppvContentMovieCueId),
               main_text : values.main_text,
-              word_value : values.word_value,
+              word_value : fixWord(values.word_value),
               space_next : parseInt(values.space_next),
               ordering : parseInt(values.ordering)
 
@@ -281,7 +292,7 @@ export default function Index(props) {
             id : ppvContentMovieCueWordStates.id,
             cue_id : parseInt(props.courseIds.ppvContentMovieCueId),
             main_text : values.main_text,
-            word_value : values.word_value,
+            word_value : fixWord(values.word_value),
             space_next : parseInt(values.space_next),
             ordering : parseInt(values.ordering)
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 // const url = "http://122.201.30.39:8080";
-const url = "https://adminback.medlegten.com";
+const url = "https://adminback.lingos.mn";
 
 // ----------------------------------------- Login Auth -----------------------------------------
 export function authLogin(data) {
@@ -9,6 +9,7 @@ export function authLogin(data) {
       method: "post",
       url: url + "/api/tb-sys-user/auth/login",
       headers: {
+        "Access-Control-Allow-Origin":"*",
         "Content-Type": "application/json",
       },
       data: data,

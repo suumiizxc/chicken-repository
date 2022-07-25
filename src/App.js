@@ -85,6 +85,10 @@ function App() {
     is_active: 1,
   });
   const [courseIds, setCourseIds] = useState({
+    content_movie_cue_word_current_page:1, 
+    vocabulary_current_page:1,
+    content_movie_cue_current_page:1,
+    content_current_page:1,
     introVideoId: null,
     introVideoCueId : null,
     mixedVideoId: null,
@@ -115,6 +119,16 @@ function App() {
     left: "50%",
     transform: "translate(-50%, -50%)",
   };
+  
+  onpopstate = () => {
+    switch(window.location.pathname){
+      case "/ppv/content":
+        courseIds.vocabulary_current_page = 1;
+        courseIds.content_movie_cue_current_page =1;
+        setCourseIds({...courseIds});
+        break;
+    }
+  }
 
   return (
     <>

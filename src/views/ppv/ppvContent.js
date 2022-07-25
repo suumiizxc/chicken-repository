@@ -80,6 +80,8 @@ export default function Index(props) {
     upload_image_b64 : null,
     view_img_url : null,
     quiz_config: null,
+    vocabulary_count: null,
+    currentPage: 1,
   });
 
   const handleFileRead = async (event) => {
@@ -283,9 +285,8 @@ export default function Index(props) {
                     ppvContentStates.id = record.id;
                     ppvContentStates.isModalVisible = true;
                     ppvContentStates.view_img_url = record.profile_img;
+                    ppvContentStates.vocabulary_count = record.vocabulary_count;
                     getFormData(record);
-                    console.log("pisdaa : ", record.profile_img)
-                    
                     setPPVContentStates({ ...ppvContentStates });
                     }}
                     icon={<EditOutlined style={{ color: "#3e79f7" }} />}
@@ -542,7 +543,7 @@ export default function Index(props) {
           insertListeningData(inObj);
           getAllPPVContent();
       } else if (ppvContentStates.action == "EDIT") {
-          var updObj = {id : ppvContentStates.id, category_id : parseInt(ppvContentStates.CategoryDataMap[values.category_id]), intro : values.intro, is_active : parseInt(values.is_active), is_serial : parseInt(values.is_serial), level_id : parseInt(ppvContentStates.LevelDataMap[values.level_id]), name : values.name, profile_img : values.profile_img, vocabulary_count : parseInt(values.vocabulary_count)};
+          var updObj = {id : ppvContentStates.id, category_id : parseInt(ppvContentStates.CategoryDataMap[values.category_id]), intro : values.intro, is_active : parseInt(values.is_active), is_serial : parseInt(values.is_serial), level_id : parseInt(ppvContentStates.LevelDataMap[values.level_id]), name : values.name, profile_img : values.profile_img, vocabulary_count : parseInt(ppvContentStates.vocabulary_count)};
           updateListeningData(updObj);
           getFormData({name:""})
           getAllPPVContent();
@@ -645,7 +646,13 @@ return (
           </Button>
           
         </div>
-        <Table columns={columns} dataSource={ppvContentStates.data}/>
+        <Table columns={columns} dataSource={ppvContentStates.data}
+        onChange={(newPagination)=>{
+          props.courseIds.content_current_page = newPagination.current
+          props.setCourseIds({...props.courseIds})
+        }}
+        pagination={{current:props.courseIds.content_current_page}}
+        />
         <Modal
           title="PPV edit"
           width={"90%"}

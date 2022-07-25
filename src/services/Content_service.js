@@ -1,6 +1,6 @@
 import axios from "axios";
 // const url = "http://122.201.30.39:8080";
-const url = "https://adminback.medlegten.com";
+const url = "https://adminback.lingos.mn";
 // const url = "http://172.20.176.1:8081";
 // ----------------------------------------- START GRAMMER  -----------------------------------------
 // ----------------------------------------- GET All GRAMMER -----------------------------------------
@@ -1149,7 +1149,7 @@ export function getAllPPVContentAPI(token) {
       method: "get",
       url: url + "/api/ppv-content/all",
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        //"Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
         Authorization: token,
       },
@@ -1994,7 +1994,7 @@ export function uploadSingleImageAPI(data) {
   return new Promise((resolve, reject) => {
     axios({
       method: "post",
-      url: url+"api/upload-b64-image" ,
+      url: url+"/api/upload-b64-image" ,
       headers: {
         Accept: 'application/json',
         //"Access-Control-Allow-Origin":"*",
@@ -2011,7 +2011,7 @@ export function uploadArticleSingleImageAPI(data) {
   return new Promise((resolve, reject) => {
     axios({
       method: "post",
-      url: localUrl+"/api/article/upload-b64-image" ,
+      url: url+"/api/article/upload-b64-image" ,
       headers: {
         //"Access-Control-Allow-Origin":"*",
         "Content-Type": "application/json",
@@ -2027,8 +2027,9 @@ export function uploadPPVContentMovieVideo(data){
   return new Promise((resolve, reject) =>{
     axios({
       method:"post",
-      url:localUrl+"/api/upload-b64-video",
+      url:url+"/api/upload-b64-video",
       headers:{
+        "Access-Control-Allow-Origin":"*",
         "Content-Type":"application/json",
       },
       data: data,
@@ -2041,7 +2042,7 @@ export function InsertArticleSlider(data, token){
   return new Promise((resolve, reject) => {
     axios({
       method: "post",
-      url: localUrl + "/api/course-article/insert-slider",
+      url: url + "/api/course-article/insert-slider",
       headers:{
         "Content-Type": "application/json",
         Authorization: token,
@@ -2057,7 +2058,7 @@ export function getArticleImage(article_id, token){
   return new Promise((resolve, reject) => {
     axios({
       method: "get",
-      url: localUrl + "/api/course-article/img/"+article_id,
+      url: url + "/api/course-article/img/"+article_id,
       headers:{
         "Content-Type": "application/json",
         Authorization: token,
@@ -2288,12 +2289,12 @@ export function updatePPVContentMovieCueMonAPI(data, token) {
       .catch((err) => reject(err));
   });
 }
-// const localurl = "http://localhost:8081/"
+// const url = "http://localhost:8081/"
 // export function getPPVContentCategoryByID(id, token){
 //   return new Promise((resolve, reject) => {
 //     axios({
 //       method: "get",
-//       url: localurl + "/api/ppv-content-category/"+id,
+//       url: url + "/api/ppv-content-category/"+id,
 //       headers:{
 //         "Conten"
 //       }

@@ -124,6 +124,17 @@ export default function Index(props) {
     return slitDate[0];
   };
 
+  const fixWord = (word) =>{
+    var wordArr = word.split(" ")
+    word = ""
+    wordArr.forEach(something => {
+      if(something !== ""){
+        word += something+" "
+      }
+    });
+    return word.slice(0, -1).toLowerCase();
+  }
+
   const onChangeRootWordOption = (value) => {
     console.log(`selected ${value}`);
   };
@@ -425,7 +436,7 @@ export default function Index(props) {
       wordStates.editWord = {
         id: parseInt(wordStates.editWord.id),
         language_id: parseInt(values.language_id),
-        word: values.word,
+        word: fixWord(values.word),
         type_id: values.type_id,
         root_word_id: parseInt(values.root_word_id),
         created_by: parseInt(localStorage.getItem("user_id")),
@@ -488,7 +499,7 @@ export default function Index(props) {
       wordStates.insertWord = {
         language_id:
           values.language_id === undefined ? 0 : parseInt(values.language_id),
-        word: values.word,
+        word: fixWord(values.word),
         type_id: values.type_id === undefined ? 0 : values.type_id,
         root_word_id:
           values.root_word_id === undefined ? 0 : parseInt(values.root_word_id),
@@ -674,11 +685,6 @@ export default function Index(props) {
   //   }
   // }, [setShowWordStateOption]);
 
-
-
-
-
-  
 
   return (
     <Card title={"Үгсийн сан"} style={{ margin: 15, width: "100%" }}>

@@ -65,6 +65,7 @@ export default function Index(props) {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
+
   const [ppvContentMovieCueStates, setPPVContentMovieCueStates] = useState({
     token: localStorage.getItem("token"),
     card_title: "Видео интро",
@@ -118,6 +119,17 @@ export default function Index(props) {
     }
 
   ]
+
+  const fixWord = (word) =>{
+    var wordArr = word.split(" ")
+    word = ""
+    wordArr.forEach(something => {
+      if(something !== ""){
+        word += something+" "
+      }
+    });
+    return word.slice(0, -1).toLowerCase();
+  }
 
   const columns_word = [
     {
@@ -310,6 +322,7 @@ export default function Index(props) {
         if (res && res.data && res.data.status && res.data.status === true) {
           //success
           ppvContentMovieCueStates.data = res.data.data;
+          ppvContentMovieCueStates.isBulk = res.data.data.length == 0 ? true:false;
           setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
           console.log("success all writing", res.data.data);
         } else {
@@ -794,7 +807,7 @@ export default function Index(props) {
             {
               cue_id : id, 
               main_text : val1, 
-              word_value : symbols.indexOf(val1) === -1 && parseInt(val1).toString() === "NaN"? val1.toLowerCase() : "", 
+              word_value : fixWord(symbols.indexOf(val1) === -1 && parseInt(val1).toString() === "NaN"? val1.toLowerCase() : ""), 
               space_next : val1 === '"' && quotStart || val1 === "'" || val1 === '('? 1:0, 
               ordering : initial_order,
               is_visible : 0,
@@ -940,6 +953,7 @@ export default function Index(props) {
     });
   }
 
+
   useEffect(() => {
     console.log("listening useffect");
     getAllReading(props.courseIds.ppvContentMovieId);
@@ -1038,6 +1052,11 @@ return (
         <Divider orientation="center"><h1>{ppvContentMovieCueStates.movie_name}</h1></Divider>
         </Affix>
         <Table columns={columns} dataSource={ppvContentMovieCueStates.data} 
+        onChange={(newPagination)=>{
+          props.courseIds.content_movie_cue_current_page = newPagination.current
+          props.setCourseIds({...props.courseIds})
+        }}
+        pagination={{current:props.courseIds.content_movie_cue_current_page}}
         />
         <h1>PPV Quiz vocabulary</h1>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -1073,6 +1092,11 @@ return (
         </div>
         {/* <Divider orientation="center"><h1>{ppvContentMovieCueStates.movie_name}</h1></Divider> */}
         <Table columns={columns_vocabulary} dataSource={ppvContentMovieCueStates.vocList} 
+        onChange={(newPagination)=>{
+          props.courseIds.vocabulary_current_page = newPagination.current
+          props.setCourseIds({...props.courseIds})
+        }}
+        pagination={{current:props.courseIds.vocabulary_current_page}}
         />
         <Modal
           title="Cue edit"

@@ -1,6 +1,6 @@
 import axios from "axios";
 // const url = "http://122.201.30.39:8080";
-const url = "https://adminback.medlegten.com";
+const url = "https://adminback.lingos.mn";
 
 // ----------------------------------------- START INTRO VIDEO  -----------------------------------------
 // ----------------------------------------- GET All intro video -----------------------------------------

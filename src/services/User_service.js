@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const url = "https://adminback.medlegten.com";
+const url = "https://adminback.lingos.mn";
 
 export function getAllUsers(token, isActive){
     return new Promise((resolve, reject) => {
