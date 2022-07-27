@@ -2029,7 +2029,7 @@ export function uploadPPVContentMovieVideo(data){
       method:"post",
       url:url+"/api/upload-b64-video",
       headers:{
-        "Access-Control-Allow-Origin":"*",
+       // "Access-Control-Allow-Origin":"*",
         "Content-Type":"application/json",
       },
       data: data,
@@ -2287,6 +2287,128 @@ export function updatePPVContentMovieCueMonAPI(data, token) {
     })
       .then((res) => resolve(res))
       .catch((err) => reject(err));
+  });
+}
+
+export function getAllAgeCategories(token){
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/ppv-category/age-category/all",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token
+      }
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  });
+}
+
+export function getContentAgeCategories(content_id, token){
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/ppv-category/age-category/"+content_id,
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: token
+      },
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  });
+}
+
+export function insertContentAgeCategory(data, token){
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/ppv-category/insert-age-category",
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  });
+}
+
+export function deleteContentAgeCategory(content_category_id, token){
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/ppv-category/delete-age-category/"+content_category_id,
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: token
+      }
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  });
+}
+
+export function getAllProducts(token){
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/ppv-product/all",
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: token
+      }
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  });
+}
+
+export function getContentProductByContentID(content_id, token){
+  return new Promise((resolve, reject)=>{
+    axios({
+      method: "get",
+      url: url + "/api/ppv-content/product/" + content_id,
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: token
+      }
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  });
+} 
+
+export function inserContentProduct(data, token){
+  return new Promise((resolve, reject)=>{
+    axios({
+      method: "post",
+      url: url + "/api/ppv-content/insert-content-product",
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: token
+      },
+      data: data
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  });
+}
+
+export function deleteContentProduct(product_id, token){
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "delete",
+      url: url + "/api/ppv-content/delete-product/" + product_id,
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: token
+      }
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
   });
 }
 // const url = "http://localhost:8081/"

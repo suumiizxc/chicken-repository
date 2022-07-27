@@ -21,6 +21,8 @@ import {
   Upload, 
   Image,
   Select,
+  Dropdown,
+  Menu,
 } from "antd";
 import {
   DeleteOutlined,
@@ -37,6 +39,7 @@ import {
   UploadOutlined,
   ZoomInOutlined,
   ZoomOutOutlined,
+  ArrowDownOutlined,
 } from "@ant-design/icons";
 import {
     getAllPPVContentAPI,
@@ -49,7 +52,15 @@ import {
     getPPVQuizConfigByContentAPI,
     insertPPVQuizConfigAPI,
     getAllPPVCategory,
-    getAllPPVLevel
+    getAllPPVLevel,
+    getContentAgeCategories,
+    getAllAgeCategories,
+    insertContentAgeCategory,
+    deleteContentAgeCategory,
+    getAllProducts,
+    getContentProductByContentID,
+    inserContentProduct,
+    deleteContentProduct
 
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
@@ -81,7 +92,12 @@ export default function Index(props) {
     view_img_url : null,
     quiz_config: null,
     vocabulary_count: null,
-    currentPage: 1,
+    content_age_category: [],
+    age_categories: [],
+    age_category_menu: null,
+    content_product: [],
+    products : [],
+    product_menu: null,
   });
 
   const handleFileRead = async (event) => {
@@ -118,6 +134,18 @@ export default function Index(props) {
       };
     }
   }
+
+  const menu = (
+    <Menu
+      items={ppvContentStates.age_category_menu}
+    />
+  );
+
+  const product_menu = (
+    <Menu
+      items = {ppvContentStates.product_menu}
+    />
+  )
 
   const columns_config = [
     {
@@ -288,6 +316,8 @@ export default function Index(props) {
                     ppvContentStates.vocabulary_count = record.vocabulary_count;
                     getFormData(record);
                     setPPVContentStates({ ...ppvContentStates });
+                    getContentAgeCategory(record.id)
+                    GetContentProductByContentID(record.id)
                     }}
                     icon={<EditOutlined style={{ color: "#3e79f7" }} />}
                 />
@@ -534,6 +564,229 @@ export default function Index(props) {
         })
   }
 
+  const getContentAgeCategory = (content_id) =>{
+    ppvContentStates.loader = true;
+    setPPVContentStates({...ppvContentStates})
+    getContentAgeCategories(content_id, ppvContentStates.token).then((res) => {
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates})
+      if(res && res.data && res.data.status ) {
+        ppvContentStates.content_age_category = res.data.data == null ? []:res.data.data;
+        setPPVContentStates({...ppvContentStates})
+        InitAgeCategoryMenu(content_id);
+      }else{
+        message.error("Насны ангилал харах явцад алдаа гарлаа");
+      }
+    }).catch((err) => {
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates})
+      message.error("Насны ангилал харах явцад алдаа гарлаа");
+    })
+  }
+
+  const getAllAgeCategory = () => {
+    ppvContentStates.loader = true;
+    setPPVContentStates({...ppvContentStates})
+    getAllAgeCategories(ppvContentStates.token).then((res) => {
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates});
+      if(res && res.data && res.data.status){
+        ppvContentStates.age_categories = res.data.data;
+        setPPVContentStates({...ppvContentStates});
+      }else{
+        message.error("Амжилтгүй")
+      }
+    }).catch((err) => {
+      message.error("Амжилтгүй")
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates})
+    })
+  }
+
+  const InsertContentAgeCategory = (data) =>{
+    ppvContentStates.loader = true;
+    setPPVContentStates({...ppvContentStates})
+    insertContentAgeCategory(data, ppvContentStates.token).then((res) => {
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates})
+      if(res && res.data && res.data.status){
+        message.success("Амжилттай");
+      }else{
+        message.error("Амжилтгүй");
+      }
+    }).catch((err) => {
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates})
+      message.error("Амжилтгүй");
+    })
+  }
+
+  const DeleteContentAgeCategory = (age_category_id)=>{
+    ppvContentStates.loader = true;
+    setPPVContentStates({...ppvContentStates})
+    deleteContentAgeCategory(age_category_id, ppvContentStates.token).then((res) => {
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates});
+      if(res && res.data && res.data.status){
+        message.success("Амжилттай устгагдлаа");
+      }else{
+        message.error("Амжилтгүй");
+      }
+    }).catch((err) => {
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates})
+      message.error("Амжилтгүй");
+    })
+  }
+
+  const GetContentProductByContentID = (content_id) => {
+    ppvContentStates.loader = true;
+    setPPVContentStates({...ppvContentStates});
+    getContentProductByContentID(content_id, ppvContentStates.token).then((res) => {
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates});
+      if(res && res.data && res.data.status){
+        ppvContentStates.content_product = res.data.data == null ? []:res.data.data;
+        setPPVContentStates({...ppvContentStates})
+        InitContentProductMenu(content_id);
+      }else{
+        message.error("Product list харах явцад алдаа гарлаа");
+      }
+    }).catch((err) => {
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates})
+      message.error("Product list харах явцад алдаа гарлаа");
+    })
+  }
+
+  const getAllProduct = () => {
+    ppvContentStates.loader = true;
+    setPPVContentStates({...ppvContentStates});
+    getAllProducts(ppvContentStates.token).then((res) => {
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates});
+      if(res && res.data && res.data.status){
+        ppvContentStates.products = res.data.data;
+        setPPVContentStates({...ppvContentStates});
+        console.log(ppvContentStates.products)
+      }else{
+        message.success("Амжилтгүй");
+      }
+    }).catch((err) => {
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates});
+      message.success("Амжилтгүй");
+    })
+  }
+
+  const InsertContentProduct = (data) => {
+    ppvContentStates.loader = true;
+    setPPVContentStates({...ppvContentStates})
+    inserContentProduct(data, ppvContentStates.token).then((res) => {
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates})
+      if(res && res.data && res.data.status){
+        message.success("Амжилттай");
+      }else{
+        message.success("Амжилтгүй");
+      }
+    }).catch((err) => {
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates});
+      message.success("Амжилтгүй");
+    })
+  }
+
+  const DeleteContentProduct = (product_id) =>{
+    ppvContentStates.loader = true;
+    setPPVContentStates({...ppvContentStates});
+    deleteContentProduct(product_id, ppvContentStates.token).then((res) => {
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates});
+      if(res && res.data && res.data.status){
+        message.success("Амжилттай устгагдлаа");
+      }else{
+        message.success("Амжилтгүй");
+      }
+    }).catch((err) =>{
+      message.success("Амжилтгүй");
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates});
+    })
+  }
+
+  const handleCheckBox = (value, content_id, category_id) => {
+    if (value.target.checked){
+      InsertContentAgeCategory({
+        "content_id":content_id,
+        "age_category_id":category_id
+      })
+    }else{
+      DeleteContentAgeCategory(value.target.value)
+    }
+    ppvContentStates.isModalVisible = false;
+    setPPVContentStates({...ppvContentStates});
+  }
+
+  const handleProductCheckBox = (value, content_id, product_id) => {
+    if (value.target.checked){
+      InsertContentProduct({
+        "content_id":content_id,
+        "product_id":product_id
+      })
+    }else{
+      DeleteContentProduct(value.target.value)
+    }
+    ppvContentStates.isModalVisible = false;
+    setPPVContentStates({...ppvContentStates});
+  }
+
+  const InitAgeCategoryMenu = (content_id) => {
+    var checkedCCategoryID = {}
+    var checkedCategories = ppvContentStates.content_age_category.map((ccategory) => {
+      checkedCCategoryID[ccategory.age_category_id] = ccategory.id
+      console.log(ccategory)
+      return ccategory.age_category_id
+    })
+    
+    ppvContentStates.age_category_menu = ppvContentStates.age_categories.map((category)=>{
+      return{
+        key: category.id,
+        label: (
+          <Checkbox
+          value={checkedCCategoryID[category.id]} 
+          defaultChecked ={checkedCategories.indexOf(category.id) > -1}
+          onChange={(e) => handleCheckBox(e, content_id, category.id)}
+          >{category.name}</Checkbox>
+        ),
+      }
+    })
+    setPPVContentStates({...ppvContentStates})
+  } 
+
+  const InitContentProductMenu = (content_id) => {
+    var checkedCProductID = {}
+    var checkedProducts = ppvContentStates.content_product.map((cproduct) => {
+      checkedCProductID[cproduct.product_id] = cproduct.id
+      console.log(cproduct)
+      return cproduct.product_id
+    })
+    
+    ppvContentStates.product_menu = ppvContentStates.products.map((product)=>{
+      return{
+        key: product.id,
+        label: (
+          <Checkbox
+          value={checkedCProductID[product.id]} 
+          defaultChecked ={checkedProducts.indexOf(product.id) > -1}
+          onChange={(e) => handleProductCheckBox(e, content_id, product.id)}
+          >{product.name}</Checkbox>
+        ),
+      }
+    })
+    setPPVContentStates({...ppvContentStates})
+  }
+
   const onFinishWriting = (values) => {
       console.log("on finish writing : ", values);
 
@@ -618,6 +871,8 @@ export default function Index(props) {
     getLevelOptions();
     getCategoryOptions();
     getAllPPVContent();
+    getAllAgeCategory();
+    getAllProduct();
   }, []);
 
 return (
@@ -667,7 +922,6 @@ return (
         >
          {(() => {   
              if(ppvContentStates.action == "EDIT") {
-              console.log(ppvContentStates.CategoryData)
                  return (
                     <Form
                     form={form}
@@ -768,7 +1022,35 @@ return (
                                       </Select>
                                   </Form.Item>
                               </Col>
-                              
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"age_category"}
+                                  label="Насны ангилал"
+                                  >
+                                    <Dropdown
+                                      overlay={menu}
+                                    >
+                                        <Divider>
+                                          <ArrowDownOutlined/>
+                                        </Divider>
+                                      
+                                    </Dropdown>
+                                  </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                  <Form.Item
+                                  name={"content_product"}
+                                  label="Content product"
+                                  >
+                                    <Dropdown
+                                      overlay={product_menu}
+                                    >
+                                        <Divider>
+                                          <ArrowDownOutlined/>
+                                        </Divider>
+                                    </Dropdown>
+                                  </Form.Item>
+                              </Col>
                           </Row>
                             <Row>
                                 <Col span={8}>
