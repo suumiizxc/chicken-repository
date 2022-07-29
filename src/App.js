@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Spin } from "antd";
+import React, { useEffect, useState } from "react";
+import { message, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -43,6 +43,8 @@ import Article from "./views/article/article"
 import ArticleCue from "./views/article/articleCue"
 import ArticleCueWord from "./views/article/articleCueWord"
 
+import {getOnlyWords} from "./services/Word_service"
+
 import Users from "./views/user/users";
 
 import "./App.css";
@@ -66,12 +68,46 @@ import { RegisterNewUser } from "./services/User_service";
 //   ))
 // }
 
+function makeNode(ch) {
+  this.ch = ch;
+  this.isTerminal = false;
+  this.map = {};
+  this.words = [];
+}
+
+function add(str, i, root) {
+
+  if (i === str.length) {
+      root.isTerminal = true;
+      return;
+  }
+
+  if (!root.map[str[i]])
+      root.map[str[i]] = new makeNode(str[i]);
+
+  root.words.push(str);
+  add(str, i + 1, root.map[str[i]]);
+}
+
+function search(str, i, root) {
+  if (i === str.length)
+      return root.words;
+
+  if (!root.map[str[i]])
+      return [];
+  return search(str, i + 1, root.map[str[i]]);
+
+}
+
+
 function App() {
 
   // RegisterTest()
   const [loader, setLoader] = useState(false);
   // const [token, setToken] = useState(null);
-
+  const root = new makeNode('\0')
+  var allWords = [];
+  const [rootNode, setRootNode] = useState([])
   const [userData, setUserData] = useState({
     id: null,
     first_name: null,
@@ -129,6 +165,32 @@ function App() {
         break;
     }
   }
+
+  const GetOnlyWords = () =>{
+    getOnlyWords(userData.token).then((res) => {
+      if(res && res.data && res.data.status){
+        allWords = res.data.data;
+        createTrie()
+      }else{
+        message.failed("Амжилтгүй")
+      }
+    }).catch((err) => {
+      console.log(err)
+      message.success("Амжилгүй err")
+    })
+  }
+
+  const createTrie = () => {
+    for(const word of allWords){
+      add(word.word, 0, root)
+    }
+    console.log("done")
+    setRootNode({...root})
+  }
+
+  useEffect(()=>{
+    GetOnlyWords()
+  }, [])
 
   return (
     <>
@@ -505,6 +567,9 @@ function App() {
                 path="/ppv/content-movie-cue-word"
                 element={
                   <PPVContentMovieCueWord
+                    root = {rootNode}
+                    setRoot = {setRootNode}
+                    Search={search}
                     userData={userData}
                     setUserData={setUserData}
                     loader={loader}

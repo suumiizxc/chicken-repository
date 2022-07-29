@@ -240,3 +240,18 @@ export function updateTranslation(data, token) {
       .catch((err) => reject(err));
   });
 }
+//var localUrl = "http://localhost:8081"
+export function getOnlyWords(token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/dt-word/all/only-words",
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: token
+      }
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  });
+}

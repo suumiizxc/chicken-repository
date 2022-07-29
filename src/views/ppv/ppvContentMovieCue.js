@@ -1187,7 +1187,12 @@ return (
                                         ]}
                                         
                                         >
-                                            <Input />
+                                            <Input 
+                                            onChange={(e)=>{
+                                              if(e.target.value.includes("  "))
+                                                message.warning("Давхар зай")
+                                            }}
+                                            />
                                         </Form.Item>
                                     
                                     </Col>

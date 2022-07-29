@@ -17,6 +17,7 @@ import {
   Tooltip,
   Descriptions,
   Tag,
+  AutoComplete,
 } from "antd";
 import {
   DeleteOutlined,
@@ -37,7 +38,7 @@ import {
     deleteContentMovieCueWordAPI,
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
-
+const {Option} = AutoComplete;
 export default function Index(props) {
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} />;
   const [form] = Form.useForm();
@@ -66,6 +67,7 @@ export default function Index(props) {
     updateData:{
         id : null
     },
+    results: []
   });
   const columns = [
     {
@@ -312,6 +314,14 @@ export default function Index(props) {
     setPPVContentMovieCueWordStates({ ...ppvContentMovieCueWordStates });
   };
 
+  const handleSearch = (value) =>{
+    if (!value)
+      ppvContentMovieCueWordStates.results = [];
+    else
+      ppvContentMovieCueWordStates.results = props.Search(value, 0, props.root);
+    setPPVContentMovieCueWordStates({...ppvContentMovieCueWordStates});
+  }
+
 
   useEffect(() => {
     console.log("listening useffect");
@@ -389,10 +399,19 @@ return (
                                         <Form.Item
                                         name={"word_value"}
                                         label="Word value"
-                                        
-                                        
                                         >
-                                            <Input />
+                                            <AutoComplete
+                                            onSearch={handleSearch}
+                                            >
+                                              {
+                                                ppvContentMovieCueWordStates.results.map((word)=>{
+                                                  return (
+                                                  <Option key={word} value={word}>
+                                                    {word}
+                                                  </Option>);
+                                                })
+                                              }
+                                            </AutoComplete>
                                         </Form.Item>
                                     
                                     </Col>
@@ -469,7 +488,18 @@ return (
                                        label="Word value"
                                        
                                        >
-                                           <Input />
+                                           <AutoComplete
+                                            onSearch={handleSearch}
+                                            >
+                                              {
+                                                ppvContentMovieCueWordStates.results.map((word)=>{
+                                                  return (
+                                                  <Option key={word} value={word}>
+                                                    {word}
+                                                  </Option>);
+                                                })
+                                              }
+                                            </AutoComplete>
                                        </Form.Item>
                                    
                                    </Col>
