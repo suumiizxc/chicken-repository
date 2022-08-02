@@ -18,6 +18,9 @@ import {
   Descriptions,
   Tag,
   AutoComplete,
+  Badge,
+  Dropdown,
+  Menu,
 } from "antd";
 import {
   DeleteOutlined,
@@ -30,6 +33,10 @@ import {
   PlusOutlined,
   RollbackOutlined,
   ArrowsAltOutlined,
+  WarningOutlined,
+  LinkOutlined,
+  ArrowDownOutlined,
+  EllipsisOutlined
 } from "@ant-design/icons";
 import {
     getAllContentMovieCueWordByCueAPI,
@@ -38,6 +45,7 @@ import {
     deleteContentMovieCueWordAPI,
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
+import { render } from "@testing-library/react";
 const {Option} = AutoComplete;
 export default function Index(props) {
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} />;
@@ -54,21 +62,31 @@ export default function Index(props) {
     });
     return word.slice(0, -1).toLowerCase();
   }
+  
+  // window.onscroll = (event)=>{
+  //   window.scrollTo(window.scrollX,window.scrollY)
+  //   console.log(window.scrollY)
+  // }
 
   const [ppvContentMovieCueWordStates, setPPVContentMovieCueWordStates] = useState({
     token: localStorage.getItem("token"),
     card_title: "Видео интро",
     loader: false,
     isModalVisible: false,
-    data: null,
+    data: [],
     action: null,
     host_source: null,
     insertData: null,
     updateData:{
         id : null
     },
-    results: []
+    results: [],
+    conjunctions_index: [],
+    pagination: 0,
   });
+
+  window.scrollTo(0,props.pages.content_movie_cue_word_current_srollY);
+  console.log(window.scrollY);
   const columns = [
     {
         title : "Id",
@@ -88,7 +106,41 @@ export default function Index(props) {
     {
         title : "Word value",
         dataIndex : "word_value",
-        key :"word_value"
+        key :"word_value",
+        render: (text, _,index) => {
+          if(ppvContentMovieCueWordStates.conjunctions_index.indexOf(index + ppvContentMovieCueWordStates.pagination) > -1){
+            return (
+            <span>
+              <p style={{marginRight:"5px", color:"black" }}>{text} <Badge count={<LinkOutlined style={{color:"yellow"}}/>}></Badge></p>
+            </span>
+            )
+          }
+          return <p style={{color:"black"}}>{text}</p>
+        }
+    },
+    {
+      title: "Conjunction",
+      dataIndex: "conjunction",
+      key: "conjunction",
+      render(_,row) {
+        return (
+          <Dropdown overlay={
+            <Menu items={(props.Search(row.word_value+" ", 0, props.root)).map((word)=>{
+              return{
+                label: (
+                  <p>{word}</p>
+                )
+              }
+            })}></Menu>
+          }>
+          {
+            props.Search(row.word_value+" ", 0, props.root).length !== 0 ? <Divider>
+              <EllipsisOutlined/>
+            </Divider>:<></>
+          }
+          </Dropdown>
+        )
+      }
     },
     {
         title : "Space next",
@@ -98,7 +150,7 @@ export default function Index(props) {
     {
         title : "Ordering",
         dataIndex : "ordering",
-        key :"ordering"
+        key :"ordering",
     },
     {
         title : "Үйлдэл",
@@ -180,6 +232,7 @@ export default function Index(props) {
           ppvContentMovieCueWordStates.data = res.data.data;
           setPPVContentMovieCueWordStates({ ...ppvContentMovieCueWordStates });
           console.log("success all writing", res.data.data);
+          initConjunction();
         } else {
           //unsuccessful
           message.error("Алдаа гарлаа");
@@ -322,6 +375,22 @@ export default function Index(props) {
     setPPVContentMovieCueWordStates({...ppvContentMovieCueWordStates});
   }
 
+  const initConjunction = () =>{
+    var data = ppvContentMovieCueWordStates.data;
+    for(var i=0; i<data.length - 1; i++){
+      var value = data[i].word_value;
+      for(var j=i+1; j < data.length - 1; j++){
+        value += " "+data[j].word_value
+        if(props.Search(value, 0, props.root).length === 1 && props.Search(value, 0, props.root).indexOf(value) > -1){
+          for(var index = i; index<=j; index++)
+            ppvContentMovieCueWordStates.conjunctions_index.push(index)
+          setPPVContentMovieCueWordStates({...ppvContentMovieCueWordStates})
+        }else if(props.Search(value, 0, props.root).length === 0){
+          break;
+        }
+      }
+    }
+  }
 
   useEffect(() => {
     console.log("listening useffect");
@@ -353,7 +422,15 @@ return (
             Word нэмэх
           </Button>
         </div>
-        <Table columns={columns} dataSource={ppvContentMovieCueWordStates.data} />
+        <Table columns={columns} dataSource={ppvContentMovieCueWordStates.data} 
+        onChange={(e)=>{
+          if(e.current > 1)
+            ppvContentMovieCueWordStates.pagination = 10*(e.current-1);
+          else
+            ppvContentMovieCueWordStates.pagination = 0;
+          setPPVContentMovieCueWordStates({...ppvContentMovieCueWordStates});
+        }}
+        />
         <Modal
           title="Word edit"
           width={"90%"}

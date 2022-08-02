@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { message, Spin } from "antd";
+import { message, Pagination, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -79,6 +79,7 @@ function add(str, i, root) {
 
   if (i === str.length) {
       root.isTerminal = true;
+      root.words.push(str)
       return;
   }
 
@@ -91,7 +92,10 @@ function add(str, i, root) {
 
 function search(str, i, root) {
   if (i === str.length)
-      return root.words;
+      if(root.words.indexOf(str) > -1)
+        return [str]
+      else
+        return root.words
 
   if (!root.map[str[i]])
       return [];
@@ -146,6 +150,16 @@ function App() {
     articleId : null,
     articleCueId : null,
   });
+
+  const [pages, setPages] = useState({
+    content_current_pageSize: 10,
+    content_current_scrollY: 0,
+    content_movie_current_scrollY: 0,
+    content_movie_cue_current_pageSize: 10,
+    content_movie_cue_vocabulary_current_pageSize:10,
+    content_movie_cue_current_scrollY: 0,
+    content_movie_cue_word_current_srollY: 0,
+  })
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} spin />;
 
   //Loader css
@@ -156,12 +170,44 @@ function App() {
     transform: "translate(-50%, -50%)",
   };
   
+  onscroll = () => {
+    if(window.scrollY !== 0 && window.scrollY !==572){
+      switch(window.location.pathname){
+        case "/ppv/content":
+          pages.content_current_scrollY = window.scrollY;
+          break;
+        case "/ppv/content-movie":
+          pages.content_movie_current_scrollY = window.scrollY;
+          break;
+        case "/ppv/content-movie-cue":
+          pages.content_movie_cue_current_scrollY = window.scrollY;
+          break;
+        case "/ppv/content-movie-cue-word":
+          pages.content_movie_cue_word_current_srollY = window.scrollY;
+          break;
+      }
+      setPages({...pages});
+    }
+  }
+
   onpopstate = () => {
     switch(window.location.pathname){
       case "/ppv/content":
         courseIds.vocabulary_current_page = 1;
         courseIds.content_movie_cue_current_page =1;
         setCourseIds({...courseIds});
+        pages.content_movie_current_scrollY = 0;
+        setPages({...pages})
+        break;
+      case "/ppv/content-movie":
+        pages.content_movie_cue_current_pageSize = 10;
+        pages.content_movie_cue_current_scrollY = 0;
+        pages.content_movie_cue_vocabulary_current_pageSize = 10;
+        setPages({...pages});
+        break;
+      case "/ppv/content-movie-cue":
+        pages.content_movie_cue_word_current_srollY = 0;
+        setPages({...pages});
         break;
     }
   }
@@ -184,7 +230,6 @@ function App() {
     for(const word of allWords){
       add(word.word, 0, root)
     }
-    console.log("done")
     setRootNode({...root})
   }
 
@@ -528,6 +573,8 @@ function App() {
                 path="/ppv/content"
                 element={
                   <PPVContent
+                    pages={pages}
+                    setPages={setPages}
                     userData={userData}
                     setUserData={setUserData}
                     loader={loader}
@@ -541,6 +588,8 @@ function App() {
                 path="/ppv/content-movie"
                 element={
                   <PPVContentMovie
+                    pages={pages}
+                    setPages={setPages}
                     userData={userData}
                     setUserData={setUserData}
                     loader={loader}
@@ -554,6 +603,8 @@ function App() {
                 path="/ppv/content-movie-cue"
                 element={
                   <PPVContentMovieCue
+                    pages={pages}
+                    setPages={setPages}
                     userData={userData}
                     setUserData={setUserData}
                     loader={loader}
@@ -567,6 +618,8 @@ function App() {
                 path="/ppv/content-movie-cue-word"
                 element={
                   <PPVContentMovieCueWord
+                    pages={pages}
+                    setPages={setPages}
                     root = {rootNode}
                     setRoot = {setRootNode}
                     Search={search}

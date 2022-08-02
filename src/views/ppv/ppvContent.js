@@ -100,6 +100,8 @@ export default function Index(props) {
     product_menu: null,
   });
 
+  window.scrollTo(0,props.pages.content_current_scrollY);
+  console.log(window.scrollY);
   const handleFileRead = async (event) => {
     const file = event.target.files[0]
     const base64 = await convertBase64(file)
@@ -903,10 +905,16 @@ return (
         </div>
         <Table columns={columns} dataSource={ppvContentStates.data}
         onChange={(newPagination)=>{
-          props.courseIds.content_current_page = newPagination.current
-          props.setCourseIds({...props.courseIds})
+          props.courseIds.content_current_page = newPagination.current;
+          props.setCourseIds({...props.courseIds});
+          props.pages.content_current_pageSize = newPagination.pageSize;
+          props.setPages({...props.pages});
+          console.log(props.pages.content_current_pageSize);
         }}
-        pagination={{current:props.courseIds.content_current_page}}
+        pagination={{
+          pageSize:props.pages.content_current_pageSize,
+          current:props.courseIds.content_current_page
+        }}
         />
         <Modal
           title="PPV edit"

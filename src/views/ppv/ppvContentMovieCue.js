@@ -88,7 +88,8 @@ export default function Index(props) {
     words_not_in_dtword: null,
   });
 
-  
+  //window.scrollTo(0,props.pages.content_movie_cue_current_scrollY);
+  console.log(window.scrollY);
   const symbols = [",", ".", ":", ";", "/", "!","-","_", `'`, `"`, `...`, `?`, `s`,`)`,`(`,`|`];
 
   const columns_vocabulary = [
@@ -1055,8 +1056,13 @@ return (
         onChange={(newPagination)=>{
           props.courseIds.content_movie_cue_current_page = newPagination.current
           props.setCourseIds({...props.courseIds})
+          props.pages.content_movie_cue_current_pageSize = newPagination.pageSize
+          props.setPages({...props.pages})
         }}
-        pagination={{current:props.courseIds.content_movie_cue_current_page}}
+        pagination={{
+          pageSize: props.pages.content_movie_cue_current_pageSize,
+          current:props.courseIds.content_movie_cue_current_page
+        }}
         />
         <h1>PPV Quiz vocabulary</h1>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -1095,8 +1101,12 @@ return (
         onChange={(newPagination)=>{
           props.courseIds.vocabulary_current_page = newPagination.current
           props.setCourseIds({...props.courseIds})
+          props.pages.content_movie_cue_vocabular_current_pageSize = newPagination.pageSize
+          props.setPages({...props.pages})
         }}
-        pagination={{current:props.courseIds.vocabulary_current_page}}
+        pagination={{
+          pageSize: props.pages.content_movie_cue_vocabulary_current_pageSize,
+          current:props.courseIds.vocabulary_current_page}}
         />
         <Modal
           title="Cue edit"

@@ -80,6 +80,8 @@ export default function Index(props) {
     upload_video_b64: null,
   });
 
+  window.scrollTo(0,props.pages.content_movie_current_scrollY);
+  console.log(window.scrollY);
   const handleFileRead = async (event) => {
     const file = event.target.files[0]
     const base64 = await convertBase64(file)
