@@ -2411,6 +2411,22 @@ export function deleteContentProduct(product_id, token){
     .catch((err) => reject(err));
   });
 }
+
+export function getWordTranslationByCueID(cue_id, token){
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: url + "/api/dt-word-translation/word-translation-by-cue-id/" + cue_id,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token
+      }
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  });
+}
+
 // const url = "http://localhost:8081/"
 // export function getPPVContentCategoryByID(id, token){
 //   return new Promise((resolve, reject) => {

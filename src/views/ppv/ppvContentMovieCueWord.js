@@ -82,11 +82,11 @@ export default function Index(props) {
     },
     results: [],
     conjunctions_index: [],
+    conjunctions_not_in_DTWord_index: [],
     pagination: 0,
   });
 
-  window.scrollTo(0,props.pages.content_movie_cue_word_current_srollY);
-  console.log(window.scrollY);
+  window.scrollTo(window.scrollX,props.pages.content_movie_cue_word_current_srollY);
   const columns = [
     {
         title : "Id",
@@ -108,6 +108,13 @@ export default function Index(props) {
         dataIndex : "word_value",
         key :"word_value",
         render: (text, _,index) => {
+          if(ppvContentMovieCueWordStates.conjunctions_not_in_DTWord_index.indexOf(index + ppvContentMovieCueWordStates.pagination) > -1){
+            return (
+              <span>
+                <p style={{marginRight:"5px", color:"black" }}>{text} <Badge count={<LinkOutlined style={{color:"red"}}/>}></Badge></p>
+              </span>
+              )
+          }
           if(ppvContentMovieCueWordStates.conjunctions_index.indexOf(index + ppvContentMovieCueWordStates.pagination) > -1){
             return (
             <span>
@@ -233,6 +240,7 @@ export default function Index(props) {
           setPPVContentMovieCueWordStates({ ...ppvContentMovieCueWordStates });
           console.log("success all writing", res.data.data);
           initConjunction();
+          initConjunctionNotInDTWord();
         } else {
           //unsuccessful
           message.error("Алдаа гарлаа");
@@ -379,13 +387,30 @@ export default function Index(props) {
     var data = ppvContentMovieCueWordStates.data;
     for(var i=0; i<data.length - 1; i++){
       var value = data[i].word_value;
-      for(var j=i+1; j < data.length - 1; j++){
+      for(var j=i+1; j < data.length; j++){
         value += " "+data[j].word_value
         if(props.Search(value, 0, props.root).length === 1 && props.Search(value, 0, props.root).indexOf(value) > -1){
           for(var index = i; index<=j; index++)
             ppvContentMovieCueWordStates.conjunctions_index.push(index)
           setPPVContentMovieCueWordStates({...ppvContentMovieCueWordStates})
         }else if(props.Search(value, 0, props.root).length === 0){
+          break;
+        }
+      }
+    }
+  }
+
+  const initConjunctionNotInDTWord = () =>{
+    var data = ppvContentMovieCueWordStates.data;
+    for(var i=0; i<data.length - 1; i++){
+      var value = data[i].word_value;
+      for(var j=i+1; j < data.length; j++){
+        value += " "+data[j].word_value
+        if(props.Search(value, 0, props.pages.content_movie_cue_conjunction_root).length === 1 && props.Search(value, 0, props.pages.content_movie_cue_conjunction_root).indexOf(value) > -1){
+          for(var index = i; index<=j; index++)
+            ppvContentMovieCueWordStates.conjunctions_not_in_DTWord_index.push(index)
+          setPPVContentMovieCueWordStates({...ppvContentMovieCueWordStates})
+        }else if(props.Search(value, 0, props.pages.content_movie_cue_conjunction_root).length === 0){
           break;
         }
       }
@@ -622,7 +647,6 @@ return (
                    </Form>
                )
             } 
-          
             })()}
         </Modal>
       </Spin>

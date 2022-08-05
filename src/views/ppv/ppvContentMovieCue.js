@@ -18,6 +18,7 @@ import {
   Descriptions,
   Affix,
   Tag,
+  BackTop
   
 } from "antd";
 import {
@@ -33,6 +34,8 @@ import {
   ArrowsAltOutlined,
   ReloadOutlined,
   UnorderedListOutlined,
+  ExclamationCircleFilled,
+  CopyOutlined,
 } from "@ant-design/icons";
 import {
     getAllContentMovieCueByMovieAPI,
@@ -52,6 +55,7 @@ import {
     getContenMovieByID,
     generatePPVVocabularyByMovieID,
     getWordsNotInDTWordByMovieID,
+    getWordTranslationByCueID,
 
     //getAllContentMovieCueWordByCueAPI,
     
@@ -85,11 +89,11 @@ export default function Index(props) {
     from_language_translation: null,
     isBulk : true,
     space_next: false,
-    words_not_in_dtword: null,
+    words_not_in_dtword:[],
+    cue_word_translations:[],
   });
-
-  //window.scrollTo(0,props.pages.content_movie_cue_current_scrollY);
-  console.log(window.scrollY);
+  
+  window.scrollTo(window.scrollX,props.pages.content_movie_cue_current_scrollY);
   const symbols = [",", ".", ":", ";", "/", "!","-","_", `'`, `"`, `...`, `?`, `s`,`)`,`(`,`|`];
 
   const columns_vocabulary = [
@@ -118,7 +122,6 @@ export default function Index(props) {
         />
       )
     }
-
   ]
 
   const fixWord = (word) =>{
@@ -208,7 +211,13 @@ export default function Index(props) {
     {
         title : "From language translation",
         dataIndex : "from_language_translation",
-        key :"from_language_translation"
+        key :"from_language_translation",
+        render: (text)=>{
+          return text.includes("  ") ? 
+          <p style={{color:"black"}}>{text} <ExclamationCircleFilled style={{color:"yellow"}}/></p> 
+          : 
+          <p style={{color:"black"}}>{text}</p>
+        },
     },
     {
         title : "To language id",
@@ -218,7 +227,13 @@ export default function Index(props) {
     {
         title : "To language translation",
         dataIndex : "to_language_translation",
-        key :"to_language_translation"
+        key :"to_language_translation",
+        render: (text)=>{
+          return text.includes("  ") ? 
+          <p style={{color:"black"}}>{text} <ExclamationCircleFilled style={{color:"yellow"}}/></p> 
+          : 
+          <p style={{color:"black"}}>{text}</p>
+        }
     },
     {
         title : "Үйлдэл",
@@ -253,6 +268,7 @@ export default function Index(props) {
                     ppvContentMovieCueStates.id = record.id;
                     ppvContentMovieCueStates.isModalVisible = true;
                     //deleteListeningDataByCueID(record);
+                    getTranslationByCueID(record.id);
                     getFormData(record);
                     ppvContentMovieCueStates.from_language_translation = form.getFieldValue('from_language_translation')
                     setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
@@ -294,6 +310,24 @@ export default function Index(props) {
         )
     }
     
+  ]
+
+  const cue_edit_column = [
+    {
+      title: "Word value",
+      dataIndex: "word",
+      key: "word"
+    },
+    {
+      title: "Translation",
+      dataIndex: "translation_text",
+      key: "translation_text"
+    },
+    {
+      title: "Root word",
+      dataIndex: "root_word",
+      key: "root_word"
+    }
   ]
 
   const getFormData = (record) => {
@@ -938,6 +972,10 @@ export default function Index(props) {
         ppvContentMovieCueStates.loader = false;
         ppvContentMovieCueStates.words_not_in_dtword = res.data.data;
         setPPVContentMovieCueStates({...ppvContentMovieCueStates});
+        for(const words of ppvContentMovieCueStates.words_not_in_dtword){
+          props.add(words.word_value, 0, props.pages.content_movie_cue_conjunction_root)
+        }
+        props.setPages({...props.pages})
         message.success("Амжилттай");
       }else{
         ppvContentMovieCueStates.loader = false;
@@ -954,6 +992,24 @@ export default function Index(props) {
     });
   }
 
+  const getTranslationByCueID = (cue_id) =>{
+    ppvContentMovieCueStates.loader = true;
+    setPPVContentMovieCueStates({...ppvContentMovieCueStates});
+    getWordTranslationByCueID(cue_id, ppvContentMovieCueStates.token).then((res) => {
+      ppvContentMovieCueStates.loader = false;
+      setPPVContentMovieCueStates({...ppvContentMovieCueStates});
+      if(res && res.data && res.data.status){
+        ppvContentMovieCueStates.cue_word_translations = res.data.data;
+        setPPVContentMovieCueStates({...ppvContentMovieCueStates});
+      }else{
+        message.error("Амжилтгүй");
+      }
+    }).catch((e) => {
+      ppvContentMovieCueStates.loader = false;
+      setPPVContentMovieCueStates({...ppvContentMovieCueStates});
+      message.error("Амжилтгүй");
+    })
+  }
 
   useEffect(() => {
     console.log("listening useffect");
@@ -1049,9 +1105,19 @@ return (
           </Button>
         </div>
         <h1>PPV content movie cue</h1>
-        <Affix>
         <Divider orientation="center"><h1>{ppvContentMovieCueStates.movie_name}</h1></Divider>
-        </Affix>
+        <BackTop
+          style={{margin:"50px"}}
+        >
+          <div style={{
+          padding:"10px",
+          width: "150px",
+          borderRadius: 20,
+          backgroundColor: '#2e2e2e',
+          color: '#fff',
+          textAlign: 'center',
+          fontSize: 14,}}>{ppvContentMovieCueStates.movie_name}</div>
+        </BackTop>
         <Table columns={columns} dataSource={ppvContentMovieCueStates.data} 
         onChange={(newPagination)=>{
           props.courseIds.content_movie_cue_current_page = newPagination.current
@@ -1065,6 +1131,35 @@ return (
         }}
         />
         <h1>PPV Quiz vocabulary</h1>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button
+            icon={<CopyOutlined/>}
+            type="primary"
+            style={{
+              marginBottom: 16,
+            }}
+            onClick={()=>{
+              // ppvContentMovieCueStates.action = "SEE_MY_MONGOLIAN_TOY"
+              // setPPVContentMovieCueStates({...ppvContentMovieCueStates})
+              // ppvContentMovieCueStates.isModalVisible = true
+              // setPPVContentMovieCueStates({...ppvContentMovieCueStates})
+              navigator.clipboard.writeText((ppvContentMovieCueStates.data).map((record) => {
+                return record.to_language_translation + "\n"
+              })).then(function() {
+                navigator.clipboard.readText().then((res) => {
+                  navigator.clipboard.writeText(res.replaceAll("\n,", "\n")).then(function(){
+                    console.log(res)
+                    message.success("Copied to clipboard")
+                  })
+                })
+              }, function() {
+                message.error("My mongolian copy failed")
+              });
+            }}
+          >
+            Copy Mongolian translation
+          </Button>
+        </div>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <Button
             icon={<ReloadOutlined />}
@@ -1096,6 +1191,7 @@ return (
             Үгсийн санд байхгүй үг
           </Button>
         </div>
+        
         {/* <Divider orientation="center"><h1>{ppvContentMovieCueStates.movie_name}</h1></Divider> */}
         <Table columns={columns_vocabulary} dataSource={ppvContentMovieCueStates.vocList} 
         onChange={(newPagination)=>{
@@ -1228,11 +1324,17 @@ return (
                                         ]}
                                         
                                         >
-                                            <Input />
+                                            <Input 
+                                            onChange={(e)=>{
+                                              if(e.target.value.includes("  "))
+                                                message.warning("Давхар зай")
+                                            }}
+                                            />
                                         </Form.Item>
-                                    
                                     </Col>
-                                        
+                                    <Col span={20} offset={3}>
+                                        <Table columns={cue_edit_column} dataSource={ppvContentMovieCueStates.cue_word_translations}></Table>
+                                    </Col>
                                 </Row>
                             </Col>
                         </Row>

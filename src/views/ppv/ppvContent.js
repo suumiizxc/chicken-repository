@@ -100,8 +100,7 @@ export default function Index(props) {
     product_menu: null,
   });
 
-  window.scrollTo(0,props.pages.content_current_scrollY);
-  console.log(window.scrollY);
+  window.scrollTo(window.scrollX,props.pages.content_current_scrollY);
   const handleFileRead = async (event) => {
     const file = event.target.files[0]
     const base64 = await convertBase64(file)
@@ -391,7 +390,6 @@ export default function Index(props) {
           //success
           ppvContentStates.data = res.data.data;
           setPPVContentStates({ ...ppvContentStates });
-          console.log("success all writing", ppvContentStates);
         } else {
           //unsuccessful
           message.error("Алдаа гарлаа");
@@ -670,7 +668,6 @@ export default function Index(props) {
       if(res && res.data && res.data.status){
         ppvContentStates.products = res.data.data;
         setPPVContentStates({...ppvContentStates});
-        console.log(ppvContentStates.products)
       }else{
         message.success("Амжилтгүй");
       }
@@ -770,7 +767,6 @@ export default function Index(props) {
     var checkedCProductID = {}
     var checkedProducts = ppvContentStates.content_product.map((cproduct) => {
       checkedCProductID[cproduct.product_id] = cproduct.id
-      console.log(cproduct)
       return cproduct.product_id
     })
     
@@ -870,9 +866,9 @@ export default function Index(props) {
 
   useEffect(() => {
     console.log("listening useffect");
+    getAllPPVContent();
     getLevelOptions();
     getCategoryOptions();
-    getAllPPVContent();
     getAllAgeCategory();
     getAllProduct();
   }, []);

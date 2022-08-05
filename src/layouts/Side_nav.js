@@ -17,7 +17,6 @@ export default function Side_nav() {
   const [collapse, setCollapse] = useState(false);
   const navigate = useNavigate();
   const handleClick = (e) => {
-    console.log("click ", e);
     if (e.key === "3.1") {
       navigate("/course/intro-video");
     } else if (e.key === "3.2") {
@@ -39,7 +38,7 @@ export default function Side_nav() {
     else if (e.key === "2.7") {
       navigate("/article")
     }
-    else if(e.key === "5"){
+    else if(e.key === "4"){
       navigate("/users")
     }
   };
@@ -106,15 +105,10 @@ export default function Side_nav() {
           <Menu.Item key="3.2">{"Mixed видео"}</Menu.Item>
           {/* </Menu.ItemGroup> */}
         </SubMenu>
-        <SubMenu key="4" icon={<MailOutlined />} title="Coming soon">
-          <Menu.ItemGroup key="4.1" title="Item 1">
-            <Menu.Item key="4.1.1">{"Coming soon"}</Menu.Item>
-            <Menu.Item key="4.1.2">{"Coming soon"}</Menu.Item>
-          </Menu.ItemGroup>
-        </SubMenu>
-        <MenuItem key="5" icon={<UserOutlined/>} title="Хэрэглэгчид">
+        <MenuItem key="4" icon={<UserOutlined/>} title="Хэрэглэгчид">
           {"Хэрэглэгчид"}
         </MenuItem>
+
       </Menu>
     </div>
   );

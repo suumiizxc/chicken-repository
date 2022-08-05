@@ -112,6 +112,7 @@ function App() {
   const root = new makeNode('\0')
   var allWords = [];
   const [rootNode, setRootNode] = useState([])
+
   const [userData, setUserData] = useState({
     id: null,
     first_name: null,
@@ -159,6 +160,7 @@ function App() {
     content_movie_cue_vocabulary_current_pageSize:10,
     content_movie_cue_current_scrollY: 0,
     content_movie_cue_word_current_srollY: 0,
+    content_movie_cue_conjunction_root: null,
   })
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} spin />;
 
@@ -169,9 +171,10 @@ function App() {
     left: "50%",
     transform: "translate(-50%, -50%)",
   };
+   
   
   onscroll = () => {
-    if(window.scrollY !== 0 && window.scrollY !==572){
+    if(window.scrollY !== 0){
       switch(window.location.pathname){
         case "/ppv/content":
           pages.content_current_scrollY = window.scrollY;
@@ -231,12 +234,15 @@ function App() {
       add(word.word, 0, root)
     }
     setRootNode({...root})
+    pages.content_movie_cue_conjunction_root = new makeNode('\0')
+    setPages({...pages})
   }
 
   useEffect(()=>{
     GetOnlyWords()
   }, [])
 
+  
   return (
     <>
       {loader ? (
@@ -603,6 +609,7 @@ function App() {
                 path="/ppv/content-movie-cue"
                 element={
                   <PPVContentMovieCue
+                    add={add}
                     pages={pages}
                     setPages={setPages}
                     userData={userData}
