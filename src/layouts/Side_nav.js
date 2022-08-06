@@ -14,7 +14,7 @@ import MenuItem from "antd/lib/menu/MenuItem";
 const { SubMenu } = Menu;
 
 export default function Side_nav() {
-  const [collapse, setCollapse] = useState(false);
+  const [collapse, setCollapse] = useState(true);
   const navigate = useNavigate();
   const handleClick = (e) => {
     if (e.key === "3.1") {
@@ -71,18 +71,6 @@ export default function Side_nav() {
             padding: "14px 24px 14px 24px",
           }}
         >
-          <div>
-            {collapse ? (
-              <></>
-            ) : (
-              <img
-                className="img-fluid"
-                src={"/img/logo/medlegten_logo.svg"}
-                alt="medlgeten app logo"
-                width="100%"
-              />
-            )}
-          </div>
           <Button type="primary" size="small" onClick={toggleCollapsed}>
             {collapse ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           </Button>

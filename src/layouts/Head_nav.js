@@ -21,10 +21,17 @@ export default function Head_nav(props) {
   return (
     <div style={style}>
       <PageHeader
+        title=
+        {(<div style={{display:"flex", alignItems:"end"}}>
+          <img
+          width={40}
+          src={"/img/logo/lingos-logo.jpg"}
+          >
+          </img>
+          <a style={{marginLeft:"10px", color:"black"}}>ЛИНГОС | LINGOS</a>
+        </div>)}
         ghost={false}
         // onBack={() => window.history.back()}
-        title="МЭДЛЭГТЭН | MEDLEGTEN "
-        subTitle="Admin system"
         extra={[
           <Button key="1" size="small">
             Тохиргоо
@@ -33,7 +40,8 @@ export default function Head_nav(props) {
             Гарах
           </Button>,
         ]}
-      ></PageHeader>
+      >
+      </PageHeader>
       {/* <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item>

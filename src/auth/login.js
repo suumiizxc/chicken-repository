@@ -29,18 +29,20 @@ const Login = (props) => {
               <div className="my-4">
                 <div className="text-center">
                   <img
+                    width={100}
                     className="img-fluid"
-                    src={"/img/logo/medlegten_logo.svg"}
-                    alt="medlgeten app logo"
+                    src={"/img/logo/lingos-logo.jpg"}
+                    alt="lingos app logo"
                   />
                   <p
                     style={{
                       marginTop: "16px",
                       fontWeight: "bold",
                       color: "#1a3353",
+                      fontSize: "20px"
                     }}
                   >
-                    МЭДЛЭГТЭН
+                    LingoS
                   </p>
                   <p>
                     Та бүртгүүлэх үү? <a href="/auth/register-1">Бүртгүүлэх</a>

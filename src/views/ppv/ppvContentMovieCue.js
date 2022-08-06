@@ -423,7 +423,7 @@ export default function Index(props) {
                 //success
                 ppvContentMovieCueStates.insertData = res.data.data;
                 setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
-                deleteListeningDataByCueID(res.data.data)
+                //deleteListeningDataByCueID(res.data.data)
                 splitStringSendWord(res.data.data.id, res.data.data.from_language_translation)
                 getAllReading(props.courseIds.ppvContentMovieId);
                 console.log("success insert writing", res.data.data);
@@ -662,12 +662,6 @@ export default function Index(props) {
         })
         for(var i = 0; i < Math.floor(bulkCue.length / 4); i++) {
           console.log("iii : ", i)
-          const inObj = {
-            ordering : parseInt(bulkCue[i * 4]), 
-            start_time : bulkCue[i * 4 + 1],
-            end_time : bulkCue[i * 4 + 2],
-            text : bulkCue[i * 4 + 3]
-          }
           var insObj = {
             movie_id : parseInt(props.courseIds.ppvContentMovieId),
             ordering : parseInt(bulkCue[i * 4]), 
@@ -677,7 +671,6 @@ export default function Index(props) {
             from_language_translation : bulkCue[i * 4 + 3],
             to_language_id : 1,
             to_language_translation : "",
-
           };
           insertListeningData(insObj);
           ppvContentMovieCueStates.isBulk = false;
