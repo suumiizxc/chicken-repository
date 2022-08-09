@@ -93,7 +93,7 @@ export default function Index(props) {
     cue_word_translations:[],
   });
   
-  window.scrollTo(window.scrollX,props.pages.content_movie_cue_current_scrollY);
+  window.scrollTo(window.scrollX, props.pages.content_movie_cue_current_scrollY);
   const symbols = [",", ".", ":", ";", "/", "!","-","_", `'`, `"`, `...`, `?`, `s`,`)`,`(`,`|`];
 
   const columns_vocabulary = [
@@ -236,6 +236,32 @@ export default function Index(props) {
         }
     },
     {
+      title: "Selected for listening",
+      dataIndex: "is_selected_for_listening",
+      key: "is_selected_for_listening",
+      render: (text, values)=>{
+        return (<Checkbox
+          checked = {text == 1}
+        onChange={()=>{
+          var updObj = {
+            id : values.id,
+            movie_id : parseInt(props.courseIds.ppvContentMovieId),
+            ordering : parseInt(values.ordering),
+            start_time : values.start_time,
+            end_time : values.end_time, 
+            from_language_id : parseInt(values.from_language_id),
+            from_language_translation : values.from_language_translation,
+            to_language_id : parseInt(values.to_language_id),
+            to_language_translation : values.to_language_translation,
+            is_selected_for_listening: text == 1 ? 0:1
+          };
+          
+            updateListeningData(updObj);
+        }}
+        ></Checkbox>)
+      }
+    },
+    {
         title : "Үйлдэл",
         key : "action",
         fixed : "right",
@@ -342,7 +368,6 @@ export default function Index(props) {
       from_language_translation : record.from_language_translation,
       to_language_id : record.to_language_id,
       to_language_translation : record.to_language_translation,
-      
     });
   };
 
@@ -496,12 +521,12 @@ export default function Index(props) {
   }
 
   const updatePPVVOCData = (id, selected) => {
-    ppvContentMovieCueStates.loader = true;
-    setPPVContentMovieCueStates({ppvContentMovieCueStates})
+    //ppvContentMovieCueStates.loader = true;
+    //setPPVContentMovieCueStates({ppvContentMovieCueStates})
     updatePPVQuizVocByMovieIDAPI(id, selected, ppvContentMovieCueStates.token)
       .then((res) => {
-          ppvContentMovieCueStates.loader = false;
-          setPPVContentMovieCueStates({ppvContentMovieCueStates});
+          //ppvContentMovieCueStates.loader = false;
+          //setPPVContentMovieCueStates({ppvContentMovieCueStates});
           if (res && res.data && res.data.status && res.data.status === true) {
               //success
               // ppvContentMovieCueStates.updateData = res.data.data;
@@ -633,6 +658,7 @@ export default function Index(props) {
             from_language_translation : values.from_language_translation,
             to_language_id : parseInt(values.to_language_id),
             to_language_translation : values.to_language_translation,
+            is_selected_for_listening: 0
           };
           
             updateListeningData(updObj);
@@ -1100,7 +1126,7 @@ return (
         <h1>PPV content movie cue</h1>
         <Divider orientation="center"><h1>{ppvContentMovieCueStates.movie_name}</h1></Divider>
         <BackTop
-          style={{margin:"50px"}}
+          style={{marginRight:"87%", bottom:"100px"}}
         >
           <div style={{
           padding:"10px",
@@ -1207,6 +1233,7 @@ return (
             ppvContentMovieCueStates.isModalVisible = false;
             ppvContentMovieCueStates.action = null;
             setPPVContentMovieCueStates({ ...ppvContentMovieCueStates });
+            document.getElementById('video-player').pause()
           }}
         >
          {(() => {   
@@ -1324,6 +1351,27 @@ return (
                                             }}
                                             />
                                         </Form.Item>
+                                    </Col>
+                                    <Col span={20} offset={4}>
+                                        <video width="360" 
+                                        id="video-player"
+                                        onPlay={(e)=>{
+                                          try{
+                                            e.target.currentTime = parseInt(form.getFieldValue('start_time').split(":")[1] * 60) + parseInt(form.getFieldValue('start_time').split(":")[2])
+                                          }catch(e){}
+                                        }}
+                                        onTimeUpdate={(e)=>{
+                                          try{
+                                            if(e.nativeEvent.target.currentTime >= parseInt(form.getFieldValue('end_time').split(":")[1] * 60) + parseFloat(form.getFieldValue('end_time').split(":")[2].slice(0, -1))-0.2){
+                                              e.target.currentTime = parseInt(form.getFieldValue('start_time').split(":")[1] * 60) + parseInt(form.getFieldValue('start_time').split(":")[2])
+                                            }
+                                          }catch(e){}
+                                        }}
+                                        autoPlay
+                                        controls
+                                        >
+                                          <source src={props.pages.video_url} type="video/mp4"/>
+                                        </video>
                                     </Col>
                                     <Col span={20} offset={3}>
                                         <Table columns={cue_edit_column} dataSource={ppvContentMovieCueStates.cue_word_translations}></Table>

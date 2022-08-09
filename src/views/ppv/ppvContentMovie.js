@@ -463,6 +463,8 @@ export default function Index(props) {
                         navigate("/ppv/content-movie-cue");
                         props.courseIds.ppvContentMovieId = record.id;
                         props.setCourseIds({ ...props.courseIds });
+                        props.pages.video_url = record.host_url;
+                        props.setPages(props.pages)
                     }}
                     icon={<ArrowsAltOutlined style={{ color: "#3e79f7" }} />}
                     />
@@ -1055,6 +1057,7 @@ return (
             ppvContentMovieStates.isModalVisible = false;
             ppvContentMovieStates.action = null;
             setPPVContentMovieStates({ ...ppvContentMovieStates });
+            document.getElementById('video-player1').pause()
           }}
         >
          {(() => {   
@@ -1195,7 +1198,9 @@ return (
                             </Col>
                         </Row>
                         <Col span={8}>
-                            <video id="myVideo" height={300} src={ppvContentMovieStates.movie_video_url} controls></video>
+                            <video id="video-player1" height={300} controls>
+                              <source src={ppvContentMovieStates.movie_video_url} type="video/mp4" ></source>
+                            </video>
                         </Col>
                         <Form.Item wrapperCol={{ offset: 17, span: 7 }}>
                         <Button

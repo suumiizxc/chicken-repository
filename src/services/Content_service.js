@@ -1314,7 +1314,7 @@ export function getAllContentMovieCueByMovieAPI(id, token) {
       method: "get",
       url: url + "/api/ppv-content-movie-cue/profile-by-movie/" + id,
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        //"Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
         Authorization: token,
       },
@@ -1331,7 +1331,7 @@ export function insertContentMovieCueAPI(data, token) {
       method: "post",
       url: url + "/api/ppv-content-movie-cue/insert",
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        //"Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
         Authorization: token,
       },
@@ -1365,7 +1365,7 @@ export function updateContentMovieCueAPI(data, token) {
       method: "put",
       url: url + "/api/ppv-content-movie-cue/update",
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        //"Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
         Authorization: token,
       },
