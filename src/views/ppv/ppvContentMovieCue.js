@@ -93,8 +93,10 @@ export default function Index(props) {
     cue_word_translations:[],
   });
   
-  window.scrollTo(window.scrollX, props.pages.content_movie_cue_current_scrollY);
+  
   const symbols = [",", ".", ":", ";", "/", "!","-","_", `'`, `"`, `...`, `?`, `s`,`)`,`(`,`|`];
+
+  window.scrollTo(window.scrollX, props.pages.content_movie_cue_current_scrollY);
 
   const columns_vocabulary = [
     {
@@ -293,6 +295,7 @@ export default function Index(props) {
                     ppvContentMovieCueStates.updateData = record;
                     ppvContentMovieCueStates.id = record.id;
                     ppvContentMovieCueStates.isModalVisible = true;
+                    ppvContentMovieCueStates.is_selected_for_listening = record.is_selected_for_listening;
                     //deleteListeningDataByCueID(record);
                     getTranslationByCueID(record.id);
                     getFormData(record);
@@ -373,12 +376,12 @@ export default function Index(props) {
 
   //GET All writing list
   const getAllReading = (id) => {
-    ppvContentMovieCueStates.loader = true;
-    setPPVContentMovieCueStates({ ppvContentMovieCueStates });
+    // ppvContentMovieCueStates.loader = true;
+    // setPPVContentMovieCueStates({ ppvContentMovieCueStates });
     getAllContentMovieCueByMovieAPI(id, ppvContentMovieCueStates.token)
       .then((res) => {
-        ppvContentMovieCueStates.loader = false;
-        setPPVContentMovieCueStates({ ppvContentMovieCueStates });
+        // ppvContentMovieCueStates.loader = false;
+        // setPPVContentMovieCueStates({ ppvContentMovieCueStates });
         if (res && res.data && res.data.status && res.data.status === true) {
           //success
           ppvContentMovieCueStates.data = res.data.data;
@@ -392,7 +395,7 @@ export default function Index(props) {
       })
       .catch((e) => {
         //unsuccessful
-        props.setLoader(false);
+        //props.setLoader(false);
         message.error("Алдаа гарлаа ");
         console.log(e);
       });
@@ -658,7 +661,7 @@ export default function Index(props) {
             from_language_translation : values.from_language_translation,
             to_language_id : parseInt(values.to_language_id),
             to_language_translation : values.to_language_translation,
-            is_selected_for_listening: 0
+            is_selected_for_listening: ppvContentMovieCueStates.is_selected_for_listening,
           };
           
             updateListeningData(updObj);

@@ -611,6 +611,9 @@ export default function Index(props) {
       setPPVContentStates({...ppvContentStates})
       if(res && res.data && res.data.status){
         message.success("Амжилттай");
+        ppvContentStates.isModalVisible = false;
+        setPPVContentStates({...ppvContentStates});
+        getContentAgeCategory(data.content_id);
       }else{
         message.error("Амжилтгүй");
       }
@@ -686,6 +689,9 @@ export default function Index(props) {
       setPPVContentStates({...ppvContentStates})
       if(res && res.data && res.data.status){
         message.success("Амжилттай");
+        ppvContentStates.isModalVisible = false;
+        setPPVContentStates({...ppvContentStates});
+        GetContentProductByContentID(data.content_id);
       }else{
         message.success("Амжилтгүй");
       }
@@ -721,10 +727,8 @@ export default function Index(props) {
         "age_category_id":category_id
       })
     }else{
-      DeleteContentAgeCategory(value.target.value)
+      DeleteContentAgeCategory(value.target.value);
     }
-    ppvContentStates.isModalVisible = false;
-    setPPVContentStates({...ppvContentStates});
   }
 
   const handleProductCheckBox = (value, content_id, product_id) => {
@@ -736,8 +740,6 @@ export default function Index(props) {
     }else{
       DeleteContentProduct(value.target.value)
     }
-    ppvContentStates.isModalVisible = false;
-    setPPVContentStates({...ppvContentStates});
   }
 
   const InitAgeCategoryMenu = (content_id) => {
@@ -760,6 +762,7 @@ export default function Index(props) {
         ),
       }
     })
+    ppvContentStates.isModalVisible = true;
     setPPVContentStates({...ppvContentStates})
   } 
 
@@ -782,6 +785,7 @@ export default function Index(props) {
         ),
       }
     })
+    ppvContentStates.isModalVisible = true;
     setPPVContentStates({...ppvContentStates})
   }
 
