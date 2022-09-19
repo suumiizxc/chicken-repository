@@ -3,9 +3,12 @@ import { Button, Menu } from "antd";
 import {
   BankOutlined,
   BarsOutlined,
+  BookOutlined,
   MailOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  SoundOutlined,
+  TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
@@ -40,6 +43,12 @@ export default function Side_nav() {
     }
     else if(e.key === "4"){
       navigate("/users")
+    }
+    else if(e.key === "5.1"){
+      navigate("/hw_listening")
+    }
+    else if(e.key === "5.2"){
+      navigate("/hw_listening_character")
     }
   };
   const toggleCollapsed = () => {
@@ -96,7 +105,15 @@ export default function Side_nav() {
         <MenuItem key="4" icon={<UserOutlined/>} title="Хэрэглэгчид">
           {"Хэрэглэгчид"}
         </MenuItem>
-
+        <SubMenu key="5" icon={<BookOutlined/>} title="Сонсгол шалгах">
+        <MenuItem key="5.1" icon={<SoundOutlined/>} title="Сонсгол">
+          {"Сонсгол"}
+        </MenuItem>
+        <MenuItem key="5.2" icon={<UserOutlined/>} title={"Дүрүүд"}>
+          {"Дүрүүд"}
+        </MenuItem>
+        </SubMenu>
+        {/* <MenuItem key="5"icon={<TeamOutlined/>}>{"Үйлчлүүлэгчид"}</MenuItem> */}
       </Menu>
     </div>
   );

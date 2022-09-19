@@ -23,6 +23,8 @@ import {
   Select,
   Dropdown,
   Menu,
+  Slider,
+  InputNumber,
 } from "antd";
 import {
   DeleteOutlined,
@@ -60,7 +62,10 @@ import {
     getAllProducts,
     getContentProductByContentID,
     inserContentProduct,
-    deleteContentProduct
+    deleteContentProduct,
+    GetChallengeSpeedByContentID,
+    InsertChallengeSpeed,
+    UpdateChallengeSpeedByContentID
 
 } from "../../services/Content_service";
 import { useNavigate } from "react-router-dom";
@@ -99,6 +104,14 @@ export default function Index(props) {
     products : [],
     product_menu: null,
   });
+
+  const [ppvContentChallengeSpeedState, setPPVContentChallengeSpeedState] = useState({
+    id: null,
+    content_id: null,
+    low: null,
+    medium: null,
+    fast: null,
+  })
 
   window.scrollTo(window.scrollX,props.pages.content_current_scrollY);
   const handleFileRead = async (event) => {
@@ -312,13 +325,14 @@ export default function Index(props) {
                     // getAllPPVContent(record);
                     ppvContentStates.updateData = record;
                     ppvContentStates.id = record.id;
-                    ppvContentStates.isModalVisible = true;
+                    getChallengeSpeedByContentID(record.id);
+                    ppvContentStates.isModalVisible = true
                     ppvContentStates.view_img_url = record.profile_img;
                     ppvContentStates.vocabulary_count = record.vocabulary_count;
                     getFormData(record);
                     setPPVContentStates({ ...ppvContentStates });
-                    getContentAgeCategory(record.id)
-                    GetContentProductByContentID(record.id)
+                    getContentAgeCategory(record.id);
+                    GetContentProductByContentID(record.id);
                     }}
                     icon={<EditOutlined style={{ color: "#3e79f7" }} />}
                 />
@@ -662,6 +676,54 @@ export default function Index(props) {
     })
   }
 
+  const getChallengeSpeedByContentID = (content_id) =>{
+    ppvContentStates.loader = true;
+    setPPVContentStates({...ppvContentStates});
+    GetChallengeSpeedByContentID(content_id, ppvContentStates.token).then((res)=>{
+      if(res && res.data && res.data.status){
+        ppvContentChallengeSpeedState = res.data.data;
+        setPPVContentChallengeSpeedState({...ppvContentChallengeSpeedState});
+      }else{
+        message.error("Амжилтгүй");
+      }
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates});
+    }).catch((err) => {
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates});
+      message.error("Амжилтгүй");
+    })
+  }
+  
+  const insertChallengeSpeed = (content_id)=>{
+    ppvContentStates.loader = true;
+    setPPVContentStates({...ppvContentStates});
+    InsertChallengeSpeed({"content_id":content_id}, ppvContentStates.token).then((res) => {
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates});
+      if(!res || !res.data.status){
+        message.error("Challenge speed оруулахад алдаа гарлаа");
+      }
+    })
+    .catch((err) => {
+      message.error("Challenge speed оруулахад алдаа гарлаа");
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates});
+    })
+  }
+
+  const updateChallengeSpeedByContentID = (data)=>{
+    ppvContentStates.loader = true;
+    setPPVContentStates({...ppvContentStates})
+    UpdateChallengeSpeedByContentID(data, ppvContentStates.token).then((res) => {
+      ppvContentStates.loader = false;
+      setPPVContentStates({...ppvContentStates});
+      getChallengeSpeedByContentID(data.content_id);
+    }).catch((err) => {
+      message.error("Challenge speed update failed");
+    })
+  }
+
   const getAllProduct = () => {
     ppvContentStates.loader = true;
     setPPVContentStates({...ppvContentStates});
@@ -798,6 +860,10 @@ export default function Index(props) {
           insertListeningData(inObj);
           getAllPPVContent();
       } else if (ppvContentStates.action == "EDIT") {
+          // var challenegeSpeedUpObj = {
+          //   id: ppv
+          //   content_id: ppvContentStates.id
+          // }
           var updObj = {id : ppvContentStates.id, category_id : parseInt(ppvContentStates.CategoryDataMap[values.category_id]), intro : values.intro, is_active : parseInt(values.is_active), is_serial : parseInt(values.is_serial), level_id : parseInt(ppvContentStates.LevelDataMap[values.level_id]), name : values.name, profile_img : values.profile_img, vocabulary_count : parseInt(ppvContentStates.vocabulary_count)};
           updateListeningData(updObj);
           getFormData({name:""})
@@ -909,7 +975,6 @@ return (
           props.setCourseIds({...props.courseIds});
           props.pages.content_current_pageSize = newPagination.pageSize;
           props.setPages({...props.pages});
-          console.log(props.pages.content_current_pageSize);
         }}
         pagination={{
           pageSize:props.pages.content_current_pageSize,
@@ -923,6 +988,10 @@ return (
           footer={null}
           onCancel={() => {
             form.resetFields();
+            ppvContentChallengeSpeedState.low = null;
+            ppvContentChallengeSpeedState.medium = null;
+            ppvContentChallengeSpeedState.fast = null;
+            setPPVContentChallengeSpeedState({...ppvContentChallengeSpeedState});
             ppvContentStates.isModalVisible = false;
             ppvContentStates.action = null;
             setPPVContentStates({ ...ppvContentStates });
@@ -1059,6 +1128,37 @@ return (
                                     </Dropdown>
                                   </Form.Item>
                               </Col>
+                              {/* <Col span={8}>
+                                <Form.Item
+                                  label={"Low"}
+                                >
+                                    <InputNumber
+                                      max = {10}
+                                      defaultValue={ppvContentChallengeSpeedState.low == null ? 0: ppvContentChallengeSpeedState.low}
+                                    ></InputNumber>
+                                </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                <Form.Item
+                                  label={"Medium"}
+                                >
+                                    <InputNumber
+                                      defaultValue={ppvContentChallengeSpeedState.medium == null ? 0: ppvContentChallengeSpeedState.medium}
+                                    ></InputNumber>
+                                </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                <Form.Item
+                                  label={"Fast"}
+                                >
+                                    <InputNumber
+                                    onChange={(val)=>{
+                                      console.log(val);
+                                    }}
+                                    defaultValue={ppvContentChallengeSpeedState.fast == null ? 0: ppvContentChallengeSpeedState.fast}
+                                    ></InputNumber>
+                                </Form.Item>
+                              </Col> */}
                           </Row>
                             <Row>
                                 <Col span={8}>
@@ -1071,7 +1171,7 @@ return (
                                         <Input
                                                 id="originalFileName"
                                                 type="file"
-                                                inputProps={{ accept: 'image/*, .xlsx, .xls, .csv, .pdf, .pptx, .pptm, .ppt' }}
+                                                //inputProps={{ accept: 'image/*, .xlsx, .xls, .csv, .pdf, .pptx, .pptm, .ppt' }}
                                                 //required
                                                 label="Document"
                                                 name="originalFileName"

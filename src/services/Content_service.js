@@ -1079,7 +1079,7 @@ export function deleteReadingCueWordByCueIDAPI(id,token) {
   });
 }
 
-const localUrl = "http://192.168.1.106:8081"
+const localUrl = "http://localhost:8081"
 
 export function generatePPVVocabularyByMovieID(token, movie_id){
   return new Promise((resolve, reject) => {
@@ -2421,6 +2421,53 @@ export function getWordTranslationByCueID(cue_id, token){
         "Content-Type": "application/json",
         Authorization: token
       }
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  });
+}
+
+export function GetChallengeSpeedByContentID(content_id, token){
+  return new Promise((resolve, reject)=>{
+    axios({
+      method:"get",
+      url: localUrl + "/api/ppv-content-challenge/speed/"+content_id,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token
+      }
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  });
+}
+
+export function InsertChallengeSpeed(data, token){
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: localUrl + "api/ppv-content-challenege/speepd/insert",
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
+  });
+}
+
+export function UpdateChallengeSpeedByContentID(data, token){
+  return new Promise((resolve, reject) => {
+    axios({
+      method:"put",
+      url: localUrl + "api/ppv-content-challenge/speed/"+data.id,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token
+      },
+      data: data,
     })
     .then((res) => resolve(res))
     .catch((err) => reject(err));

@@ -43,6 +43,10 @@ import Article from "./views/article/article"
 import ArticleCue from "./views/article/articleCue"
 import ArticleCueWord from "./views/article/articleCueWord"
 
+import HWlistening from "./views/hw_listening/hw_listening"
+import HWlisteningCue from "./views/hw_listening/hw_listening_cue"
+import HWlisteningCharacter from "./views/hw_listening/hw_listening_character"
+import HWlisteningCueWord from "./views/hw_listening/hw_listening_cue_word"
 import {getOnlyWords} from "./services/Word_service"
 
 import Users from "./views/user/users";
@@ -150,6 +154,11 @@ function App() {
     conversationCueId : null,
     articleId : null,
     articleCueId : null,
+    hwListeningId: null,
+    characterOptions: [],
+    listeningCharacterOptions: [],
+    listeningCharacters: [],
+    hwListeningCueId: null,
   });
 
   const [pages, setPages] = useState({
@@ -161,7 +170,8 @@ function App() {
     content_movie_cue_current_scrollY: 0,
     content_movie_cue_word_current_srollY: 0,
     content_movie_cue_conjunction_root: null,
-  })
+  });
+
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} spin />;
 
   //Loader css
@@ -730,6 +740,45 @@ function App() {
                 }
               >
               {/* ---------------------------------------------------------------------------------------- */}
+              </Route>
+              <Route path="/hw_listening" element={
+              <HWlistening
+                userData={userData}
+                setUserData={setUserData}
+                courseIds={courseIds}
+                setCourseIds={setCourseIds}
+              />
+              }>
+              </Route>
+              <Route path="/hw_listening_cue" element={
+              <HWlisteningCue
+                userData={userData}
+                setUserData={setUserData}
+                courseIds={courseIds}
+                setCourseIds={setCourseIds}
+              />
+              }>
+              </Route>
+              <Route path="/hw_listening_character" element={
+              <HWlisteningCharacter
+                userData={userData}
+                setUserData={setUserData}
+                courseIds={courseIds}
+                setCourseIds={setCourseIds}
+              />
+              }>
+              </Route>
+              <Route
+                path="/hw_listening_cue_word"
+                element={
+                  <HWlisteningCueWord
+                    userData={userData}
+                    setUserData={setUserData}
+                    courseIds = {courseIds}
+                    setCourseIds = {setCourseIds}
+                  />
+                }
+              >
               </Route>
             </Route>
             <Route path="*" element={<PageNotFound />}></Route>
