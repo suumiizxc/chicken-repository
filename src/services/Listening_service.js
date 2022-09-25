@@ -1,5 +1,5 @@
 import axios from "axios"
-//const localUrl = "http://localhost:8081/api/"
+//const url = "http://localhost:8081/api/"
 const url = "https://adminback.lingos.mn/api/" 
 function Get(reqUrl, token){
     return new Promise((resolve, reject) =>{
@@ -122,4 +122,8 @@ export function DeleteHWListeningCue(token, id){
 
 export function GetHwListeningCueWords(token, cue_id){
     return Get("hw-listening/cue-words/"+cue_id, token);
+}
+
+export function UpdateHwListeningCueWord(token, data){
+    return Put("hw-listening/cue-word/update", token, data);
 }

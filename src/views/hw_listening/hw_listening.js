@@ -97,6 +97,7 @@ export default function Index(props){
                         onClick={()=>{
                             props.courseIds.hwListeningId = record.id;
                             props.setCourseIds({...props.courseIds});
+                            console.log(props.courseIds.hwListeningId);
                             getCharactersByListeningID(record.id);
                         }}
                         icon={<ArrowsAltOutlined style={{color: "#3e79f7"}}/>}

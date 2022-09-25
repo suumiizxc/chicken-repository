@@ -1,5 +1,5 @@
 import { CheckOutlined, DeleteOutlined, EditOutlined, ExpandAltOutlined, ExpandOutlined, PlayCircleFilled, PlusCircleOutlined, StopOutlined } from "@ant-design/icons";
-import { Avatar, Button, Card, Col, Form, Input, List, message, Popconfirm, Row, Select, Spin, Table, TimePicker, Tooltip, Typography} from "antd";
+import { Avatar, Button, Card, Col, Form, Input, InputNumber, List, message, Popconfirm, Row, Select, Spin, Table, TimePicker, Tooltip, Typography} from "antd";
 import FormItem from "antd/lib/form/FormItem";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -39,6 +39,8 @@ export default function Index(props){
             setHwListeningCueStates({...hwListeningCueStates});
             if(res && res.data && res.data.status){
                 hwListeningCueStates.data = res.data.data;
+                setHwListeningCueStates({...hwListeningCueStates});
+                console.log(hwListeningCueStates.data);
                 for(let i=0; i<hwListeningCueStates.data.length; i++)
                     hwListeningCueStates.rowDisabled[i] = true;
                 setHwListeningCueStates({...hwListeningCueStates});
@@ -57,11 +59,11 @@ export default function Index(props){
         hwListeningCueStates.loader = true;
         setHwListeningCueStates({...hwListeningCueStates});
         UpdateHWListeningCue(hwListeningCueStates.token, data).then((res)=>{
-            hwListeningCueStates.loader=false;
-            setHwListeningCueStates({...hwListeningCueStates});
             if(res && res.data && res.data.status){
                 message.success("Амжилттай шинэчлэлээ");
                 getCuesByListeningID(props.courseIds.hwListeningId);
+                hwListeningCueStates.loader=false;
+                setHwListeningCueStates({...hwListeningCueStates});
             }else{
                 message.error("Амжилтгүй")
             }
@@ -95,7 +97,7 @@ export default function Index(props){
             setHwListeningCueStates({...hwListeningCueStates});
             if(res && res.data && res.data.status){
                 message.success("Амжилттай устгалаа");
-                getCuesByListeningID(props.courseIds.hwListeningId);
+                getCuesByListeningID(props.courseIds.hwListeningId); 
             }else{
                 message.error("Амжилтгүй");
             }
@@ -175,6 +177,7 @@ export default function Index(props){
                             }
                         })
                     }}
+                    
                     defaultValue={hwListeningCueStates.listeningCharacters.map((e)=>(
                         e.name
                     ))}
@@ -286,9 +289,9 @@ export default function Index(props){
                                                         }
                                                         </Form.Item>
                                                     </Col>
-                                                    <Col span={4}>
+                                                    <Col span={3}>
                                                     <Form.Item
-                                                        label={"Character"}
+                                                        
                                                         name={[index, "character"]}
                                                         initialValue={item.character_id}
                                                     >
@@ -302,6 +305,17 @@ export default function Index(props){
                                                             ))}
                                                         </Select>
                                                     </Form.Item>
+                                                    </Col>
+                                                    <Col span={1}>
+                                                        <Form.Item
+                                                            name={[index, "ordering"]}
+                                                            initialValue={item.ordering}
+                                                        >
+                                                        <InputNumber
+                                                            disabled={hwListeningCueStates.rowDisabled[index]}
+                                                            style={{width:"50px"}}
+                                                        ></InputNumber>
+                                                        </Form.Item>
                                                     </Col>
                                                     <Col span={1}>
                                                         <Popconfirm
@@ -346,7 +360,7 @@ export default function Index(props){
                                                                                 mon_text: form.getFieldValue([index, "mongol"]),
                                                                                 start_time: form.getFieldValue([index, "start_time"]),
                                                                                 end_time: form.getFieldValue([index, "end_time"]),
-                                                                                ordering: 3,
+                                                                                ordering: form.getFieldValue([index, "ordering"]),
                                                                                 listening_id: props.courseIds.hwListeningId,
                                                                                 is_active: item.is_active,
                                                                                 character_id: parseInt((typeof form.getFieldValue([index, "character"]))=="object" ? form.getFieldValue([index, "character"])[0]:form.getFieldValue([index, "character"]))
@@ -359,7 +373,7 @@ export default function Index(props){
                                                                                 mon_text: form.getFieldValue([index, "mongol"]),
                                                                                 start_time: form.getFieldValue([index, "start_time"]),
                                                                                 end_time: form.getFieldValue([index, "end_time"]),
-                                                                                ordering: 3,
+                                                                                ordering: form.getFieldValue([index, "ordering"]),
                                                                                 listening_id: props.courseIds.hwListeningId,
                                                                                 is_active: item.is_active,
                                                                                 character_id: parseInt((typeof form.getFieldValue([index, "character"]))=="object" ? form.getFieldValue([index, "character"])[0]:form.getFieldValue([index, "character"]))
