@@ -1,4 +1,4 @@
-import { CheckOutlined, DeleteOutlined, EditOutlined, ExpandAltOutlined, ExpandOutlined, PlayCircleFilled, PlusCircleOutlined, StopOutlined } from "@ant-design/icons";
+import { CheckOutlined, DeleteOutlined, EditOutlined, ExpandAltOutlined, ExpandOutlined, PlayCircleFilled, PlayCircleOutlined, PlusCircleOutlined, StopOutlined } from "@ant-design/icons";
 import { Avatar, Button, Card, Col, Form, Input, InputNumber, List, message, Popconfirm, Row, Select, Spin, Table, TimePicker, Tooltip, Typography} from "antd";
 import FormItem from "antd/lib/form/FormItem";
 import moment from "moment";
@@ -28,7 +28,8 @@ export default function Index(props){
             start_time: null,
             end_time: null,
             character: null,
-        }
+        },
+        playedIndex: null,
     });
 
     const getCuesByListeningID = (listening_id) => {
@@ -40,7 +41,6 @@ export default function Index(props){
             if(res && res.data && res.data.status){
                 hwListeningCueStates.data = res.data.data;
                 setHwListeningCueStates({...hwListeningCueStates});
-                console.log(hwListeningCueStates.data);
                 for(let i=0; i<hwListeningCueStates.data.length; i++)
                     hwListeningCueStates.rowDisabled[i] = true;
                 setHwListeningCueStates({...hwListeningCueStates});
@@ -230,7 +230,7 @@ export default function Index(props){
                                             autoComplete="off"
                                         >
                                             <FormItem>
-                                                <Row gutter={[16,24]}>
+                                                <Row gutter={[12,24]}>
                                                     <Col span={5}>
                                                         <Form.Item
                                                             label={"English"}
@@ -439,6 +439,39 @@ export default function Index(props){
                                                             }}
                                                             ></Button>
                                                         </Tooltip>
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                <Col span={1}>
+                                                        <Button
+                                                        block
+                                                        icon={<PlayCircleOutlined/>}
+                                                        onClick={()=>{
+                                                            hwListeningCueStates.playedIndex = index;
+                                                            setHwListeningCueStates({...hwListeningCueStates});
+                                                            var player = document.getElementById("audio");
+                                                            if(player.paused){
+                                                                player.play();
+                                                            }else{
+                                                                player.pause();
+                                                            }
+                                                        }}
+                                                        ></Button>
+                                                        <audio id="audio" src={props.courseIds.hwListeningSoundUrl}
+                                                        onPlay={(e)=>{
+                                                            console.log(form.getFieldValue([hwListeningCueStates.playedIndex, "start_time"]))
+                                                            try{
+                                                                e.target.currentTime = parseInt(form.getFieldValue([hwListeningCueStates.playedIndex, "start_time"]).split(":")[1] * 60) + parseInt(form.getFieldValue([hwListeningCueStates.playedIndex, "start_time"]).split(":")[2])
+                                                            }catch(e){}
+                                                        }}
+                                                        onTimeUpdate={(e)=>{
+                                                            try{
+                                                                if(e.nativeEvent.target.currentTime >= parseInt(form.getFieldValue([hwListeningCueStates.playedIndex, "end_time"]).split(":")[1] * 60) + parseFloat(form.getFieldValue([hwListeningCueStates.playedIndex, "end_time"]).split(":")[2] - 0.2)){
+                                                                    e.target.currentTime = parseInt(form.getFieldValue([hwListeningCueStates.playedIndex, "start_time"]).split(":")[1] * 60) + parseInt(form.getFieldValue([hwListeningCueStates.playedIndex, "start_time"]).split(":")[2])
+                                                                }
+                                                            }catch(e){}
+                                                        }}
+                                                        ></audio>
                                                     </Col>
                                                 </Row>
                                             </FormItem>

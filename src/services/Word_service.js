@@ -24,6 +24,7 @@ export function getWords(token, page, limit) {
   });
 }
 
+var localUrl = "http://localhost:8081"
 
 export function getFindWords(string,token) {
   return new Promise((resolve, reject) => {
@@ -31,7 +32,7 @@ export function getFindWords(string,token) {
       method: "get",
       url: url + "/api/dt-word/find-by-text/" + string,
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        //"Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
         Authorization: token,
       },
@@ -39,6 +40,21 @@ export function getFindWords(string,token) {
     })
       .then((res) => resolve(res))
       .catch((err) => reject(err));
+  });
+}
+
+export function GetWordsByTranslation(string, token){
+  return new Promise((resolve, reject)=>{
+    axios({
+      method:"get",
+      url: url + "/api/dt-word/search-by-translation/"+string,
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    })
+    .then((res) => resolve(res))
+    .catch((err) => reject(err));
   });
 }
 

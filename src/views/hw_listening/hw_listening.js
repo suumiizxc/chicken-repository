@@ -96,6 +96,7 @@ export default function Index(props){
                         <Button
                         onClick={()=>{
                             props.courseIds.hwListeningId = record.id;
+                            props.courseIds.hwListeningSoundUrl = record.sound_url;
                             props.setCourseIds({...props.courseIds});
                             console.log(props.courseIds.hwListeningId);
                             getCharactersByListeningID(record.id);
@@ -294,8 +295,10 @@ export default function Index(props){
             if(res && res.data && res.data.status){
                 props.courseIds.characterOptions = [];
                 for(let i=0; i<res.data.data.length; i++){
-                    props.courseIds.characterOptions.push(<Option key={res.data.data[i].id} value={res.data.data[i].name}>{res.data.data[i].name}</Option>)
-                    props.setCourseIds({...props.courseIds});
+                    if(res.data.data[i].is_active === 1){
+                        props.courseIds.characterOptions.push(<Option key={res.data.data[i].id} value={res.data.data[i].name}>{res.data.data[i].name}</Option>)
+                        props.setCourseIds({...props.courseIds});
+                    }
                 }
             }else{
                 message.error("Амжилтгүй");

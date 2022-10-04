@@ -33,6 +33,7 @@ import {
   deleteWordTranslation,
 
   getFindWords,
+  GetWordsByTranslation,
 } from "../../services/Word_service";
 
 const { Search } = Input;
@@ -45,7 +46,9 @@ export default function Index(props) {
   const antIcon = <LoadingOutlined style={{ fontSize: 32 }} />;
   const [wordStates, setWordStates] = useState({
     isModalVisible: false,
+    isModalVisible2: false,
     data: null,
+    word_translations: null,
     all_language: null,
     types: null,
     language_id: null,
@@ -281,6 +284,19 @@ export default function Index(props) {
       ),
     },
   ];
+
+  const translation_column = [
+    {
+      title: "Word",
+      dataIndex: "word",
+      key: "word"
+    },
+    {
+      title: "Translation",
+      dataIndex: "translation_text",
+      key: "translation_text"
+    }
+  ]
 
   const getFormData = (word, translation) => {
     console.log(
@@ -570,6 +586,13 @@ export default function Index(props) {
     }
   };
 
+  const onSearchWord2 = (val) => {
+    const token = localStorage.getItem("token");
+    wordStates.data = [...props.Search(val, 0, props.root)];
+    wordStates.get_word_count = wordStates.data.length;
+    setWordStates({...wordStates});
+  }
+
   const onSearchWord = (val) => {
     console.log("ON SEARCH")
     const token = localStorage.getItem("token");
@@ -660,6 +683,24 @@ export default function Index(props) {
       });
   };
 
+  const getWordsByTranslation = (text) =>{
+    setWordLoader(true);
+    GetWordsByTranslation(text, localStorage.getItem("token")).then((res)=>{
+      setWordLoader(false);
+      if(res && res.data && res.data.status){
+        wordStates.word_translations = res.data.data;
+        wordStates.isModalVisible2 = true;
+        setWordStates({...wordStates})
+      }else{
+        message.error("Амжилтгүй");
+      }
+    })
+    .catch((err)=>{
+      message.error("Алдаа гарлаа");
+      setWordLoader(false);
+    });
+  }
+
   const pageChange = (values) => {
     wordStates.page = values;
 
@@ -670,7 +711,6 @@ export default function Index(props) {
   useEffect(() => {
     console.log("word useffect");
     getAllWords();
-
   }, []);
 
   // useEffect(() => {
@@ -700,7 +740,12 @@ export default function Index(props) {
         }}
       >
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <Space direction="vertical" style={{marginBottom:16,}}>
+        <Space direction="vertical" style={{marginBottom:16,}} >
+          <Search placeholder="Search by translation" onSearch={(value)=>{
+            getWordsByTranslation(value);
+          }} style={{ width: 200 }} />
+        </Space>
+        <Space direction="vertical" style={{marginBottom:16,}} >
           <Search placeholder="input search text" onSearch={onSearchWord} style={{ width: 200 }} />
         </Space>
         </div>
@@ -734,6 +779,21 @@ export default function Index(props) {
         <Table columns={columns} dataSource={wordStates.data} pagination={false}/>
         <Pagination onChange={pageChange} defaultCurrent={1} total={Math.floor(wordStates.get_word_count / wordStates.limit) + 1} />
         {/* {wordStates.isModalVisible ? ( */}
+        <Modal
+          width={"70%"}
+          visible={wordStates.isModalVisible2}
+          footer={null}
+          onCancel={()=>{
+            wordStates.word_translations = null;
+            wordStates.isModalVisible2 = false;
+            setWordStates({...wordStates});
+          }}
+        >
+          <Table
+            dataSource={wordStates.word_translations}
+            columns={translation_column}
+          />
+        </Modal>
         <Modal
           title={wordStates.action === "EDIT" ? "Үг засах" : "Үг нэмэх"}
           width={"70%"}

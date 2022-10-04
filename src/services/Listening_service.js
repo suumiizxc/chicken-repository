@@ -1,5 +1,5 @@
 import axios from "axios"
-//const url = "http://localhost:8081/api/"
+// const url = "http://localhost:8081/api/"
 const url = "https://adminback.lingos.mn/api/" 
 function Get(reqUrl, token){
     return new Promise((resolve, reject) =>{

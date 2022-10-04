@@ -159,6 +159,7 @@ function App() {
     listeningCharacterOptions: [],
     listeningCharacters: [],
     hwListeningCueId: null,
+    hwListeningSoundUrl: null,
   });
 
   const [pages, setPages] = useState({
@@ -293,6 +294,9 @@ function App() {
                 path="/word"
                 element={
                   <WordIndex
+                    root = {rootNode}
+                    setRoot = {setRootNode}
+                    Search={search}
                     userData={userData}
                     setUserData={setUserData}
                     loader={loader}
