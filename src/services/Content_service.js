@@ -1,5 +1,5 @@
 import axios from "axios";
-// const url = "http://122.201.30.39:8080";
+// const url = "http://localhost:8081";
 const url = "https://adminback.lingos.mn";
 // const url = "http://172.20.176.1:8081";
 // ----------------------------------------- START GRAMMER  -----------------------------------------
@@ -1209,6 +1209,7 @@ export function deletePPVContentAPI(id, token) {
 }
 
 export function updatePPVContentAPI(data, token) {
+  console.log(data)
   return new Promise((resolve, reject) => {
     axios({
       method: "put",

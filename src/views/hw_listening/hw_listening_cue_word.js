@@ -59,7 +59,24 @@ export default function Index(props){
         {
             title: "Space next",
             dataIndex: "space_next",
-            key: "space_next"
+            key: "space_next",
+            render: (text, record, index)=>{
+                return(
+                    <Form
+                        form={form}
+                    >
+                        <Form.Item
+                            name={[index, "space_next"]}
+                            initialValue={record.space_next}
+                        >
+                            <Input
+                                style={{width:"70px"}}
+                                disabled={hwListeningCueWordStates.rowDisabled[index]}
+                            />
+                        </Form.Item>
+                    </Form>
+                )
+            }
         },
         {
             title: "Ordering",
@@ -83,7 +100,7 @@ export default function Index(props){
                                     id:records.id,
 	                                main_text: records.main_text,
 	                                ordering: records.ordering,
-	                                space_next: records.space_next,
+	                                space_next: parseInt(form.getFieldValue([index, "space_next"])),
 	                                word_value: form.getFieldValue([index, "word_value"]),
 	                                cue_id: records.cue_id
                                 })
@@ -153,6 +170,7 @@ export default function Index(props){
                 }}
             >
                 <Table
+                    pagination={false} 
                     columns={columns}
                     dataSource={hwListeningCueWordStates.data}
                 />

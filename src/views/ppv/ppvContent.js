@@ -325,7 +325,7 @@ export default function Index(props) {
                     // getAllPPVContent(record);
                     ppvContentStates.updateData = record;
                     ppvContentStates.id = record.id;
-                    getChallengeSpeedByContentID(record.id);
+                    //getChallengeSpeedByContentID(record.id);
                     ppvContentStates.isModalVisible = true
                     ppvContentStates.view_img_url = record.profile_img;
                     ppvContentStates.vocabulary_count = record.vocabulary_count;
@@ -853,7 +853,6 @@ export default function Index(props) {
 
   const onFinishWriting = (values) => {
       console.log("on finish writing : ", values);
-
       ppvContentStates.isModalVisible = false;
       if (ppvContentStates.action == "ADD_LISTENING") {
           var inObj = {category_id : parseInt(values.category_id), intro : values.intro, is_active : parseInt(values.is_active), is_serial : values.is_serial, level_id : parseInt(values.level_id), name : values.name, profile_img : values.profile_img, vocabulary_count : parseInt(values.vocabulary_count)};
@@ -864,7 +863,15 @@ export default function Index(props) {
           //   id: ppv
           //   content_id: ppvContentStates.id
           // }
-          var updObj = {id : ppvContentStates.id, category_id : parseInt(ppvContentStates.CategoryDataMap[values.category_id]), intro : values.intro, is_active : parseInt(values.is_active), is_serial : parseInt(values.is_serial), level_id : parseInt(ppvContentStates.LevelDataMap[values.level_id]), name : values.name, profile_img : values.profile_img, vocabulary_count : parseInt(ppvContentStates.vocabulary_count)};
+          var updObj = {id : ppvContentStates.id, 
+            category_id : parseInt(ppvContentStates.CategoryDataMap[values.category_id]), 
+            intro : values.intro, 
+            is_active : parseInt(values.is_active), 
+            is_serial : parseInt(values.is_serial), 
+            level_id : parseInt(ppvContentStates.LevelDataMap[values.level_id]), 
+            name : values.name, profile_img : values.profile_img, 
+            vocabulary_count : parseInt(ppvContentStates.vocabulary_count),
+          };
           updateListeningData(updObj);
           getFormData({name:""})
           getAllPPVContent();

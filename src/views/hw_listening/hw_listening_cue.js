@@ -30,6 +30,8 @@ export default function Index(props){
             character: null,
         },
         playedIndex: null,
+        last_end_time: null,
+        last_character: null,
     });
 
     const getCuesByListeningID = (listening_id) => {
@@ -43,6 +45,8 @@ export default function Index(props){
                 setHwListeningCueStates({...hwListeningCueStates});
                 for(let i=0; i<hwListeningCueStates.data.length; i++)
                     hwListeningCueStates.rowDisabled[i] = true;
+                hwListeningCueStates.last_end_time = hwListeningCueStates.data[hwListeningCueStates.data.length - 1].end_time;
+                hwListeningCueStates.last_character = hwListeningCueStates.data[hwListeningCueStates.data.length - 1].character_id;
                 setHwListeningCueStates({...hwListeningCueStates});
             }else{
                 message.error("Амжилтгүй");
@@ -52,6 +56,7 @@ export default function Index(props){
             hwListeningCueStates.loader = false;
             setHwListeningCueStates({...hwListeningCueStates});
             message.error("Алдаа гарлаа");
+            console.log(err)
         })
     }
 
@@ -133,7 +138,7 @@ export default function Index(props){
 
     return(
         <Card
-            title={"Listenign cue"} style={{ margin: 15, width: "100%"}}
+            title={"Listening cue"} style={{ margin: 15, width: "100%"}}
         >
             <Spin
                 spinning={hwListeningCueStates.loader}
@@ -195,12 +200,12 @@ export default function Index(props){
                             id: null,
                             eng_text: null,
                             mon_text: null,
-                            start_time: null,
+                            start_time: hwListeningCueStates.last_end_time,
                             end_time: null,
                             ordering: null,
                             listening_id: props.courseIds.hwListeningId,
                             is_active: null,
-                            character_id: null,
+                            character_id: hwListeningCueStates.listeningCharacters[0].id == hwListeningCueStates.last_character ? hwListeningCueStates.listeningCharacters[1].id : hwListeningCueStates.listeningCharacters[0].id,
                             name: null
                         }
                     )
@@ -214,6 +219,7 @@ export default function Index(props){
                     itemLayout="horizontal"
                     dataSource={hwListeningCueStates.data}
                     renderItem={(item, index)=>(
+                        console.log(hwListeningCueStates.listeningCharacters),
                         <List.Item
                         >
                             <List.Item.Meta
