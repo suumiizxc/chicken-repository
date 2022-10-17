@@ -50,6 +50,9 @@ export default function Side_nav() {
     else if(e.key === "5.2"){
       navigate("/hw_listening_character")
     }
+    else if (e.key === "10") {
+      navigate("/chicken")
+    }
   };
   const toggleCollapsed = () => {
     collapse ? setCollapse(false) : setCollapse(true);
@@ -84,35 +87,39 @@ export default function Side_nav() {
             {collapse ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           </Button>
         </div>
-        <Menu.Item key="1" icon={<BarsOutlined />} onClick={onNavigate}>
-          {"Үгсийн сан"}
-        </Menu.Item>
-        <SubMenu key="2" icon={<BankOutlined />} title="Контент">
-          <Menu.Item key="2.1">{"Дүрэм"}</Menu.Item>
-          <Menu.Item key="2.2">{"Writing"}</Menu.Item>
-          <Menu.Item key="2.3">{"Listening"}</Menu.Item>
-          <Menu.Item key="2.4">{"Reading"}</Menu.Item>
-          <Menu.Item key="2.5">{"PPV"}</Menu.Item>
-          <Menu.Item key="2.6">{"Conversation"}</Menu.Item>
-          <Menu.Item key="2.7">{"Article"}</Menu.Item>
-        </SubMenu>
-        <SubMenu key="3" icon={<MailOutlined />} title="Курс">
+        
+        <Menu.Item key="10" icon={<BarsOutlined />} >
+
+          </Menu.Item>
+        {/* <Menu.Item key="1" icon={<BarsOutlined />} onClick={onNavigate}> */}
+          {/* {"Үгсийн сан"} */}
+        {/* </Menu.Item> */}
+        {/* <SubMenu key="2" icon={<BankOutlined />} title="Контент"> */}
+          {/* <Menu.Item key="2.1">{"Дүрэм"}</Menu.Item> */}
+          {/* <Menu.Item key="2.2">{"Writing"}</Menu.Item> */}
+          {/* <Menu.Item key="2.3">{"Listening"}</Menu.Item> */}
+          {/* <Menu.Item key="2.4">{"Reading"}</Menu.Item> */}
+          {/* <Menu.Item key="2.5">{"PPV"}</Menu.Item> */}
+          {/* <Menu.Item key="2.6">{"Conversation"}</Menu.Item> */}
+          {/* <Menu.Item key="2.7">{"Article"}</Menu.Item> */}
+        {/* </SubMenu> */}
+        {/* <SubMenu key="3" icon={<MailOutlined />} title="Курс"> */}
           {/* <Menu.ItemGroup key="3.1" title="Курс"> */}
-          <Menu.Item key="3.1">{"Интро видео"}</Menu.Item>
-          <Menu.Item key="3.2">{"Mixed видео"}</Menu.Item>
+          {/* <Menu.Item key="3.1">{"Интро видео"}</Menu.Item> */}
+          {/* <Menu.Item key="3.2">{"Mixed видео"}</Menu.Item> */}
           {/* </Menu.ItemGroup> */}
-        </SubMenu>
-        <MenuItem key="4" icon={<UserOutlined/>} title="Хэрэглэгчид">
-          {"Хэрэглэгчид"}
-        </MenuItem>
-        <SubMenu key="5" icon={<BookOutlined/>} title="Сонсгол шалгах">
-        <MenuItem key="5.1" icon={<SoundOutlined/>} title="Сонсгол">
-          {"Сонсгол"}
-        </MenuItem>
-        <MenuItem key="5.2" icon={<UserOutlined/>} title={"Дүрүүд"}>
-          {"Дүрүүд"}
-        </MenuItem>
-        </SubMenu>
+        {/* </SubMenu> */}
+        {/* <MenuItem key="4" icon={<UserOutlined/>} title="Хэрэглэгчид"> */}
+          {/* {"Хэрэглэгчид"} */}
+        {/* </MenuItem> */}
+        {/* <SubMenu key="5" icon={<BookOutlined/>} title="Сонсгол шалгах"> */}
+        {/* <MenuItem key="5.1" icon={<SoundOutlined/>} title="Сонсгол"> */}
+          {/* {"Сонсгол"} */}
+        {/* </MenuItem> */}
+        {/* <MenuItem key="5.2" icon={<UserOutlined/>} title={"Дүрүүд"}> */}
+          {/* {"Дүрүүд"} */}
+        {/* </MenuItem> */}
+        {/* </SubMenu> */}
         {/* <MenuItem key="5"icon={<TeamOutlined/>}>{"Үйлчлүүлэгчид"}</MenuItem> */}
       </Menu>
     </div>

@@ -42,7 +42,7 @@ const Login = (props) => {
                       fontSize: "20px"
                     }}
                   >
-                    LingoS
+                    Suumii
                   </p>
                   <p>
                     Та бүртгүүлэх үү? <a href="/auth/register-1">Бүртгүүлэх</a>

@@ -28,7 +28,7 @@ export default function Head_nav(props) {
           src={"/img/logo/lingos-logo.jpg"}
           >
           </img>
-          <a style={{marginLeft:"10px", color:"black"}}>ЛИНГОС | LINGOS</a>
+          <a style={{marginLeft:"10px", color:"black"}}>SUUMII | SUUMII</a>
         </div>)}
         ghost={false}
         // onBack={() => window.history.back()}

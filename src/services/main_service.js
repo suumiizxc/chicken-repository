@@ -1,6 +1,6 @@
 import axios from "axios";
 // const url = "http://122.201.30.39:8080";
-const url = "https://adminback.lingos.mn";
+const url = "http://206.189.42.174:8081";
 
 // ----------------------------------------- Login Auth -----------------------------------------
 export function authLogin(data) {

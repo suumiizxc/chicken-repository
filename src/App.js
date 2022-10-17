@@ -47,6 +47,11 @@ import HWlistening from "./views/hw_listening/hw_listening"
 import HWlisteningCue from "./views/hw_listening/hw_listening_cue"
 import HWlisteningCharacter from "./views/hw_listening/hw_listening_character"
 import HWlisteningCueWord from "./views/hw_listening/hw_listening_cue_word"
+import Chicken from "./views/chicken/chicken"
+import ChickenOneDay from "./views/chicken/chickenoneday"
+import ChickenReduce from "./views/chicken/chickenreduce"
+
+
 import {getOnlyWords} from "./services/Word_service"
 
 import Users from "./views/user/users";
@@ -160,6 +165,7 @@ function App() {
     listeningCharacters: [],
     hwListeningCueId: null,
     hwListeningSoundUrl: null,
+    chickenID : null,
   });
 
   const [pages, setPages] = useState({
@@ -250,7 +256,7 @@ function App() {
   }
 
   useEffect(()=>{
-    GetOnlyWords()
+    // GetOnlyWords()
   }, [])
 
   
@@ -319,6 +325,39 @@ function App() {
                   />
                 }
               />
+              <Route path="/chicken" element={
+                <Chicken
+                  userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+
+              } />
+               <Route path="/chicken-one-day" element={
+                <ChickenOneDay
+                  userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+
+              } />
+               <Route path="/chicken-reduce" element={
+                <ChickenReduce
+                  userData={userData}
+                    setUserData={setUserData}
+                    loader={loader}
+                    setLoader={setLoader}
+                    courseIds={courseIds}
+                    setCourseIds={setCourseIds}
+                  />
+
+              } />
               <Route
                 path="/content/grammer-structure"
                 element={

@@ -1,6 +1,6 @@
 import axios from "axios";
 // const url = "http://localhost:8081";
-const url = "https://adminback.lingos.mn";
+const url = "http://206.189.42.174:8081";
 // const url = "http://172.20.176.1:8081";
 // ----------------------------------------- START GRAMMER  -----------------------------------------
 // ----------------------------------------- GET All GRAMMER -----------------------------------------
@@ -589,7 +589,7 @@ export function getAllListeningAPI(token) {
   return new Promise((resolve, reject) => {
     axios({
       method: "get",
-      url: url + "/api/course-listening/all",
+      url: url + "/api/chicken/list",
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
@@ -606,7 +606,7 @@ export function insertListeningAPI(data, token) {
   return new Promise((resolve, reject) => {
     axios({
       method: "post",
-      url: url + "/api/course-listening/insert",
+      url: url + "/api/chicken/create",
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
@@ -622,8 +622,8 @@ export function insertListeningAPI(data, token) {
 export function updateListeningAPI(data, token) {
   return new Promise((resolve, reject) => {
     axios({
-      method: "put",
-      url: url + "/api/course-listening/update",
+      method: "post",
+      url: url + "/api/chicken/add-one/create",
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
@@ -635,6 +635,24 @@ export function updateListeningAPI(data, token) {
       .catch((err) => reject(err));
   });
 }
+
+export function reducedChickenAPI(data, token) {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: url + "/api/chicken/reduced/create",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: data,
+    })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
 
 export function deleteListeningAPI(id, token) {
   return new Promise((resolve, reject) => {
@@ -657,7 +675,7 @@ export function getAllListeningCueByListeningAPI(id, token) {
   return new Promise((resolve, reject) => {
     axios({
       method: "get",
-      url: url + "/api/course-listening-cue/profile-by-listening/" + id,
+      url: url + "/api/chicken/reduced/list-by-chicken-id/" + id,
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
